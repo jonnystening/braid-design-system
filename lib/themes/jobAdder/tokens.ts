@@ -1,5 +1,12 @@
-import { rgba } from 'polished';
-import { TreatTokens } from '../makeBraidTheme';
+import { darken, lighten, mix, rgba, tint } from 'polished';
+import { getLightVariant, isLight } from '../../utils';
+import { BraidTokens } from '../tokenType';
+
+const getActiveColor = (x: string) =>
+  isLight(x) ? darken(0.1, x) : darken(0.05, x);
+
+const getHoverColor = (x: string) =>
+  isLight(x) ? darken(0.05, x) : lighten(0.05, x);
 
 const brand = '#1971c2';
 const info = '#142d69';
@@ -27,21 +34,18 @@ const selection = blue5;
 const secondary = grey2;
 const neutral = grey2;
 
-const grid = 2;
-const pxToRows = (px: number) => Math.floor(px / grid);
-
-const tokens: TreatTokens = {
+const tokens: BraidTokens = {
   name: 'jobAdder',
   displayName: 'JobAdder',
   typography: {
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    webFont: null,
+    fontFamily: 'Raleway, Arial, Helvetica, sans-serif',
+    webFont: 'Raleway',
     fontMetrics: {
-      capHeight: 1467,
-      ascent: 1854,
-      descent: -434,
-      lineGap: 67,
-      unitsPerEm: 2048,
+      capHeight: 710,
+      ascent: 940,
+      descent: -234,
+      lineGap: 0,
+      unitsPerEm: 1000,
     },
     fontWeight: {
       regular: 400,
@@ -56,42 +60,42 @@ const tokens: TreatTokens = {
       level: {
         '1': {
           mobile: {
-            fontSize: 18,
-            rows: pxToRows(28),
+            fontSize: 28,
+            rows: 9,
           },
           tablet: {
-            fontSize: 18,
-            rows: pxToRows(28),
+            fontSize: 42,
+            rows: 11,
           },
         },
         '2': {
           mobile: {
-            fontSize: 15,
-            rows: pxToRows(24),
+            fontSize: 21,
+            rows: 8,
           },
           tablet: {
-            fontSize: 15,
-            rows: pxToRows(24),
+            fontSize: 28,
+            rows: 9,
           },
         },
         '3': {
           mobile: {
-            fontSize: 14,
-            rows: pxToRows(24),
+            fontSize: 21,
+            rows: 7,
           },
           tablet: {
-            fontSize: 14,
-            rows: pxToRows(24),
+            fontSize: 21,
+            rows: 7,
           },
         },
         '4': {
           mobile: {
-            fontSize: 13,
-            rows: pxToRows(24),
+            fontSize: 18,
+            rows: 7,
           },
           tablet: {
-            fontSize: 13,
-            rows: pxToRows(24),
+            fontSize: 18,
+            rows: 7,
           },
         },
       },
@@ -99,50 +103,45 @@ const tokens: TreatTokens = {
     text: {
       xsmall: {
         mobile: {
-          fontSize: 11,
-          rows: pxToRows(14),
+          fontSize: 12,
+          rows: 5,
         },
         tablet: {
-          fontSize: 11,
-          rows: pxToRows(14),
+          fontSize: 12,
+          rows: 5,
         },
       },
       small: {
         mobile: {
-          fontSize: 12,
-          rows: pxToRows(18),
+          fontSize: 14,
+          rows: 5,
         },
         tablet: {
-          fontSize: 12,
-          rows: pxToRows(18),
+          fontSize: 14,
+          rows: 5,
         },
       },
       standard: {
         mobile: {
-          fontSize: 12,
-          rows: pxToRows(18),
+          fontSize: 16,
+          rows: 6,
         },
         tablet: {
-          fontSize: 12,
-          rows: pxToRows(18),
+          fontSize: 16,
+          rows: 6,
         },
       },
       large: {
         mobile: {
-          fontSize: 13,
-          rows: pxToRows(20),
+          fontSize: 18,
+          rows: 7,
         },
         tablet: {
-          fontSize: 13,
-          rows: pxToRows(20),
+          fontSize: 18,
+          rows: 7,
         },
       },
     },
-  },
-  breakpoint: {
-    mobile: 0,
-    tablet: 768,
-    desktop: 992,
   },
   contentWidth: {
     xsmall: 400,
@@ -150,17 +149,17 @@ const tokens: TreatTokens = {
     medium: 940,
     large: 1280,
   },
-  grid,
-  touchableSize: pxToRows(36),
+  grid: 4,
+  touchableSize: 10,
   space: {
-    gutter: 8,
-    xxsmall: 2,
-    xsmall: 3,
-    small: 4,
-    medium: 6,
-    large: 10,
-    xlarge: 14,
-    xxlarge: 20,
+    gutter: 6,
+    xxsmall: 1,
+    xsmall: 2,
+    small: 3,
+    medium: 5,
+    large: 8,
+    xlarge: 12,
+    xxlarge: 24,
   },
   transforms: {
     touchable: 'scale(0.98)',
@@ -172,25 +171,34 @@ const tokens: TreatTokens = {
   border: {
     radius: {
       standard: '4px',
+      large: '6px',
+      xlarge: '10px',
     },
     width: {
       standard: 1,
       large: 2,
     },
     color: {
-      standard: '#CFCFCF',
-      standardInverted: white,
+      brandAccent,
+      caution,
+      cautionLight: mix(0.6, caution, getLightVariant(caution)),
+      critical,
+      criticalLight: mix(0.3, critical, getLightVariant(critical)),
       field: '#CFCFCF',
       focus,
-      critical,
-      info,
-      promote,
-      positive,
-      caution,
-      formHover: formAccent,
       formAccent,
+      formHover: formAccent,
+      info,
+      infoLight: mix(0.3, info, getLightVariant(info)),
+      positive,
+      positiveLight: mix(0.3, positive, getLightVariant(positive)),
+      promote,
+      promoteLight: mix(0.3, promote, getLightVariant(promote)),
+      standard: '#CFCFCF',
+      standardInverted: white,
     },
   },
+  focusRingSize: 2,
   shadows: {
     small:
       '0 2px 4px 0px rgba(28,28,28,.1), 0 2px 2px -2px rgba(28,28,28,.1), 0 4px 4px -4px rgba(28,28,28,.2)',
@@ -201,37 +209,59 @@ const tokens: TreatTokens = {
   },
   color: {
     foreground: {
+      brandAccent,
+      caution,
+      critical,
+      formAccent,
+      info,
       link,
       linkHover,
       linkVisited,
       neutral: grey1,
       neutralInverted: white,
-      formAccent,
-      critical,
-      caution,
       positive,
-      info,
       promote,
+      rating: '#ff9000',
       secondary,
       secondaryInverted: 'hsla(0, 0%, 100%, 0.65)',
-      rating: '#ff9000',
     },
     background: {
       body: bodyBackground,
       brand,
+      brandAccent,
+      brandAccentActive: getActiveColor(brandAccent),
+      brandAccentHover: getHoverColor(brandAccent),
+      brandAccentSoft: tint(0.925, brandAccent),
+      brandAccentSoftActive: tint(0.85, brandAccent),
+      brandAccentSoftHover: tint(0.9, brandAccent),
+      card: white,
+      caution,
+      cautionLight: getLightVariant(caution),
+      critical,
+      criticalActive: getActiveColor(critical),
+      criticalHover: getHoverColor(critical),
+      criticalLight: getLightVariant(critical),
+      criticalSoft: tint(0.925, critical),
+      criticalSoftActive: tint(0.85, critical),
+      criticalSoftHover: tint(0.9, critical),
+      formAccent,
+      formAccentActive: getActiveColor(formAccent),
+      formAccentDisabled: grey4,
+      formAccentHover: getHoverColor(formAccent),
+      formAccentSoft: tint(0.925, formAccent),
+      formAccentSoftActive: tint(0.85, formAccent),
+      formAccentSoftHover: tint(0.9, formAccent),
+      info,
+      infoLight: getLightVariant(info),
       input: white,
       inputDisabled: grey5,
-      brandAccent,
-      formAccent,
-      formAccentDisabled: grey4,
-      selection,
-      card: white,
-      critical,
-      caution,
-      positive,
       neutral,
-      info,
+      neutralLight: getLightVariant(neutral),
+      positive,
+      positiveLight: getLightVariant(positive),
       promote,
+      promoteLight: getLightVariant(promote),
+      selection,
     },
   },
 };
