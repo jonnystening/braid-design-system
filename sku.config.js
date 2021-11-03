@@ -48,6 +48,11 @@ module.exports = {
       type: 'asset/source',
     });
 
+    config.module.rules.push({
+      test: /\.otf$/,
+      type: 'asset/inline',
+    });
+
     return config;
   },
   skipPackageCompatibilityCompilation: ['lodash', 'prettier'],

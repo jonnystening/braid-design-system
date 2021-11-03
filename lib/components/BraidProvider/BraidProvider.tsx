@@ -17,6 +17,7 @@ import { BraidTestProviderContext } from '../BraidTestProvider/BraidTestProvider
 import { BreakpointProvider } from './BreakpointContext';
 import { BraidThemeContext } from './BraidThemeContext';
 import { BraidTheme } from '../../themes/BraidTheme';
+import './BraidProvider.css';
 
 if (process.env.NODE_ENV === 'development') {
   ensureResetImported();

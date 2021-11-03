@@ -38,14 +38,14 @@ export const makeTokens = ({
     displayName,
     typography: {
       fontFamily:
-        'Roboto, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif',
+        'Gordita, Roboto, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif',
       webFont: null,
       fontMetrics: {
-        capHeight: 1456,
-        ascent: 1900,
-        descent: -500,
+        capHeight: 783,
+        ascent: 1064,
+        descent: -267,
         lineGap: 0,
-        unitsPerEm: 2048,
+        unitsPerEm: 1000,
       },
       fontWeight: {
         regular: 400,

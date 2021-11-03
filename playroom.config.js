@@ -17,6 +17,14 @@ module.exports = {
   port: 8082,
 
   webpackConfig: () => ({
+    module: {
+      rules: [
+        {
+          test: /\.otf$/,
+          type: 'asset/inline',
+        },
+      ],
+    },
     plugins: [
       new MiniCssExtractPlugin({
         ignoreOrder: true,
