@@ -1,80 +1,75 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Tag, Inline } from '../';
+import { Card, Inline, Tag, Strong, Text, TextLinkButton } from '../';
+import source from '../../utils/source.macro';
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  examples: [
-    {
-      label: 'Standard Tag',
-      background: 'card',
-      Example: () => <Tag>Tag</Tag>,
-    },
-    {
-      label: 'Clearable Tag',
-      background: 'card',
-      Example: ({ handler }) => (
-        <Tag onClear={handler} clearLabel="Clear tag">
-          Tag
-        </Tag>
-      ),
-    },
-    {
-      label: 'Truncated Tag',
-      docsSite: false,
-      background: 'card',
-      Example: ({ handler }) => (
-        <Tag onClear={handler} clearLabel="Clear tag">
-          The quick brown fox jumps over the lazy dog. The quick brown fox jumps
-          over the lazy dog. The quick brown fox jumps over the lazy dog. The
-          quick brown fox jumps over the lazy dog. The quick brown fox jumps
-          over the lazy dog. The quick brown fox jumps over the lazy dog. The
-          quick brown fox jumps over the lazy dog.
-        </Tag>
-      ),
-    },
-    {
-      label: 'Test: Standard and clearable tags should be equal height',
-      docsSite: false,
-      background: 'card',
-      Example: ({ handler }) => (
+  Example: () =>
+    source(
+      <Card rounded>
         <Inline space="small">
-          <Tag>Tag</Tag>
-          <Tag onClear={handler} clearLabel="Clear tag">
-            Tag
-          </Tag>
+          <Tag>One</Tag>
+          <Tag>Two</Tag>
+          <Tag>Three</Tag>
         </Inline>
-      ),
-    },
-  ],
-  snippets: [
+      </Card>,
+    ),
+  alternatives: [{ name: 'Badge', description: 'For static labels.' }],
+  additional: [
     {
-      name: 'Standard',
-      code: (
-        <Inline space="small">
-          <Tag>Tag</Tag>
-          <Tag>Tag</Tag>
-          <Tag>Tag</Tag>
-        </Inline>
+      label: 'Clearable',
+      description: (
+        <Text>
+          Tags can be made clearable, by providing an <Strong>onClear</Strong>{' '}
+          handler and a <Strong>clearLabel</Strong> to describe what clicking it
+          will do.
+        </Text>
       ),
-    },
-    {
-      name: 'Dismissable',
-      code: (
-        <Inline space="small">
-          <Tag onClear={() => {}} clearLabel="Dismiss">
-            Tag
-          </Tag>
-          <Tag onClear={() => {}} clearLabel="Dismiss">
-            Tag
-          </Tag>
-          <Tag onClear={() => {}} clearLabel="Dismiss">
-            Tag
-          </Tag>
-        </Inline>
-      ),
+      background: 'card',
+      Example: ({ getState, setState, toggleState }) =>
+        source(
+          <Inline space="small" alignY="center">
+            {!getState('clearOne') ? (
+              <Tag
+                onClear={() => toggleState('clearOne')}
+                clearLabel={'Clear "One"'}
+              >
+                One
+              </Tag>
+            ) : null}
+            {!getState('clearTwo') ? (
+              <Tag
+                onClear={() => toggleState('clearTwo')}
+                clearLabel={'Clear "Two"'}
+              >
+                Two
+              </Tag>
+            ) : null}
+            {!getState('clearThree') ? (
+              <Tag
+                onClear={() => toggleState('clearThree')}
+                clearLabel={'Clear "Three"'}
+              >
+                Three
+              </Tag>
+            ) : null}
+            <Text tone="secondary">
+              <TextLinkButton
+                weight="weak"
+                hitArea="large"
+                onClick={() => {
+                  setState('clearOne', false);
+                  setState('clearTwo', false);
+                  setState('clearThree', false);
+                }}
+              >
+                Reset
+              </TextLinkButton>
+            </Text>
+          </Inline>,
+        ),
     },
   ],
 };

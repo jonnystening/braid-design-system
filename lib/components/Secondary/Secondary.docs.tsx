@@ -1,21 +1,32 @@
 import React from 'react';
+import source from '../../utils/source.macro';
 import { ComponentDocs } from '../../../site/src/types';
-import { Secondary, Text } from '../';
+import { Secondary, Text, TextLink } from '../';
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  examples: [
+  Example: () =>
+    source(
+      <Text size="large">
+        The last word of this sentence is <Secondary>secondary.</Secondary>
+      </Text>,
+    ),
+  alternatives: [
+    { name: 'Strong', description: 'For a stronger text treatment.' },
+  ],
+  additional: [
     {
-      Example: () => (
+      label: 'Note',
+      description: (
         <Text>
-          The word in the <Secondary>middle</Secondary> is secondary text.
+          This component must be nested within a{' '}
+          <TextLink href="/components/Text">Text</TextLink> or{' '}
+          <TextLink href="/components/Heading">Heading</TextLink> component.
         </Text>
       ),
     },
   ],
-  snippets: [{ name: 'Standard', code: <Secondary>Secondary</Secondary> }],
 };
 
 export default docs;

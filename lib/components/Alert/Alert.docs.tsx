@@ -1,191 +1,149 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
+import source from '../../utils/source.macro';
 import { Alert, Text, Strong, Stack, TextLink, List } from '../';
+import { Card } from '../Card/Card';
 
 const docs: ComponentDocs = {
   category: 'Content',
-  description: (
-    <Stack space="large">
-      <Text>
-        Provides a strong inline notification to the user. If you’re looking for
-        a lighter visual treatment, try{' '}
-        <TextLink href="/components/Notice">Notice</TextLink> instead.
-      </Text>
-      <Text>
-        <Strong>Note:</Strong> This component has only been designed to contain
-        standard size text. Any other size of text will break the alignment with
-        the icon.
-      </Text>
-    </Stack>
-  ),
   migrationGuide: true,
-  screenshotWidths: [320],
-  examples: [
+  Example: () =>
+    source(
+      <Card rounded>
+        <Stack space="medium">
+          <Alert tone="promote">
+            <Text>This is a promoted message.</Text>
+          </Alert>
+          <Alert tone="info">
+            <Text>This is an informative message.</Text>
+          </Alert>
+          <Alert tone="positive">
+            <Text>This is a positive message.</Text>
+          </Alert>
+          <Alert tone="caution">
+            <Text>This is a cautionary message.</Text>
+          </Alert>
+          <Alert tone="critical">
+            <Text>This is a critical message.</Text>
+          </Alert>
+        </Stack>
+      </Card>,
+    ),
+  accessibility: (
+    <Text>
+      Follows the{' '}
+      <TextLink href="https://www.w3.org/TR/wai-aria-practices/#alert">
+        WAI-ARIA Alert Pattern
+      </TextLink>
+      , announcing messages with a{' '}
+      <TextLink href="https://www.w3.org/TR/wai-aria/#aria-live">
+        polite
+      </TextLink>{' '}
+      level of importance.
+    </Text>
+  ),
+  alternatives: [
     {
-      label: 'Info Alert',
-      Example: () => (
-        <Alert tone="info">
-          <Text>This is an important piece of information.</Text>
-        </Alert>
-      ),
+      name: 'Notice',
+      description: 'For a lighter visual treatment.',
     },
     {
-      label: 'Info Alert Inside Card',
-      background: 'card',
-      gallery: false,
-      Example: () => (
-        <Alert tone="info">
-          <Text>This is an important piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Dismissible alert',
-      Example: () => (
-        <Alert tone="info" onClose={() => {}} closeLabel="Close info alert">
-          <Text>This is an important piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Alert with rich content',
-      Example: () => (
-        <Alert tone="info">
-          <Stack space="large">
-            <Text>
-              This is an important piece of information with a{' '}
-              <TextLink href="#">TextLink.</TextLink>
-            </Text>
-            <List space="medium">
-              <Text>Bullet 1</Text>
-              <Text>Bullet 2</Text>
-              <Text>Bullet 3</Text>
-            </List>
-          </Stack>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Promote Alert',
-      Example: () => (
-        <Alert tone="promote">
-          <Text>This is a promoted piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Promote Alert Inside Card',
-      background: 'card',
-      gallery: false,
-      Example: () => (
-        <Alert tone="promote">
-          <Text>This is a promoted piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Caution Alert',
-      Example: () => (
-        <Alert tone="caution">
-          <Text>This is a cautionary piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Caution Alert Inside Card',
-      background: 'card',
-      gallery: false,
-      Example: () => (
-        <Alert tone="caution">
-          <Text>This is a cautionary piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Critical Alert',
-      Example: () => (
-        <Alert tone="critical">
-          <Text>This is a critical piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Critical Alert Inside Card',
-      background: 'card',
-      gallery: false,
-      Example: () => (
-        <Alert tone="critical">
-          <Text>This is a critical piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Positive Alert',
-      Example: () => (
-        <Alert tone="positive">
-          <Text>This is a positive piece of information.</Text>
-        </Alert>
-      ),
-    },
-    {
-      label: 'Positive Alert Inside Card',
-      background: 'card',
-      gallery: false,
-      Example: () => (
-        <Alert tone="positive">
-          <Text>This is a positive piece of information.</Text>
-        </Alert>
-      ),
+      name: 'useToast',
+      description: 'For asynchronous messages that float above the page.',
     },
   ],
-  snippets: [
+  additional: [
     {
-      name: 'Critical',
-      code: (
-        <Alert tone="critical">
-          <Text>Critical Alert</Text>
-        </Alert>
+      label: 'Content guidelines',
+      description: (
+        <Stack space="large">
+          <Text>
+            An Alert can contain layout components such as{' '}
+            <TextLink href="/components/Stack">Stack</TextLink> and{' '}
+            <TextLink href="/components/Inline">Inline</TextLink>, as well as
+            typographic components such as{' '}
+            <TextLink href="/components/Text">Text</TextLink>,{' '}
+            <TextLink href="/components/TextLink">TextLink</TextLink> and{' '}
+            <TextLink href="/components/List">List</TextLink>. We do not
+            recommend using{' '}
+            <TextLink href="/components/Button">Button</TextLink> elements
+            inside of message.
+          </Text>
+          <Text>
+            This component has only been designed to use standard size text. Any
+            other size of text will break the alignment with the icon.
+          </Text>
+        </Stack>
       ),
+      background: 'card',
+      Example: () =>
+        source(
+          <Alert tone="info">
+            <Stack space="large">
+              <Text>
+                This is an informative message with a{' '}
+                <TextLink href="#">TextLink.</TextLink>
+              </Text>
+              <List space="medium">
+                <Text>Bullet 1</Text>
+                <Text>Bullet 2</Text>
+                <Text>Bullet 3</Text>
+              </List>
+            </Stack>
+          </Alert>,
+        ),
     },
     {
-      name: 'Caution',
-      code: (
-        <Alert tone="caution">
-          <Text>Caution Alert</Text>
-        </Alert>
+      label: 'Dismissable alerts',
+      description: (
+        <Text>
+          An Alert can be made dismissable by providing an{' '}
+          <Strong>onClose</Strong> handler.
+        </Text>
       ),
+      background: 'card',
+      Example: () =>
+        /* eslint-disable no-alert */
+        source(
+          <Alert
+            tone="info"
+            onClose={() => alert('Dismiss this message')}
+            closeLabel="Close info alert"
+          >
+            <Text>This is an informative message.</Text>
+          </Alert>,
+        ),
+      /* eslint-enable no-alert */
     },
     {
-      name: 'Positive',
-      code: (
-        <Alert tone="positive">
-          <Text>Positive Alert</Text>
-        </Alert>
+      label: 'Contextual design',
+      description: (
+        <Text>
+          When outside of a <TextLink href="/components/Card">Card</TextLink>,
+          an outline is used to provide sufficient contrast against the
+          background.
+        </Text>
       ),
-    },
-    {
-      name: 'Info',
-      code: (
-        <Alert tone="info">
-          <Text>Info Alert</Text>
-        </Alert>
-      ),
-    },
-    {
-      name: 'Promote',
-      code: (
-        <Alert tone="promote">
-          <Text>Promote Alert</Text>
-        </Alert>
-      ),
-    },
-    {
-      name: 'Dismissible alert',
-      code: (
-        <Alert onClose={() => {}} closeLabel="Close">
-          <Text>Dismissible Alert</Text>
-        </Alert>
-      ),
+      Example: () =>
+        source(
+          <Stack space="medium">
+            <Alert tone="promote">
+              <Text>This is a promoted message.</Text>
+            </Alert>
+            <Alert tone="info">
+              <Text>This is an informative message.</Text>
+            </Alert>
+            <Alert tone="positive">
+              <Text>This is a positive message.</Text>
+            </Alert>
+            <Alert tone="caution">
+              <Text>This is a cautionary message.</Text>
+            </Alert>
+            <Alert tone="critical">
+              <Text>This is a critical message.</Text>
+            </Alert>
+          </Stack>,
+        ),
     },
   ],
 };

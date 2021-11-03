@@ -1,252 +1,140 @@
-import React, { Fragment, ReactNode } from 'react';
+import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Box, Stack, Hidden } from '../';
-import { StackProps } from './Stack';
+import { Stack, Hidden, Text, TextLink, Strong } from '../';
 import { Placeholder } from '../private/Placeholder/Placeholder';
-import { padding } from '../Box/useBoxStyles.treat';
-
-const spaces = Object.keys(padding.top).filter(
-  (space) => space !== 'none',
-) as Array<StackProps['space']>;
-
-const Container = ({ children }: { children: ReactNode }) => (
-  <Box style={{ maxWidth: '300px' }}>{children}</Box>
-);
+import source from '../../utils/source.macro';
 
 const docs: ComponentDocs = {
   category: 'Layout',
-  screenshotWidths: [320, 768, 1200],
-  screenshotOnlyInWireframe: true,
   migrationGuide: true,
-  examples: [
-    ...spaces.map((space) => ({
-      label: `Space: ${space}`,
-      Container,
-      Example: () => (
-        <Stack space={space}>
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    })),
+  Example: () =>
+    source(
+      <Stack space="large">
+        <Placeholder height={40} />
+        <Placeholder height={40} />
+        <Placeholder height={40} />
+      </Stack>,
+    ),
+  alternatives: [
     {
-      label: 'Align to center',
-      Container,
-      Example: () => (
-        <Stack space="gutter" align="center">
-          <Placeholder height={40} width={40} />
-          <Placeholder height={40} width={60} />
-          <Placeholder height={40} width={80} />
-        </Stack>
+      name: 'Box',
+      description: 'For custom layouts.',
+    },
+  ],
+  additional: [
+    {
+      label: 'Spacing',
+      description: (
+        <>
+          <Text>
+            The <TextLink href="/foundations/layout#spacing">spacing</TextLink>{' '}
+            between children can be adjusted using the <Strong>space</Strong>{' '}
+            prop.
+          </Text>
+          <Text>
+            Responsive values are supported, e.g.{' '}
+            <Strong>
+              {
+                "space={{ mobile: 'small', tablet: 'medium', desktop: 'large', wide: 'xlarge' }}"
+              }
+            </Strong>
+          </Text>
+        </>
       ),
+      Example: () =>
+        source(
+          <Stack
+            space={{
+              mobile: 'small',
+              tablet: 'medium',
+              desktop: 'large',
+              wide: 'xlarge',
+            }}
+            align="center"
+          >
+            <Placeholder height={40} width={40} />
+            <Placeholder height={40} width={60} />
+            <Placeholder height={40} width={80} />
+          </Stack>,
+        ),
     },
     {
-      label: 'Align to right',
-      Container,
-      Example: () => (
-        <Stack space="gutter" align="right">
-          <Placeholder height={40} width={40} />
-          <Placeholder height={40} width={60} />
-          <Placeholder height={40} width={80} />
-        </Stack>
+      label: 'Horizontal alignment',
+      description: (
+        <Text>
+          Items can be aligned horiontally using the <Strong>align</Strong>{' '}
+          prop. Responsive values are supported, e.g.{' '}
+          <Strong>{"align={{ mobile: 'center', tablet: 'left' }}"}</Strong>
+        </Text>
       ),
-    },
-    {
-      label:
-        'Responsive alignment (e.g. center on mobile, left from tablet upwards)',
-      Container,
-      Example: () => (
-        <Stack space="gutter" align={['center', 'left']}>
-          <Placeholder height={40} width={40} />
-          <Placeholder height={40} width={60} />
-          <Placeholder height={40} width={80} />
-        </Stack>
-      ),
+      Example: () =>
+        source(
+          <Stack space="medium" dividers>
+            <Stack space="gutter" align="left">
+              <Placeholder width={60} height={40} label="left" />
+              <Placeholder width={80} height={40} />
+              <Placeholder width={60} height={40} />
+            </Stack>
+            <Stack space="gutter" align="center">
+              <Placeholder width={60} height={40} />
+              <Placeholder width={80} height={40} label="center" />
+              <Placeholder width={60} height={40} />
+            </Stack>
+            <Stack space="gutter" align="right">
+              <Placeholder width={60} height={40} />
+              <Placeholder width={80} height={40} />
+              <Placeholder width={60} height={40} label="right" />
+            </Stack>
+          </Stack>,
+        ),
     },
     {
       label: 'Dividers',
-      Container,
-      Example: () => (
-        <Stack space="gutter" dividers>
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
+      description: (
+        <Text>
+          Dividers can be placed between each item using the{' '}
+          <Strong>dividers</Strong> prop. Supports both <Strong>regular</Strong>{' '}
+          and <Strong>strong</Strong> variants
+        </Text>
       ),
+      Example: () =>
+        source(
+          <Stack space="xxlarge">
+            <Stack space="medium" dividers>
+              <Placeholder height={30} />
+              <Placeholder height={30} label="regular" />
+              <Placeholder height={30} />
+            </Stack>
+            <Stack space="medium" dividers="strong">
+              <Placeholder height={30} />
+              <Placeholder height={30} label="strong" />
+              <Placeholder height={30} />
+            </Stack>
+          </Stack>,
+        ),
     },
-    {
-      label: 'Strong dividers',
-      Container,
-      Example: () => (
-        <Stack space="gutter" dividers="strong">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      label:
-        'Test - Should flatten fragments (6 placeholders should be evenly spaced)',
-      docsSite: false,
-      Container,
-      Example: () => (
-        <Stack space="small">
-          <Fragment>
-            <Placeholder height={40} />
-            <Placeholder height={40} />
-            <Fragment>
-              <Placeholder height={40} />
-              <Fragment>
-                <Placeholder height={40} />
-              </Fragment>
-            </Fragment>
-          </Fragment>
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
+
     {
       label: 'Responsively hiding stack items',
-      Container,
-      Example: () => (
-        <Stack space="gutter">
-          <Placeholder height={40} label="1" />
-          <Hidden below="tablet">
-            <Placeholder height={40} label="2" />
-          </Hidden>
-          <Hidden above="mobile">
-            <Placeholder height={40} label="3" />
-          </Hidden>
-          <Placeholder height={40} label="4" />
-        </Stack>
+      description: (
+        <Text>
+          The <TextLink href="/components/Hidden">Hidden</TextLink> component
+          can be used to responsively hide specific items.
+        </Text>
       ),
-    },
-    {
-      label:
-        'Test - Hidden stack items with responsive alignment (should be center aligned showing 3 + 4 on mobile, right aligned showing 2 + 3 + 4 on tablet, left aligned showing 1 + 2 + 3 on desktop)',
-      Container,
-      docsSite: false,
-      Example: () => (
-        <Stack space="gutter" align={['center', 'right', 'left']}>
-          <Hidden below="desktop">
-            <Placeholder width={40} height={40} label="1" />
-          </Hidden>
-          <Hidden below="tablet">
-            <Placeholder width={40} height={40} label="2" />
-          </Hidden>
-          <Hidden print>
-            <Placeholder width={40} height={40} label="3" />
-          </Hidden>
-          <Hidden above="tablet">
-            <Placeholder width={40} height={40} label="4" />
-          </Hidden>
-          <Hidden screen>
-            <Placeholder
-              width={40}
-              height={40}
-              label="This should not be visible"
-            />
-          </Hidden>
-        </Stack>
-      ),
-    },
-    {
-      label:
-        'Test - Hidden stack items with dividers (should show 3 + 4 on mobile, 2 + 3 + 4 on tablet, and 1 + 2 + 3 on desktop)',
-      Container,
-      docsSite: false,
-      Example: () => (
-        <Stack space="gutter" dividers>
-          <Hidden below="desktop">
+      Example: () =>
+        source(
+          <Stack space="gutter">
             <Placeholder height={40} label="1" />
-          </Hidden>
-          <Hidden below="tablet">
-            <Placeholder height={40} label="2" />
-          </Hidden>
-          <Placeholder height={40} label="3" />
-          <Hidden above="tablet">
+            <Hidden below="tablet">
+              <Placeholder height={40} label="2" />
+            </Hidden>
+            <Hidden above="mobile">
+              <Placeholder height={40} label="3" />
+            </Hidden>
             <Placeholder height={40} label="4" />
-          </Hidden>
-          <Hidden screen>
-            <Placeholder height={40} label="This should not be visible" />
-          </Hidden>
-        </Stack>
-      ),
-    },
-  ],
-  snippets: [
-    {
-      name: 'XXSmall Space',
-      code: (
-        <Stack space="xxsmall">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'XSmall Space',
-      code: (
-        <Stack space="xsmall">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'Small Space',
-      code: (
-        <Stack space="small">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'Medium Space',
-      code: (
-        <Stack space="medium">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'Gutter Space',
-      code: (
-        <Stack space="gutter">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'Large Space',
-      code: (
-        <Stack space="large">
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
-    },
-    {
-      name: 'Responsive Space',
-      code: (
-        <Stack space={['small', 'large', 'none']}>
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-          <Placeholder height={40} />
-        </Stack>
-      ),
+          </Stack>,
+        ),
     },
   ],
 };

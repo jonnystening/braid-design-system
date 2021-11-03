@@ -1,8 +1,12 @@
 import React, { ReactNode, Fragment } from 'react';
-import reactElementToJSXString from 'react-element-to-jsx-string';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import { ComponentProps } from './ComponentProps';
+import docsTheme from '../../../../lib/themes/docs';
+import { PlayroomStateProvider } from '../../../../lib/playroom/playroomState';
+import { useSourceFromExample } from '../../../../lib/utils/useSourceFromExample';
+import { BraidSnippet } from '../../../../lib/components/private/Snippets';
 import {
+  BraidProvider,
   Box,
   Heading,
   Stack,
@@ -11,49 +15,86 @@ import {
   Alert,
   Inline,
   Badge,
+  List,
+  Secondary,
 } from '../../../../lib/components';
 
-import { ComponentDocs } from '../../types';
+import { ComponentDocs, ComponentExample } from '../../types';
 import Code from '../Code/Code';
-import { ThemedExample } from '../ThemeSetting';
+import { ThemedExample, useThemeSettings } from '../ThemeSetting';
 import { useConfig } from '../ConfigContext';
 import { getHistory } from '../Updates';
 import { Markdown } from '../Markdown/Markdown';
 import { Navigation, NavigationItem } from './Navigation/Navigation';
 import { PageTitle } from '../Seo/PageTitle';
-
-const handler = () => {
-  /* No-op for docs examples */
-};
+import { LinkableHeading } from '../LinkableHeading/LinkableHeading';
 
 const DefaultContainer = ({ children }: { children: ReactNode }) => (
   <Fragment>{children}</Fragment>
 );
 
+interface RenderExampleProps {
+  id: string;
+  Example?: ComponentExample['Example'];
+  code?: ComponentExample['code'];
+  Container?: ComponentExample['Container'];
+  background?: ComponentExample['background'];
+  showCodeByDefault?: ComponentExample['showCodeByDefault'];
+  playroom?: ComponentExample['playroom'];
+}
+const RenderExample = ({
+  id,
+  Example,
+  code,
+  Container = DefaultContainer,
+  background = 'body',
+  showCodeByDefault = false,
+  playroom,
+}: RenderExampleProps) => {
+  const { code: codeAsString, value } = useSourceFromExample(id, {
+    Example,
+    code,
+  });
+
+  return (
+    <BraidProvider styleBody={false} theme={docsTheme}>
+      <Stack space="xxsmall">
+        {value ? (
+          <ThemedExample background={background}>
+            <Container>{value}</Container>
+          </ThemedExample>
+        ) : null}
+        {codeAsString ? (
+          <Code collapsedByDefault={!showCodeByDefault} playroom={playroom}>
+            {codeAsString}
+          </Code>
+        ) : null}
+      </Stack>
+    </BraidProvider>
+  );
+};
+
 interface ComponentDocProps {
   componentName: string;
   subfolder?: string;
   docs: ComponentDocs;
+  snippets?: BraidSnippet[];
 }
 
 export const ComponentDoc = ({
   componentName,
   subfolder = '',
   docs,
+  snippets = [],
 }: ComponentDocProps) => {
+  const { theme } = useThemeSettings();
   const { sourceUrlPrefix } = useConfig();
 
   const componentFolder = `lib/components/${
     subfolder ? `${subfolder}/` : ''
   }${componentName}`;
-  const examples = docs.examples || [];
-
   const sourceUrl = `${sourceUrlPrefix}/${componentFolder}`;
   const migrationGuideUrl = `${sourceUrlPrefix}/${componentFolder}/${componentName}.migration.md`;
-
-  const filteredExamples = examples.filter(
-    (example) => example.docsSite !== false,
-  );
 
   const propsToDocument = docs.subComponents
     ? [componentName, ...docs.subComponents]
@@ -69,6 +110,12 @@ export const ComponentDoc = ({
   const propsRouteActive =
     useRouteMatch({
       path: `/components/${componentName}/props`,
+      exact: true,
+    }) !== null;
+
+  const snippetsRouteActive =
+    useRouteMatch({
+      path: `/components/${componentName}/snippets`,
       exact: true,
     }) !== null;
 
@@ -122,74 +169,89 @@ export const ComponentDoc = ({
           >
             Releases
           </NavigationItem>
+          {snippets.length > 0 ? (
+            <NavigationItem
+              active={snippetsRouteActive}
+              href={`/components/${componentName}/snippets`}
+            >
+              Snippets
+            </NavigationItem>
+          ) : null}
         </Navigation>
         {docs.deprecationWarning ? (
           <Alert tone="caution">{docs.deprecationWarning}</Alert>
         ) : null}
+        {docs.banner}
       </Stack>
       <Switch>
         <Route exact path={`/components/${componentName}`}>
           <PageTitle title={componentName} />
           <Stack space="xxlarge">
-            {docs.description}
+            {docs.Example ? (
+              <BraidProvider styleBody={false} theme={theme}>
+                <PlayroomStateProvider>
+                  <RenderExample
+                    id={`${componentName}_example`}
+                    Example={docs.Example}
+                    showCodeByDefault={docs.category === 'Logic'}
+                  />
+                </PlayroomStateProvider>
+              </BraidProvider>
+            ) : null}
 
-            {filteredExamples.map((example, index) => {
-              const {
-                label,
-                Example,
-                code,
-                Container = DefaultContainer,
-                background = 'body',
-                showCodeByDefault = false,
-                playroom,
-                description,
-              } = example;
+            {docs.description ? (
+              <Stack space="large">{docs.description}</Stack>
+            ) : null}
 
-              const codeAsString =
-                Example && !code
-                  ? reactElementToJSXString(
-                      Example({ id: 'id', handler }), // eslint-disable-line new-cap
-                      {
-                        useBooleanShorthandSyntax: false,
-                        showDefaultProps: false,
-                        showFunctions: false,
-                        filterProps: ['onChange', 'onBlur', 'onFocus'],
-                      },
-                    )
-                  : code;
+            {docs.alternatives.length > 0 ? (
+              <Stack space="large">
+                <LinkableHeading level="3">Alternatives</LinkableHeading>
+                <List space="large">
+                  {docs.alternatives.map((alt) => (
+                    <Text key={`${alt.name}`}>
+                      <TextLink href={`/components/${alt.name}`}>
+                        {alt.name}
+                      </TextLink>{' '}
+                      <Secondary>— {alt.description}</Secondary>
+                    </Text>
+                  ))}
+                </List>
+              </Stack>
+            ) : null}
 
-              return (
-                <Box key={index}>
-                  <Stack space="large">
-                    {label && filteredExamples.length > 1 ? (
-                      <Heading level="3">{label}</Heading>
-                    ) : null}
-                    {description ?? null}
-                    <Stack space="xxsmall">
-                      {Example ? (
-                        <ThemedExample background={background}>
-                          <Container>
-                            <Example id={`${index}`} handler={handler} />
-                          </Container>
-                        </ThemedExample>
-                      ) : null}
-                      {codeAsString ? (
-                        <Code
-                          collapsedByDefault={
-                            !showCodeByDefault &&
-                            Example !== undefined &&
-                            docs.category !== 'Logic'
-                          }
-                          playroom={playroom}
-                        >
-                          {codeAsString}
-                        </Code>
-                      ) : null}
-                    </Stack>
-                  </Stack>
-                </Box>
-              );
-            })}
+            {docs.accessibility ? (
+              <Stack space="large">
+                <LinkableHeading level="3">Accessibility</LinkableHeading>
+                {docs.accessibility}
+              </Stack>
+            ) : null}
+
+            {(docs.additional || []).map((example, index) => (
+              <Stack space="large" key={index}>
+                {example.label ? (
+                  <LinkableHeading level="3">{example.label}</LinkableHeading>
+                ) : null}
+                {example.description ?? null}
+                {example.code || example.Example ? (
+                  <BraidProvider styleBody={false} theme={theme}>
+                    <PlayroomStateProvider>
+                      <RenderExample
+                        id={String(index)}
+                        code={example.code}
+                        Example={example.Example}
+                        Container={example.Container}
+                        background={example.background}
+                        showCodeByDefault={
+                          example.showCodeByDefault ||
+                          example.Example === undefined
+                        }
+                        playroom={example.playroom}
+                      />
+                    </PlayroomStateProvider>
+                  </BraidProvider>
+                ) : null}
+              </Stack>
+            ))}
           </Stack>
         </Route>
         <Route path={`/components/${componentName}/props`}>
@@ -256,6 +318,26 @@ export const ComponentDoc = ({
                 </Text>
               </Stack>
             )}
+          </Stack>
+        </Route>
+        <Route path={`/components/${componentName}/snippets`}>
+          <PageTitle title={`${componentName} Snippets`} />
+
+          <Stack space="xxlarge">
+            {snippets.map(({ group, name, code }) => (
+              <Stack space="medium" key={`${group}_${name}`}>
+                <Text tone="secondary">{name}</Text>
+                <BraidProvider styleBody={false} theme={theme}>
+                  <PlayroomStateProvider>
+                    <RenderExample
+                      id={`${group}_${name}`}
+                      Example={() => code}
+                      showCodeByDefault={false}
+                    />
+                  </PlayroomStateProvider>
+                </BraidProvider>
+              </Stack>
+            ))}
           </Stack>
         </Route>
       </Switch>

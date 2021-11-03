@@ -1,152 +1,147 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Accordion, AccordionItem, Stack, Text, TextLink } from '../';
-import { AccordionItem as PlayroomAccordionItem } from '../../playroom/components';
+import source from '../../utils/source.macro';
+import { Accordion, AccordionItem, Card, Text, TextLink, Strong } from '../';
+import { Placeholder } from '../../playroom/components';
+import { validSpaceValues } from './Accordion';
 
 const docs: ComponentDocs = {
   category: 'Content',
-  screenshotWidths: [320],
   subComponents: ['AccordionItem'],
   migrationGuide: true,
-  description: (
-    <Stack space="large">
-      <Text>
-        Follows the{' '}
-        <TextLink href="https://www.w3.org/TR/wai-aria-practices/#disclosure">
-          WAI-ARIA Disclosure Pattern.
-        </TextLink>
-      </Text>
-      <Text>
-        Accordion items manage their own state internally by default. If
-        you&rsquo;d like to take control of the state yourself, you can pass
-        &ldquo;expanded&rdquo; and &ldquo;onToggle&rdquo; props to
-        AccordionItem.
-      </Text>
-      <Text>
-        <TextLink href="/components/AccordionItem">AccordionItem</TextLink>{' '}
-        elements can be rendered outside of an enclosing{' '}
-        <TextLink href="/components/Accordion">Accordion</TextLink> if
-        you&rsquo;d like to customise their surrounding layout.
-      </Text>
-      <Text tone="secondary">
-        If you want a lighter visual treatment for standalone accordion items,
-        check out <TextLink href="/components/Disclosure">Disclosure.</TextLink>
-      </Text>
-    </Stack>
-  ),
-  examples: [
-    {
-      label: 'Collapsed Accordion',
-      Example: ({ id }) => (
-        <Accordion>
-          <AccordionItem label="Accordion item 1" id={`${id}_1`}>
-            <Text>Accordion item content</Text>
-          </AccordionItem>
-          <AccordionItem label="Accordion item 2" id={`${id}_2`}>
-            <Text>Accordion item content</Text>
-          </AccordionItem>
-          <AccordionItem label="Accordion item 3" id={`${id}_3`}>
-            <Text>Accordion item content</Text>
-          </AccordionItem>
-        </Accordion>
-      ),
-    },
-    {
-      label: 'Expanded Accordion',
-      Example: ({ id }) => {
-        const [expanded1, setExpanded1] = useState(true);
-        const [expanded2, setExpanded2] = useState(true);
-        const [expanded3, setExpanded3] = useState(true);
-
-        return (
-          <Accordion>
-            <AccordionItem
-              label="Accordion item 1"
-              id={`${id}_1`}
-              expanded={expanded1}
-              onToggle={setExpanded1}
-            >
-              <Text>Accordion item content</Text>
-            </AccordionItem>
-            <AccordionItem
-              label="Accordion item 2"
-              id={`${id}_2`}
-              expanded={expanded2}
-              onToggle={setExpanded2}
-            >
-              <Text>Accordion item content</Text>
-            </AccordionItem>
-            <AccordionItem
-              label="Accordion item 3"
-              id={`${id}_3`}
-              expanded={expanded3}
-              onToggle={setExpanded3}
-            >
-              <Text>Accordion item content</Text>
-            </AccordionItem>
-          </Accordion>
-        );
-      },
-    },
-    {
-      label: 'Standalone AccordionItem',
-      gallery: false,
-      Example: ({ id }) => (
-        <AccordionItem label="Label" id={id}>
-          <Text>Content</Text>
+  Example: ({ id }) =>
+    source(
+      <Accordion>
+        <AccordionItem label="Accordion item 1" id={`${id}_1`}>
+          <Placeholder height={80} />
         </AccordionItem>
-      ),
+        <AccordionItem label="Accordion item 2" id={`${id}_2`}>
+          <Placeholder height={80} />
+        </AccordionItem>
+        <AccordionItem label="Accordion item 3" id={`${id}_3`}>
+          <Placeholder height={80} />
+        </AccordionItem>
+      </Accordion>,
+    ),
+  accessibility: (
+    <Text>
+      Follows the{' '}
+      <TextLink href="https://www.w3.org/TR/wai-aria-practices/#disclosure">
+        WAI-ARIA Disclosure Pattern.
+      </TextLink>
+    </Text>
+  ),
+  alternatives: [
+    {
+      name: 'Disclosure',
+      description: 'For a lighter visual treatment.',
+    },
+    {
+      name: 'Tabs',
+      description: 'For a horizontal selection of multiple content panels.',
+    },
+    {
+      name: 'Dialog',
+      description: 'For exposing a smaller amount of content in a modal.',
+    },
+    {
+      name: 'Drawer',
+      description: 'For exposing a larger amount of content in a modal.',
     },
   ],
-  snippets: [
+  additional: [
     {
-      name: '2 items',
-      code: (
-        <Accordion>
-          <PlayroomAccordionItem label="Label">
-            <Stack space="large">
-              <Text>Content</Text>
-            </Stack>
-          </PlayroomAccordionItem>
-          <PlayroomAccordionItem label="Label">
-            <Stack space="large">
-              <Text>Content</Text>
-            </Stack>
-          </PlayroomAccordionItem>
-        </Accordion>
+      label: 'Customising the appearance',
+      description: (
+        <>
+          <Text>
+            You can customise the <Strong>size</Strong> and{' '}
+            <Strong>tone</Strong> props, and optionally set the{' '}
+            <Strong>dividers</Strong> prop to <Strong>false.</Strong>
+          </Text>
+          <Text>
+            While we aim to provide sensible defaults, you can also provide a
+            custom <Strong>space</Strong> value to adjust the spacing between
+            items. Note that, to ensure adequate space for touch targets, the{' '}
+            <Strong>space</Strong> prop only accepts values of{' '}
+            {validSpaceValues.map((value, i) => (
+              <React.Fragment key={value}>
+                {i === validSpaceValues.length - 1 ? ' and ' : ''}
+                {i !== validSpaceValues.length - 1 && i !== 0 ? ', ' : ''}
+                <Strong>“{value}”</Strong>
+              </React.Fragment>
+            ))}
+            .
+          </Text>
+        </>
       ),
+      Example: ({ id }) =>
+        source(
+          <Card>
+            <Accordion
+              size="standard"
+              tone="secondary"
+              space="xlarge"
+              dividers={false}
+            >
+              <AccordionItem label="Accordion item 1" id={`${id}_1`}>
+                <Placeholder height={80} />
+              </AccordionItem>
+              <AccordionItem label="Accordion item 2" id={`${id}_2`}>
+                <Placeholder height={80} />
+              </AccordionItem>
+              <AccordionItem label="Accordion item 3" id={`${id}_3`}>
+                <Placeholder height={80} />
+              </AccordionItem>
+            </Accordion>
+          </Card>,
+        ),
     },
     {
-      name: '3 items',
-      code: (
-        <Accordion>
-          <PlayroomAccordionItem label="Label">
-            <Stack space="large">
-              <Text>Content</Text>
-            </Stack>
-          </PlayroomAccordionItem>
-          <PlayroomAccordionItem label="Label">
-            <Stack space="large">
-              <Text>Content</Text>
-            </Stack>
-          </PlayroomAccordionItem>
-          <PlayroomAccordionItem label="Label">
-            <Stack space="large">
-              <Text>Content</Text>
-            </Stack>
-          </PlayroomAccordionItem>
-        </Accordion>
+      label: 'Managing state',
+      description: (
+        <Text>
+          An <Strong>AccordionItem</Strong>, by default, manages its own state
+          internally. If you&rsquo;d like to take control of the state, you can
+          do so using the <Strong>expanded</Strong> and{' '}
+          <Strong>onToggle</Strong> props.
+        </Text>
       ),
-    },
-    {
-      name: 'Standalone item',
-      code: (
-        <PlayroomAccordionItem label="Label">
-          <Stack space="large">
-            <Text>Content</Text>
-          </Stack>
-        </PlayroomAccordionItem>
-      ),
+      Example: ({ id, setDefaultState, getState, toggleState }) =>
+        source(
+          <>
+            {setDefaultState('expanded1', false)}
+            {setDefaultState('expanded2', true)}
+            {setDefaultState('expanded3', false)}
+
+            <Accordion>
+              <AccordionItem
+                label="Accordion item 1"
+                id={`${id}_1`}
+                expanded={getState('expanded1')}
+                onToggle={() => toggleState('expanded1')}
+              >
+                <Placeholder height={80} />
+              </AccordionItem>
+              <AccordionItem
+                label="Accordion item 2"
+                id={`${id}_2`}
+                expanded={getState('expanded2')}
+                onToggle={() => toggleState('expanded2')}
+              >
+                <Placeholder height={80} />
+              </AccordionItem>
+              <AccordionItem
+                label="Accordion item 3"
+                id={`${id}_3`}
+                expanded={getState('expanded3')}
+                onToggle={() => toggleState('expanded3')}
+              >
+                <Placeholder height={80} />
+              </AccordionItem>
+            </Accordion>
+          </>,
+        ),
     },
   ],
 };

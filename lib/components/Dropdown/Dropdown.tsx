@@ -1,26 +1,33 @@
 import React, { Fragment, AllHTMLAttributes, forwardRef } from 'react';
-import { useStyles } from 'sku/react-treat';
 import { Box } from '../Box/Box';
-import { Field, FieldProps } from '../private/Field/Field';
+import {
+  Field,
+  FieldBaseProps,
+  FieldLabelVariant,
+} from '../private/Field/Field';
 import { IconChevron } from '../icons';
-import * as styleRefs from './Dropdown.treat';
+import * as styles from './Dropdown.css';
 import { Text } from '../Text/Text';
 
 type ValidDropdownChildren = AllHTMLAttributes<
   HTMLOptionElement | HTMLOptGroupElement
 >;
 type SelectProps = AllHTMLAttributes<HTMLSelectElement>;
-export interface DropdownProps
-  extends Omit<FieldProps, 'labelId' | 'secondaryMessage'> {
+export type DropdownBaseProps = Omit<
+  FieldBaseProps,
+  'value' | 'labelId' | 'secondaryMessage' | 'prefix'
+> & {
   children: ValidDropdownChildren[] | ValidDropdownChildren;
   value: NonNullable<SelectProps['value']>;
   onChange: NonNullable<SelectProps['onChange']>;
   onBlur?: SelectProps['onBlur'];
   onFocus?: SelectProps['onFocus'];
   placeholder?: string;
-}
+};
+export type DropdownLabelProps = FieldLabelVariant;
+export type DropdownProps = DropdownBaseProps & DropdownLabelProps;
 
-const NamedDropdown = forwardRef<HTMLSelectElement, DropdownProps>(
+export const Dropdown = forwardRef<HTMLSelectElement, DropdownProps>(
   (props, ref) => {
     const {
       children,
@@ -33,12 +40,12 @@ const NamedDropdown = forwardRef<HTMLSelectElement, DropdownProps>(
       ...restProps
     } = props;
 
-    const styles = useStyles(styleRefs);
     return (
       <Field
         {...restProps}
         disabled={disabled}
         labelId={undefined}
+        prefix={undefined}
         secondaryMessage={null}
         value={value}
       >
@@ -57,9 +64,11 @@ const NamedDropdown = forwardRef<HTMLSelectElement, DropdownProps>(
               {...fieldProps}
               ref={ref}
             >
-              <option value="" disabled={true}>
-                {placeholder}
-              </option>
+              {!value || placeholder ? (
+                <option value="" disabled={true}>
+                  {disabled ? '' : placeholder}
+                </option>
+              ) : null}
               {children}
             </Box>
             {overlays}
@@ -85,6 +94,4 @@ const NamedDropdown = forwardRef<HTMLSelectElement, DropdownProps>(
   },
 );
 
-NamedDropdown.displayName = 'Dropdown';
-
-export const Dropdown = NamedDropdown;
+Dropdown.displayName = 'Dropdown';

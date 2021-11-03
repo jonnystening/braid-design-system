@@ -1,34 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Optional } from 'utility-types';
+import { useFallbackState, StateProp } from '../../playroom/playroomState';
 import { useFallbackId } from '../../playroom/utils';
 import {
   PasswordField as BraidPasswordField,
-  PasswordFieldProps,
+  PasswordFieldBaseProps,
+  PasswordFieldLabelProps,
 } from './PasswordField';
 
-type PlayroomPasswordFieldProps = Optional<
-  PasswordFieldProps,
-  'id' | 'value' | 'onChange'
->;
+type PlayroomPasswordFieldProps = StateProp &
+  Optional<PasswordFieldBaseProps, 'id' | 'value' | 'onChange'> &
+  PasswordFieldLabelProps;
 
 export const PasswordField = ({
   id,
+  stateName,
   value,
   onChange,
   ...restProps
 }: PlayroomPasswordFieldProps) => {
   const fallbackId = useFallbackId();
-  const [fallbackValue, setFallbackValue] = useState('');
+  const [state, handleChange] = useFallbackState(
+    stateName,
+    value,
+    onChange,
+    '',
+  );
 
   return (
     <BraidPasswordField
       id={id ?? fallbackId}
-      value={value ?? fallbackValue}
-      onChange={
-        onChange
-          ? onChange
-          : (event) => setFallbackValue(event.currentTarget.value)
-      }
+      value={state}
+      onChange={handleChange}
+      autoComplete="off"
       {...restProps}
     />
   );

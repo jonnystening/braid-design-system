@@ -1,5 +1,6 @@
-import { TreatTokens } from '../makeBraidTheme';
-import { rgba } from 'polished';
+import { BraidTokens } from '../tokenType';
+import { darken, lighten, mix, rgba, tint } from 'polished';
+import { getAccessibleVariant, getLightVariant, isLight } from '../../utils';
 
 const formAccent = '#2765cf';
 const critical = '#d0011b';
@@ -16,7 +17,13 @@ const linkVisited = '#733d90';
 const secondary = '#1c1c1ca1';
 const neutral = '#747474';
 
-const tokens: TreatTokens = {
+const getActiveColor = (x: string) =>
+  isLight(x) ? darken(0.1, x) : darken(0.05, x);
+
+const getHoverColor = (x: string) =>
+  isLight(x) ? darken(0.05, x) : lighten(0.05, x);
+
+const tokens: BraidTokens = {
   name: 'seekUnifiedBeta',
   displayName: 'SEEK Unified (Beta)',
   typography: {
@@ -126,11 +133,6 @@ const tokens: TreatTokens = {
       },
     },
   },
-  breakpoint: {
-    mobile: 0,
-    tablet: 740,
-    desktop: 992,
-  },
   contentWidth: {
     xsmall: 400,
     small: 660,
@@ -159,25 +161,34 @@ const tokens: TreatTokens = {
   border: {
     radius: {
       standard: '2px',
+      large: '4px',
+      xlarge: '6px',
     },
     width: {
       standard: 1,
       large: 2,
     },
     color: {
-      standard: '#d6d6d6',
-      standardInverted: white,
+      brandAccent,
+      caution,
+      cautionLight: mix(0.6, caution, getLightVariant(caution)),
+      critical,
+      criticalLight: mix(0.3, critical, getLightVariant(critical)),
       field: '#898989',
       focus,
-      formHover: formAccent,
-      critical,
-      info,
-      promote,
-      positive,
-      caution,
       formAccent,
+      formHover: formAccent,
+      info,
+      infoLight: mix(0.3, info, getLightVariant(info)),
+      positive,
+      positiveLight: mix(0.3, positive, getLightVariant(positive)),
+      promote,
+      promoteLight: mix(0.3, promote, getLightVariant(promote)),
+      standard: '#d6d6d6',
+      standardInverted: white,
     },
   },
+  focusRingSize: 2,
   shadows: {
     small:
       '0 2px 4px 0px rgba(28,28,28,.1), 0 2px 2px -2px rgba(28,28,28,.1), 0 4px 4px -4px rgba(28,28,28,.2)',
@@ -188,37 +199,59 @@ const tokens: TreatTokens = {
   },
   color: {
     foreground: {
+      brandAccent,
+      caution: getAccessibleVariant(caution, caution),
+      critical: getAccessibleVariant(critical),
+      formAccent,
+      info: getAccessibleVariant(info),
       link,
       linkHover: link,
       linkVisited,
       neutral: black,
       neutralInverted: white,
-      formAccent,
-      critical,
-      caution,
-      positive,
-      info,
-      promote,
+      positive: getAccessibleVariant(positive),
+      promote: getAccessibleVariant(promote),
+      rating: '#f57c00',
       secondary,
       secondaryInverted: 'hsla(0, 0%, 100%, 0.65)',
-      rating: '#f57c00',
     },
     background: {
       body: '#eee',
       brand: '#0d3880',
+      brandAccent,
+      brandAccentActive: getActiveColor(brandAccent),
+      brandAccentHover: getHoverColor(brandAccent),
+      brandAccentSoft: tint(0.925, brandAccent),
+      brandAccentSoftActive: tint(0.85, brandAccent),
+      brandAccentSoftHover: tint(0.9, brandAccent),
+      card: white,
+      caution,
+      cautionLight: getLightVariant(caution),
+      critical,
+      criticalActive: getActiveColor(critical),
+      criticalHover: getHoverColor(critical),
+      criticalLight: getLightVariant(critical),
+      criticalSoft: tint(0.925, critical),
+      criticalSoftActive: tint(0.85, critical),
+      criticalSoftHover: tint(0.9, critical),
+      formAccent,
+      formAccentActive: getActiveColor(formAccent),
+      formAccentDisabled: '#ccc',
+      formAccentHover: getHoverColor(formAccent),
+      formAccentSoft: tint(0.925, formAccent),
+      formAccentSoftActive: tint(0.85, formAccent),
+      formAccentSoftHover: tint(0.9, formAccent),
+      info,
+      infoLight: getLightVariant(info),
       input: white,
       inputDisabled: '#eee',
-      brandAccent,
-      formAccent,
-      formAccentDisabled: '#ccc',
-      selection: '#f1f7ff',
-      card: white,
-      critical,
-      caution,
-      positive,
       neutral,
-      info,
+      neutralLight: getLightVariant(neutral),
+      positive,
+      positiveLight: getLightVariant(positive),
       promote,
+      promoteLight: getLightVariant(promote),
+      selection: '#f1f7ff',
     },
   },
 };

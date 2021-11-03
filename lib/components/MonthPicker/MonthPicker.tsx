@@ -1,15 +1,17 @@
 import React, { ChangeEvent, FocusEvent, createRef, Fragment } from 'react';
 import { isMobile } from 'is-mobile';
 import assert from 'assert';
-import { useStyles } from 'sku/react-treat';
 import { Box } from '../Box/Box';
 import { Column } from '../Column/Column';
 import { Columns } from '../Columns/Columns';
-import { HiddenVisually } from '../HiddenVisually/HiddenVisually';
 import { Dropdown } from '../Dropdown/Dropdown';
-import { FieldProps, Field } from '../private/Field/Field';
-import { FieldGroup } from '../private/FieldGroup/FieldGroup';
-import * as styleRefs from './MonthPicker.treat';
+import { Field } from '../private/Field/Field';
+import {
+  FieldGroup,
+  FieldLabelVariant,
+  FieldGroupBaseProps,
+} from '../private/FieldGroup/FieldGroup';
+import * as styles from './MonthPicker.css';
 
 interface MonthPickerValue {
   month?: number;
@@ -47,19 +49,18 @@ const defaultMonthNames = [
 
 type FocusHandler = () => void;
 type ChangeHandler = (value: MonthPickerValue) => void;
-export interface MonthPickerProps
-  extends Omit<
-    FieldProps,
-    | 'value'
-    | 'labelId'
-    | 'aria-describedby'
-    | 'data'
-    | 'name'
-    | 'autoComplete'
-    | 'secondaryMessage'
-    | 'autoFocus'
-    | 'icon'
-  > {
+export type MonthPickerBaseProps = Omit<
+  FieldGroupBaseProps,
+  | 'value'
+  | 'labelId'
+  | 'aria-describedby'
+  | 'name'
+  | 'autoComplete'
+  | 'secondaryMessage'
+  | 'autoFocus'
+  | 'icon'
+  | 'prefix'
+> & {
   value: MonthPickerValue;
   onChange: ChangeHandler;
   onBlur?: FocusHandler;
@@ -70,7 +71,9 @@ export interface MonthPickerProps
   monthLabel?: string;
   yearLabel?: string;
   monthNames?: MonthNames;
-}
+};
+export type MonthPickerLabelProps = FieldLabelVariant;
+export type MonthPickerProps = MonthPickerBaseProps & MonthPickerLabelProps;
 
 const getMonths = (monthNames: MonthNames) =>
   monthNames.map((monthName, i) => (
@@ -105,34 +108,33 @@ const stringToCustomValue = (value: string) => {
   };
 };
 
-const makeChangeHandler = <
-  Element extends HTMLSelectElement | HTMLInputElement
->(
-  onChange: ChangeHandler,
-  value: MonthPickerValue,
-  fieldType: keyof MonthPickerValue | 'native',
-) => (event: ChangeEvent<Element>) => {
-  if (typeof onChange === 'function') {
-    onChange(
-      {
-        month: {
-          year: value && value.year ? value.year : undefined,
-          month: parseInt(event.target.value, 10) || undefined,
-        },
-        year: {
-          month: value && value.month ? value.month : undefined,
-          year: parseInt(event.target.value, 10) || undefined,
-        },
-        native: stringToCustomValue(event.target.value),
-      }[fieldType],
-    );
-  }
-};
+const makeChangeHandler =
+  <Element extends HTMLSelectElement | HTMLInputElement>(
+    onChange: ChangeHandler,
+    value: MonthPickerValue,
+    fieldType: keyof MonthPickerValue | 'native',
+  ) =>
+  (event: ChangeEvent<Element>) => {
+    if (typeof onChange === 'function') {
+      onChange(
+        {
+          month: {
+            year: value && value.year ? value.year : undefined,
+            month: parseInt(event.target.value, 10) || undefined,
+          },
+          year: {
+            month: value && value.month ? value.month : undefined,
+            year: parseInt(event.target.value, 10) || undefined,
+          },
+          native: stringToCustomValue(event.target.value),
+        }[fieldType],
+      );
+    }
+  };
 
 const MonthPicker = ({
   id,
   value,
-  label,
   onChange,
   onBlur,
   onFocus,
@@ -148,7 +150,6 @@ const MonthPicker = ({
 }: MonthPickerProps) => {
   assert(monthNames.length === 12, 'monthNames array must contain 12 items');
 
-  const styles = useStyles(styleRefs);
   const currentValue = {
     month: value && value.month ? value.month : undefined,
     year: value && value.year ? value.year : undefined,
@@ -194,11 +195,11 @@ const MonthPicker = ({
       id={id}
       tone={tone}
       disabled={disabled}
-      label={label}
       value={customValueToString(currentValue)}
       {...restProps}
+      icon={undefined}
+      prefix={undefined}
       labelId={undefined}
-      data={undefined}
       name={undefined}
       autoComplete={undefined}
       secondaryMessage={null}
@@ -223,19 +224,10 @@ const MonthPicker = ({
   );
 
   const customFieldGroup = (
-    <FieldGroup
-      id={id}
-      label={label}
-      tone={tone}
-      disabled={disabled}
-      {...restProps}
-    >
+    <FieldGroup id={id} tone={tone} disabled={disabled} {...restProps}>
       {(fieldGroupProps) => (
         <Columns space="medium">
           <Column>
-            <HiddenVisually>
-              <label htmlFor={monthId}>{`${label} ${monthLabel}`}</label>
-            </HiddenVisually>
             <Dropdown
               id={monthId}
               value={currentValue.month || ''}
@@ -244,6 +236,7 @@ const MonthPicker = ({
               onFocus={focusHandler}
               tone={tone}
               placeholder={monthLabel}
+              aria-label={monthLabel}
               {...fieldGroupProps}
               ref={monthRef}
             >
@@ -251,9 +244,6 @@ const MonthPicker = ({
             </Dropdown>
           </Column>
           <Column>
-            <HiddenVisually>
-              <label htmlFor={yearId}>{`${label} ${yearLabel}`}</label>
-            </HiddenVisually>
             <Dropdown
               id={yearId}
               value={currentValue.year || ''}
@@ -262,6 +252,7 @@ const MonthPicker = ({
               onFocus={focusHandler}
               tone={tone}
               placeholder={yearLabel}
+              aria-label={yearLabel}
               {...fieldGroupProps}
               ref={yearRef}
             >

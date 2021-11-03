@@ -7,46 +7,59 @@ import React, {
   MouseEvent,
   KeyboardEvent,
   useEffect,
+  forwardRef,
+  Ref,
+  ReactElement,
+  RefAttributes,
 } from 'react';
-import { useStyles } from 'sku/react-treat';
 import parseHighlights from 'autosuggest-highlight/parse';
 import { Box } from '../Box/Box';
 import { Text } from '../Text/Text';
 import { Strong } from '../Strong/Strong';
 import { HiddenVisually } from '../HiddenVisually/HiddenVisually';
 import { Announcement } from '../private/Announcement/Announcement';
-import { Field, FieldProps } from '../private/Field/Field';
+import {
+  Field,
+  FieldBaseProps,
+  FieldLabelVariant,
+} from '../private/Field/Field';
 import { ClearButton } from '../iconButtons/ClearButton/ClearButton';
-import { useTouchableSpace, useText } from '../../hooks/typography';
+import { touchableText, useText } from '../../hooks/typography';
 import { getNextIndex } from '../private/getNextIndex';
 import { normalizeKey } from '../private/normalizeKey';
 import { ClearField } from '../private/Field/ClearField';
 import { smoothScroll } from '../private/smoothScroll';
 import { useScrollIntoView } from './useScrollIntoView';
+import { useResponsiveValue } from '../useResponsiveValue/useResponsiveValue';
 import { RemoveScroll } from 'react-remove-scroll';
 import { createAccessbilityProps, getItemId } from './createAccessbilityProps';
 import { autosuggest, AutosuggestTranslations } from '../../translations/en';
 
-import * as styleRefs from './Autosuggest.treat';
+import * as styles from './Autosuggest.css';
 
 type SuggestionMatch = Array<{ start: number; end: number }>;
 
-interface AutosuggestValue<Value = any> {
+export interface AutosuggestValue<Value = any> {
   text: string;
   description?: string;
   value?: Value;
 }
 
-interface Suggestion<Value = any> extends AutosuggestValue<Value> {
+export interface Suggestion<Value = any> extends AutosuggestValue<Value> {
+  label?: string;
   highlights?: SuggestionMatch;
   onClear?: (value: AutosuggestValue<Value>) => void;
   clearLabel?: string;
 }
 
-interface GroupedSuggestion<Value> {
+export interface GroupedSuggestions<Value> {
   label: string;
   suggestions: Array<Suggestion<Value>>;
 }
+
+export type Suggestions<Value> = Array<
+  Suggestion<Value> | GroupedSuggestions<Value>
+>;
 
 // Action type IDs (allows action type names to be minified)
 const INPUT_FOCUS = 0;
@@ -74,7 +87,7 @@ type Action =
 
 interface AutosuggestState<Value> {
   highlightedIndex: number | null;
-  isOpen: boolean;
+  showSuggestionsIfAvailable: boolean;
   inputChangedSinceFocus: boolean;
   previewValue: AutosuggestValue<Value> | null;
   isFocused: boolean;
@@ -95,9 +108,10 @@ function SuggestionItem({
   ...restProps
 }: SuggestionItemProps) {
   const { highlights = [], onClear, clearLabel } = suggestion;
+  const label = suggestion.label ?? suggestion.text;
 
   const suggestionParts = parseHighlights(
-    suggestion.text,
+    label,
     highlights.map(({ start, end }) => [start, end]),
   );
 
@@ -127,7 +141,7 @@ function SuggestionItem({
         paddingX="small"
         paddingRight={onClear ? 'none' : undefined}
       >
-        <Box className={useTouchableSpace('standard')}>
+        <Box className={touchableText.standard}>
           <Text baseline={false}>
             {suggestionParts.map(({ highlight, text }, index) =>
               selected || highlight ? (
@@ -170,15 +184,13 @@ interface GroupHeadingProps {
   children: string;
 }
 function GroupHeading({ children }: GroupHeadingProps) {
-  const styles = useStyles(styleRefs);
-
   return (
     <Box
       paddingX="small"
       borderRadius="standard"
       className={[
         styles.groupHeading,
-        useTouchableSpace('xsmall'),
+        touchableText.xsmall,
         useText({
           size: 'xsmall',
           baseline: false,
@@ -186,6 +198,11 @@ function GroupHeading({ children }: GroupHeadingProps) {
           tone: 'formAccent',
         }),
       ]}
+      data-testid={
+        process.env.NODE_ENV !== 'production'
+          ? `group-heading-${children}`
+          : undefined
+      }
     >
       {children}
     </Box>
@@ -193,7 +210,7 @@ function GroupHeading({ children }: GroupHeadingProps) {
 }
 
 function normaliseSuggestions<Value>(
-  suggestions: Array<GroupedSuggestion<Value> | Suggestion<Value>>,
+  suggestions: Array<GroupedSuggestions<Value> | Suggestion<Value>>,
 ) {
   let index = 0;
   const normalisedSuggestions: Array<Suggestion<Value>> = [];
@@ -206,9 +223,9 @@ function normaliseSuggestions<Value>(
       item.suggestions.forEach((suggestion) => {
         groupHeadingForSuggestion.set(suggestion, item.label);
       });
-      index += normalisedSuggestions.push(...item.suggestions);
+      index = normalisedSuggestions.push(...item.suggestions);
     } else {
-      index += normalisedSuggestions.push(item);
+      index = normalisedSuggestions.push(item);
     }
   }
 
@@ -237,12 +254,20 @@ const noop = () => {
 const fallbackValue = { text: '' };
 const fallbackSuggestions: Suggestion[] = [];
 
-export interface AutosuggestProps<Value>
-  extends Omit<FieldProps, 'value' | 'autoComplete' | 'labelId'> {
+export type AutosuggestBaseProps<Value> = Omit<
+  FieldBaseProps,
+  'value' | 'autoComplete' | 'labelId' | 'prefix'
+> & {
   value: AutosuggestValue<Value>;
-  suggestions: Array<Suggestion<Value> | GroupedSuggestion<Value>>;
+  suggestions:
+    | Suggestions<Value>
+    | { message: string }
+    | ((
+        value: AutosuggestValue<Value>,
+      ) => Suggestions<Value> | { message: string });
   onChange: (value: AutosuggestValue<Value>) => void;
   automaticSelection?: boolean;
+  hideSuggestionsOnSelection?: boolean;
   showMobileBackdrop?: boolean;
   scrollToTopOnMobile?: boolean;
   onBlur?: () => void;
@@ -251,24 +276,49 @@ export interface AutosuggestProps<Value>
   placeholder?: string;
   type?: 'text' | 'search';
   translations?: AutosuggestTranslations;
-}
-export function Autosuggest<Value>({
-  id,
-  value = fallbackValue,
-  suggestions = fallbackSuggestions,
-  onChange = noop,
-  automaticSelection = false,
-  showMobileBackdrop = false,
-  scrollToTopOnMobile = true,
-  onFocus = noop,
-  onBlur = noop,
-  placeholder,
-  type = 'text',
-  onClear,
-  translations = autosuggest,
-  ...restProps
-}: AutosuggestProps<Value>) {
-  const styles = useStyles(styleRefs);
+};
+export type AutosuggestLabelProps = FieldLabelVariant;
+export type AutosuggestProps<Value> = AutosuggestBaseProps<Value> &
+  AutosuggestLabelProps;
+
+export const Autosuggest = forwardRef(function <Value>(
+  {
+    id,
+    value = fallbackValue,
+    suggestions: suggestionsProp = fallbackSuggestions,
+    onChange = noop,
+    automaticSelection = false,
+    showMobileBackdrop = false,
+    scrollToTopOnMobile = true,
+    hideSuggestionsOnSelection = true,
+    onFocus = noop,
+    onBlur = noop,
+    placeholder,
+    type = 'text',
+    onClear,
+    translations = autosuggest,
+    ...restProps
+  }: AutosuggestProps<Value>,
+  forwardedRef: Ref<HTMLInputElement>,
+) {
+  const suggestionsPropValue =
+    typeof suggestionsProp === 'function'
+      ? suggestionsProp(value)
+      : suggestionsProp;
+
+  const suggestions = Array.isArray(suggestionsPropValue)
+    ? suggestionsPropValue
+    : [];
+  const message =
+    'message' in suggestionsPropValue
+      ? suggestionsPropValue.message
+      : undefined;
+  const hasItems = suggestions.length > 0 || Boolean(message);
+
+  // We need a ref regardless so we can imperatively
+  // focus the field when clicking the clear button
+  const defaultRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = forwardedRef || defaultRef;
 
   const fireChange = useCallback(
     (suggestion: Suggestion<Value>) =>
@@ -276,11 +326,9 @@ export function Autosuggest<Value>({
     [onChange],
   );
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const justPressedArrowRef = useRef(false);
-  const mobileDetectionRef = useRef<HTMLDivElement>(null);
   const {
     normalisedSuggestions,
     groupHeadingIndexes,
@@ -301,7 +349,7 @@ export function Autosuggest<Value>({
 
           return {
             ...state,
-            isOpen: true,
+            showSuggestionsIfAvailable: true,
             previewValue: normalisedSuggestions[nextIndex],
             highlightedIndex: nextIndex,
           };
@@ -318,7 +366,7 @@ export function Autosuggest<Value>({
 
           return {
             ...state,
-            isOpen: true,
+            showSuggestionsIfAvailable: true,
             previewValue: normalisedSuggestions[nextIndex],
             highlightedIndex: nextIndex,
           };
@@ -328,7 +376,7 @@ export function Autosuggest<Value>({
       case INPUT_CHANGE: {
         return {
           ...state,
-          isOpen: true,
+          showSuggestionsIfAvailable: true,
           inputChangedSinceFocus: true,
           previewValue: null,
           highlightedIndex:
@@ -341,7 +389,7 @@ export function Autosuggest<Value>({
       case INPUT_FOCUS: {
         return {
           ...state,
-          isOpen: hasSuggestions,
+          showSuggestionsIfAvailable: true,
           inputChangedSinceFocus: false,
           isFocused: true,
         };
@@ -350,7 +398,7 @@ export function Autosuggest<Value>({
       case INPUT_BLUR: {
         return {
           ...state,
-          isOpen: false,
+          showSuggestionsIfAvailable: false,
           previewValue: null,
           highlightedIndex: null,
           isFocused: false,
@@ -361,14 +409,14 @@ export function Autosuggest<Value>({
         if (value.text) {
           return {
             ...state,
-            isOpen: false,
+            showSuggestionsIfAvailable: false,
             previewValue: null,
             highlightedIndex: null,
           };
-        } else if (hasSuggestions) {
+        } else if (hasItems) {
           return {
             ...state,
-            isOpen: !state.isOpen,
+            showSuggestionsIfAvailable: !state.showSuggestionsIfAvailable,
             previewValue: null,
           };
         }
@@ -376,11 +424,13 @@ export function Autosuggest<Value>({
         return state;
       }
 
-      case INPUT_ENTER: {
+      case INPUT_ENTER:
+      case SUGGESTION_MOUSE_CLICK: {
         return {
           ...state,
-          isOpen: false,
+          showSuggestionsIfAvailable: !hideSuggestionsOnSelection,
           previewValue: null,
+          highlightedIndex: null,
         };
       }
 
@@ -388,15 +438,6 @@ export function Autosuggest<Value>({
         return {
           ...state,
           highlightedIndex: action.value,
-        };
-      }
-
-      case SUGGESTION_MOUSE_CLICK: {
-        return {
-          ...state,
-          isOpen: false,
-          previewValue: null,
-          highlightedIndex: null,
         };
       }
 
@@ -420,7 +461,7 @@ export function Autosuggest<Value>({
 
   const [
     {
-      isOpen,
+      showSuggestionsIfAvailable,
       inputChangedSinceFocus,
       previewValue,
       highlightedIndex,
@@ -428,12 +469,14 @@ export function Autosuggest<Value>({
     },
     dispatch,
   ] = useReducer(reducer, {
-    isOpen: false,
+    showSuggestionsIfAvailable: false,
     inputChangedSinceFocus: false,
     previewValue: null,
     highlightedIndex: null,
     isFocused: false,
   });
+
+  const isOpen = showSuggestionsIfAvailable && hasItems;
 
   const highlightedItem =
     typeof highlightedIndex === 'number'
@@ -448,10 +491,15 @@ export function Autosuggest<Value>({
     });
   }, [hasSuggestions]);
 
+  const isMobile = useResponsiveValue()({
+    mobile: true,
+    tablet: false,
+  });
+
   const inputProps = {
     value: previewValue ? previewValue.text : value.text,
     type: type === 'search' ? type : 'text',
-    placeholder,
+    placeholder: !restProps.disabled ? placeholder : undefined,
     onChange: (e: ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value;
 
@@ -459,16 +507,8 @@ export function Autosuggest<Value>({
       fireChange({ text: inputValue });
     },
     onFocus: () => {
-      // Only scroll the autosuggest to the top of the viewport
-      // if we're on mobile. This is a bit of a hack because we
-      // don't currently have runtime access to the theme's
-      // responsive breakpoint.
-      const isMobile =
-        mobileDetectionRef.current &&
-        getComputedStyle(mobileDetectionRef.current).display === 'block';
-
-      if (rootRef.current && isMobile && scrollToTopOnMobile) {
-        smoothScroll(rootRef.current); // tslint:disable-line no-floating-promises
+      if (rootRef.current && scrollToTopOnMobile && isMobile) {
+        smoothScroll(rootRef.current);
       }
 
       dispatch({ type: INPUT_FOCUS });
@@ -550,6 +590,7 @@ export function Autosuggest<Value>({
 
   const clearable = Boolean(
     typeof onClear !== 'undefined' &&
+      !restProps.disabled &&
       typeof value !== 'undefined' &&
       value.text.length > 0,
   );
@@ -564,6 +605,9 @@ export function Autosuggest<Value>({
     isOpen &&
     (highlightedIndex === null || hasAutomaticSelection)
   ) {
+    if (message) {
+      announcements.push(message);
+    }
     if (hasSuggestions) {
       announcements.push(
         translations.suggestionsAvailableAnnouncement(suggestionCount),
@@ -585,7 +629,6 @@ export function Autosuggest<Value>({
 
   return (
     <Fragment>
-      <Box ref={mobileDetectionRef} display={['block', 'none']} />
       {showMobileBackdrop ? (
         <Box
           position="fixed"
@@ -616,6 +659,7 @@ export function Autosuggest<Value>({
             id={id}
             labelId={a11y.labelProps.id}
             value={value.text}
+            prefix={undefined}
             secondaryIcon={
               onClear ? (
                 <ClearField
@@ -627,7 +671,7 @@ export function Autosuggest<Value>({
             }
           >
             {(overlays, fieldProps, icon, secondaryIcon) => (
-              <Box>
+              <Box width="full">
                 <Box
                   component="input"
                   {...fieldProps}
@@ -641,7 +685,7 @@ export function Autosuggest<Value>({
                 <RemoveScroll ref={menuRef} enabled={isOpen} forwardProps>
                   <Box
                     component="ul"
-                    display={isOpen && hasSuggestions ? 'block' : 'none'}
+                    display={isOpen ? 'block' : 'none'}
                     position="absolute"
                     zIndex="dropdown"
                     background="card"
@@ -653,7 +697,18 @@ export function Autosuggest<Value>({
                     className={styles.menu}
                     {...a11y.menuProps}
                   >
-                    {isOpen
+                    {isOpen && message ? (
+                      <Box
+                        component="li"
+                        paddingX="small"
+                        className={touchableText.standard}
+                      >
+                        <Text tone="secondary" baseline={false}>
+                          {message}
+                        </Text>
+                      </Box>
+                    ) : null}
+                    {isOpen && hasSuggestions
                       ? normalisedSuggestions.map((suggestion, index) => {
                           const { text } = suggestion;
                           const groupHeading = groupHeadingIndexes.get(index);
@@ -679,11 +734,10 @@ export function Autosuggest<Value>({
                                 }}
                                 {...a11y.getItemProps({
                                   index,
-                                  label: suggestion.text,
+                                  label: suggestion.label ?? suggestion.text,
                                   description: suggestion.description,
-                                  groupHeading: groupHeadingForSuggestion.get(
-                                    suggestion,
-                                  ),
+                                  groupHeading:
+                                    groupHeadingForSuggestion.get(suggestion),
                                 })}
                               />
                             </Fragment>
@@ -705,4 +759,9 @@ export function Autosuggest<Value>({
       </Box>
     </Fragment>
   );
-}
+}) as <Value>(
+  props: AutosuggestProps<Value> & RefAttributes<HTMLInputElement>,
+) => ReactElement;
+
+// @ts-expect-error
+Autosuggest.displayName = 'Autosuggest';

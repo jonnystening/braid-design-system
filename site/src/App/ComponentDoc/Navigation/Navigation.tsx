@@ -8,15 +8,14 @@ import React, {
   createContext,
   useContext,
 } from 'react';
-import { useStyles } from 'sku/react-treat';
 import flattenChildren from 'react-keyed-flatten-children';
 import {
-  useNegativeMarginTop,
-  useNegativeMarginLeft,
-} from '../../../../../lib/hooks/useNegativeMargin/useNegativeMargin';
+  negativeMarginTop,
+  negativeMarginLeft,
+} from '../../../../../lib/css/negativeMargin/negativeMargin';
 import { BadgeProps } from '../../../../../lib/components/Badge/Badge';
 import { Box, Divider, Link, Text } from '../../../../../lib/components';
-import * as styleRefs from './Navigation.treat';
+import * as styles from './Navigation.css';
 
 const navItemPaddingX = ['small', 'medium'] as const;
 const navItemPaddingY = 'medium' as const;
@@ -40,8 +39,6 @@ export const NavigationItem = ({
     !badge || badge.props.bleedY === undefined,
     "Badge elements cannot set the 'bleedY' prop when passed to a NavigationItem component",
   );
-
-  const styles = useStyles(styleRefs);
 
   const index = useContext(NavigationItemIndexContext);
   const [hovered, setHovered] = useState(false);
@@ -71,6 +68,7 @@ export const NavigationItem = ({
                 position="absolute"
                 width="full"
                 zIndex={1}
+                bottom={0}
                 className={styles.activeUnderline}
               />
               <Text size="standard" weight="strong">
@@ -127,18 +125,21 @@ export const Navigation = ({ title, children }: NavigationProps) => {
       component="nav"
       aria-label={title}
       className={[
-        useNegativeMarginTop(navItemPaddingY),
-        useNegativeMarginLeft(navItemPaddingX),
+        negativeMarginTop(navItemPaddingY),
+        negativeMarginLeft(navItemPaddingX),
       ]}
     >
-      <Box component="ul" display="flex" alignItems="center">
+      <Box component="ul" display="flex" alignItems="center" overflow="auto">
         {Children.map(navigationItems, (navigationItem, index) => (
           <NavigationItemIndexContext.Provider value={index}>
             {navigationItem}
           </NavigationItemIndexContext.Provider>
         ))}
       </Box>
-      <Box paddingLeft={navItemPaddingX}>
+      <Box
+        paddingLeft={navItemPaddingX}
+        className={styles.inactiveUnderlineCorrection}
+      >
         <Divider />
       </Box>
     </Box>

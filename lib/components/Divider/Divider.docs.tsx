@@ -1,23 +1,35 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Divider } from '../';
+import { Divider, Card, Stack, Text, Strong } from '../';
+import source from '../../utils/source.macro';
 
 const docs: ComponentDocs = {
   category: 'Layout',
-  screenshotWidths: [320],
-  examples: [
+  Example: () =>
+    source(
+      <Card rounded>
+        <Stack space="xlarge">
+          <Stack space="medium">
+            <Text tone="secondary">Regular weight</Text>
+            <Divider />
+          </Stack>
+          <Stack space="medium">
+            <Text tone="secondary">Strong weight</Text>
+            <Divider weight="strong" />
+          </Stack>
+        </Stack>
+      </Card>,
+    ),
+  accessibility: (
+    <Text>
+      Renders a semantic <Strong>hr</Strong> element.
+    </Text>
+  ),
+  alternatives: [
     {
-      label: 'Divider',
-      Example: () => <Divider />,
+      name: 'Stack',
+      description: 'Supports rendering dividers between every stack item.',
     },
-    {
-      label: 'Strong Divider',
-      Example: () => <Divider weight="strong" />,
-    },
-  ],
-  snippets: [
-    { name: 'Regular', code: <Divider /> },
-    { name: 'Strong', code: <Divider weight="strong" /> },
   ],
 };
 

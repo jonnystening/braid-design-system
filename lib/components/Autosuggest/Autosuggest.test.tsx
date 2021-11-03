@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/extend-expect';
-import React, { useState, Dispatch } from 'react';
+import React, { useState, useRef, useEffect, Dispatch } from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BraidTestProvider, Autosuggest } from '..';
@@ -15,8 +15,9 @@ function renderAutosuggest<Value>({
   AutosuggestProps<Value>,
   'value' | 'suggestions' | 'automaticSelection' | 'onFocus' | 'onBlur'
 >) {
-  type Suggestions = typeof suggestionsProp;
   const changeHandler = jest.fn();
+
+  type Suggestions = AutosuggestProps<Value>['suggestions'];
 
   let suggestions: Suggestions = [];
   let setSuggestions: Dispatch<Suggestions> = () => {
@@ -25,7 +26,8 @@ function renderAutosuggest<Value>({
 
   const TestCase = () => {
     const [value, setValue] = useState(initialValue);
-    [suggestions, setSuggestions] = useState(suggestionsProp);
+
+    [suggestions, setSuggestions] = useState(() => suggestionsProp);
 
     return (
       <BraidTestProvider>
@@ -46,7 +48,9 @@ function renderAutosuggest<Value>({
     );
   };
 
-  const { getByRole, queryByLabelText, queryByText } = render(<TestCase />);
+  const { getByRole, queryByLabelText, queryByText, getByTestId } = render(
+    <TestCase />,
+  );
   const input = getByRole('combobox');
   const getInputValue = () => input.getAttribute('value');
 
@@ -56,6 +60,7 @@ function renderAutosuggest<Value>({
     changeHandler,
     queryByLabelText,
     queryByText,
+    getByTestId,
     setSuggestions: (x: Suggestions) => act(() => setSuggestions(x)),
   };
 }
@@ -97,22 +102,36 @@ describe('Autosuggest', () => {
     expect(highlight && highlight.tagName).toBe('STRONG');
   });
 
-  it('should select suggestions on click', () => {
-    const {
-      input,
-      changeHandler,
-      queryByLabelText,
-      getInputValue,
-    } = renderAutosuggest({
-      value: { text: '' },
-      suggestions: [
+  it('should support suggestions as a function', () => {
+    const { input, queryByText } = renderAutosuggest({
+      value: { text: 'Apples' },
+      suggestions: ({ text }) => [
         {
-          text: 'Apples',
+          text,
           value: 'apples',
-          highlights: [{ start: 0, end: 4 }],
+          highlights: [{ start: 0, end: 6 }],
         },
       ],
     });
+
+    userEvent.click(input);
+
+    const highlight = queryByText('Apples');
+    expect(highlight && highlight.tagName).toBe('STRONG');
+  });
+
+  it('should select suggestions on click', () => {
+    const { input, changeHandler, queryByLabelText, getInputValue } =
+      renderAutosuggest({
+        value: { text: '' },
+        suggestions: [
+          {
+            text: 'Apples',
+            value: 'apples',
+            highlights: [{ start: 0, end: 4 }],
+          },
+        ],
+      });
 
     userEvent.click(input);
     expect(getInputValue()).toBe('');
@@ -128,6 +147,78 @@ describe('Autosuggest', () => {
       text: 'Apples',
       value: 'apples',
     });
+  });
+
+  it('should support custom suggestion labels', () => {
+    const { input, changeHandler, queryByLabelText, getInputValue } =
+      renderAutosuggest({
+        value: { text: '' },
+        suggestions: [
+          {
+            text: 'Apples',
+            label: 'CUSTOM LABEL',
+            value: 'apples',
+          },
+        ],
+      });
+
+    userEvent.click(input);
+    expect(getInputValue()).toBe('');
+    expect(changeHandler).not.toHaveBeenCalled();
+
+    const suggestion = queryByLabelText('CUSTOM LABEL');
+    if (!suggestion) {
+      throw new Error('Suggestion not found');
+    }
+
+    fireEvent.click(suggestion);
+
+    expect(getInputValue()).toBe('Apples');
+    expect(changeHandler).toHaveBeenNthCalledWith(1, {
+      text: 'Apples',
+      value: 'apples',
+    });
+  });
+
+  it('should keep the menu open when a selection is made if "hideSuggestionsOnSelection" is false', async () => {
+    const TestCase = () => {
+      const initialValue = 'appl';
+      const [value, setValue] = useState({ text: initialValue });
+
+      return (
+        <BraidTestProvider>
+          <Autosuggest
+            id="fruit"
+            label="Fruit"
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue.value ? { text: '' } : newValue);
+            }}
+            hideSuggestionsOnSelection={false}
+            suggestions={[
+              {
+                text: 'Apples',
+                value: 'apples',
+              },
+            ]}
+          />
+        </BraidTestProvider>
+      );
+    };
+
+    const { getByRole, queryByLabelText } = render(<TestCase />);
+    const input = getByRole('combobox');
+    const getInputValue = () => input.getAttribute('value');
+
+    userEvent.click(input);
+
+    const suggestion = queryByLabelText('Apples');
+    if (suggestion) {
+      fireEvent.click(suggestion);
+    }
+
+    expect(getInputValue()).toBe('');
+    expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu is still open
   });
 
   it('should pass through focus and blur events', () => {
@@ -208,6 +299,35 @@ describe('Autosuggest', () => {
     expect(changeHandler).not.toHaveBeenCalled();
   });
 
+  it('should forward refs', () => {
+    const TestCase = () => {
+      const inputRef = useRef<HTMLInputElement>(null);
+
+      useEffect(() => {
+        if (inputRef.current) {
+          inputRef.current.setAttribute('data-foo', 'bar');
+        }
+      }, []);
+
+      return (
+        <BraidTestProvider>
+          <Autosuggest
+            id="id"
+            label="Label"
+            value={{ text: '' }}
+            onChange={() => {}}
+            suggestions={[]}
+            ref={inputRef}
+          />
+        </BraidTestProvider>
+      );
+    };
+
+    const { getByRole } = render(<TestCase />);
+    const input = getByRole('combobox');
+    expect(input.getAttribute('data-foo')).toBe('bar');
+  });
+
   describe('ARIA labels', () => {
     it('should associate the field label with the input', () => {
       const { queryByLabelText, input } = renderAutosuggest({
@@ -242,7 +362,7 @@ describe('Autosuggest', () => {
     });
 
     it('should support grouped suggestions', () => {
-      const { input, queryByLabelText } = renderAutosuggest({
+      const { input, queryByLabelText, getByTestId } = renderAutosuggest({
         value: { text: '' },
         suggestions: [
           {
@@ -251,6 +371,14 @@ describe('Autosuggest', () => {
               {
                 text: 'Apples',
                 value: 'apples',
+              },
+              {
+                text: 'Bananas',
+                value: 'bananas',
+              },
+              {
+                text: 'Oranges',
+                value: 'oranges',
               },
             ],
           },
@@ -261,6 +389,19 @@ describe('Autosuggest', () => {
                 text: 'Carrots',
                 value: 'carrots',
               },
+              {
+                text: 'Broccoli',
+                value: 'broccoli',
+              },
+            ],
+          },
+          {
+            label: 'Dessert',
+            suggestions: [
+              {
+                text: 'Ice cream',
+                value: 'ice-cream',
+              },
             ],
           },
         ],
@@ -270,6 +411,11 @@ describe('Autosuggest', () => {
 
       expect(queryByLabelText('Apples (Fruit)')).toBeInTheDocument();
       expect(queryByLabelText('Carrots (Vegetables)')).toBeInTheDocument();
+      expect(queryByLabelText('Ice cream (Dessert)')).toBeInTheDocument();
+
+      expect(getByTestId('group-heading-Fruit')).toBeInTheDocument();
+      expect(getByTestId('group-heading-Vegetables')).toBeInTheDocument();
+      expect(getByTestId('group-heading-Dessert')).toBeInTheDocument();
     });
 
     it('should support suggestions with descriptions', () => {
@@ -318,26 +464,22 @@ describe('Autosuggest', () => {
 
   describe('keyboard access', () => {
     it("shouldn't select anything and close the list on enter if the user hasn't navigated the list", () => {
-      const {
-        input,
-        changeHandler,
-        getInputValue,
-        queryByLabelText,
-      } = renderAutosuggest({
-        value: { text: '' },
-        suggestions: [
-          {
-            text: 'Apples',
-            value: 'apples',
-            highlights: [{ start: 0, end: 4 }],
-          },
-          {
-            text: 'Bananas',
-            value: 'bananas',
-            highlights: [{ start: 0, end: 4 }],
-          },
-        ],
-      });
+      const { input, changeHandler, getInputValue, queryByLabelText } =
+        renderAutosuggest({
+          value: { text: '' },
+          suggestions: [
+            {
+              text: 'Apples',
+              value: 'apples',
+              highlights: [{ start: 0, end: 4 }],
+            },
+            {
+              text: 'Bananas',
+              value: 'bananas',
+              highlights: [{ start: 0, end: 4 }],
+            },
+          ],
+        });
 
       userEvent.click(input);
       fireEvent.keyDown(input, { key: 'Enter' });
@@ -401,31 +543,27 @@ describe('Autosuggest', () => {
     });
 
     it('should first clear the suggestion preview and then reset the input when pressing escape', async () => {
-      const {
-        input,
-        changeHandler,
-        queryByLabelText,
-        getInputValue,
-      } = renderAutosuggest({
-        value: { text: '' },
-        suggestions: [
-          {
-            text: 'Apples',
-            value: 'apples',
-            highlights: [{ start: 0, end: 4 }],
-          },
-          {
-            text: 'Bananas',
-            value: 'bananas',
-            highlights: [{ start: 0, end: 4 }],
-          },
-          {
-            text: 'Carrots',
-            value: 'carrots',
-            highlights: [{ start: 0, end: 4 }],
-          },
-        ],
-      });
+      const { input, changeHandler, queryByLabelText, getInputValue } =
+        renderAutosuggest({
+          value: { text: '' },
+          suggestions: [
+            {
+              text: 'Apples',
+              value: 'apples',
+              highlights: [{ start: 0, end: 4 }],
+            },
+            {
+              text: 'Bananas',
+              value: 'bananas',
+              highlights: [{ start: 0, end: 4 }],
+            },
+            {
+              text: 'Carrots',
+              value: 'carrots',
+              highlights: [{ start: 0, end: 4 }],
+            },
+          ],
+        });
 
       userEvent.click(input);
 
@@ -452,16 +590,17 @@ describe('Autosuggest', () => {
     });
 
     it('should select a suggestion on enter after navigating a single suggestion', () => {
-      const { input, changeHandler, getInputValue } = renderAutosuggest({
-        value: { text: '' },
-        suggestions: [
-          {
-            text: 'Apples',
-            value: 'apples',
-            highlights: [{ start: 0, end: 4 }],
-          },
-        ],
-      });
+      const { input, changeHandler, getInputValue, queryByLabelText } =
+        renderAutosuggest({
+          value: { text: '' },
+          suggestions: [
+            {
+              text: 'Apples',
+              value: 'apples',
+              highlights: [{ start: 0, end: 4 }],
+            },
+          ],
+        });
 
       userEvent.click(input);
 
@@ -475,6 +614,48 @@ describe('Autosuggest', () => {
         text: 'Apples',
         value: 'apples',
       });
+      expect(queryByLabelText('Apples')).toBe(null); // Ensure menu has closed
+    });
+
+    it('should keep the menu open on selection if "hideSuggestionsOnSelection" is false', async () => {
+      const TestCase = () => {
+        const initialValue = 'appl';
+        const [value, setValue] = useState({ text: initialValue });
+
+        return (
+          <BraidTestProvider>
+            <Autosuggest
+              id="fruit"
+              label="Fruit"
+              value={value}
+              onChange={(newValue) => {
+                setValue(newValue.value ? { text: '' } : newValue);
+              }}
+              hideSuggestionsOnSelection={false}
+              suggestions={[
+                {
+                  text: 'Apples',
+                  value: 'apples',
+                },
+              ]}
+            />
+          </BraidTestProvider>
+        );
+      };
+
+      const { getByRole, queryByLabelText } = render(<TestCase />);
+      const input = getByRole('combobox');
+      const getInputValue = () => input.getAttribute('value');
+
+      userEvent.click(input);
+
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      expect(getInputValue()).toBe('Apples');
+
+      fireEvent.keyDown(input, { key: 'Enter' });
+
+      expect(getInputValue()).toBe('');
+      expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu is still open
     });
 
     it('should select a grouped suggestion on enter after navigating the list', () => {
@@ -562,6 +743,31 @@ describe('Autosuggest', () => {
       text: 'Apples',
       value: 'apples',
     });
+  });
+
+  it('should support messages', () => {
+    const TestCase = () => (
+      <BraidTestProvider>
+        <Autosuggest
+          id="fruit"
+          label="Fruit"
+          value={{ text: '' }}
+          onChange={() => {}}
+          hideSuggestionsOnSelection={false}
+          suggestions={{ message: 'No suggestions' }}
+        />
+      </BraidTestProvider>
+    );
+
+    const { getByRole, queryByText } = render(<TestCase />);
+    expect(queryByText('No suggestions')).not.toBeInTheDocument();
+
+    const input = getByRole('combobox');
+    userEvent.click(input);
+    expect(queryByText('No suggestions')).toBeInTheDocument();
+
+    fireEvent.blur(input);
+    expect(queryByText('No suggestions')).not.toBeInTheDocument();
   });
 
   describe('automaticSelection', () => {
@@ -652,32 +858,28 @@ describe('Autosuggest', () => {
     });
 
     it("shouldn't select anything on blur if the suggestions are hidden", async () => {
-      const {
-        input,
-        changeHandler,
-        getInputValue,
-        queryByLabelText,
-      } = renderAutosuggest({
-        automaticSelection: true,
-        value: { text: '' },
-        suggestions: [
-          {
-            text: 'Apples',
-            value: 'apples',
-            highlights: [{ start: 0, end: 4 }],
-          },
-          {
-            text: 'Bananas',
-            value: 'bananas',
-            highlights: [{ start: 0, end: 4 }],
-          },
-          {
-            text: 'Carrots',
-            value: 'carrots',
-            highlights: [{ start: 0, end: 4 }],
-          },
-        ],
-      });
+      const { input, changeHandler, getInputValue, queryByLabelText } =
+        renderAutosuggest({
+          automaticSelection: true,
+          value: { text: '' },
+          suggestions: [
+            {
+              text: 'Apples',
+              value: 'apples',
+              highlights: [{ start: 0, end: 4 }],
+            },
+            {
+              text: 'Bananas',
+              value: 'bananas',
+              highlights: [{ start: 0, end: 4 }],
+            },
+            {
+              text: 'Carrots',
+              value: 'carrots',
+              highlights: [{ start: 0, end: 4 }],
+            },
+          ],
+        });
 
       expect(getInputValue()).toBe('');
 
@@ -774,6 +976,7 @@ describe('Autosuggest', () => {
         changeHandler,
         getInputValue,
         setSuggestions,
+        queryByLabelText,
       } = renderAutosuggest({
         automaticSelection: true,
         value: { text: '' },
@@ -787,7 +990,7 @@ describe('Autosuggest', () => {
       changeHandler.mockClear();
 
       // Simulate suggestions coming back from an API
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         setTimeout(() => {
           setSuggestions([
             {
@@ -801,7 +1004,12 @@ describe('Autosuggest', () => {
         }, 100);
       });
 
+      expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu has opened
+
       fireEvent.keyDown(input, { key: 'Enter' });
+
+      expect(queryByLabelText('Apples')).not.toBeInTheDocument(); // Ensure menu has closed
+
       expect(getInputValue()).toBe('Apples');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
         text: 'Apples',

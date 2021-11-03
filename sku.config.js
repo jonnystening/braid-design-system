@@ -1,5 +1,7 @@
+const path = require('path');
 const routes = require('./sku.routes.js');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const browserslist = require('./browserslist');
 
 const isGitHubPages = Boolean(process.env.IS_GITHUB_PAGES);
 
@@ -16,28 +18,22 @@ const entries = Boolean(process.env.DEBUG_IE)
 module.exports = {
   srcPaths: [
     'lib',
+    'css',
     'themes',
     'site/src',
     'scripts',
-    '@types',
     'generate-component-docs',
     'reset',
   ],
   ...entries,
   routes,
+  rootResolution: false,
   public: './site/src/public',
   target: './site/dist',
   publicPath: isGitHubPages ? '/braid-design-system/' : '/',
+  supportedBrowsers: browserslist,
   setupTests: './setupTests.ts',
   displayNamesProd: true,
-  provideDefaultChromaticViewports: false,
-  playroomTitle: 'BRAID',
-  playroomComponents: './lib/playroom/components.ts',
-  playroomSnippets: './lib/playroom/snippets.ts',
-  playroomThemes: './lib/themes/index.ts',
-  playroomFrameComponent: './lib/playroom/FrameComponent.tsx',
-  playroomTarget: './site/dist/playroom',
-  playroomWidths: [320, 768, 1024, 1400],
   dangerouslySetWebpackConfig: (config) => {
     config.plugins.push(
       new CircularDependencyPlugin({
@@ -46,6 +42,13 @@ module.exports = {
       }),
     );
 
+    // Import Changelog as a raw string so it can be passed to the markdown renderer
+    config.module.rules.push({
+      test: path.join(__dirname, 'CHANGELOG.md'),
+      type: 'asset/source',
+    });
+
     return config;
   },
+  skipPackageCompatibilityCompilation: ['lodash', 'prettier'],
 };

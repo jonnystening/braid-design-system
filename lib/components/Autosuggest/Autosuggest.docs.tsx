@@ -1,46 +1,49 @@
-import React, { useState, ReactNode } from 'react';
-import matchHighlights from 'autosuggest-highlight/match';
+import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Autosuggest, IconSearch, IconLocation, TextLink, Text } from '../';
-import { Autosuggest as PlayroomAutosuggest } from '../../playroom/components';
+import source from '../../utils/source.macro';
+import {
+  Autosuggest,
+  filterSuggestions,
+  TextLink,
+  Text,
+  Strong,
+  Box,
+  Alert,
+} from '../';
 
-const Container = ({ children }: { children: ReactNode }) => (
-  <div style={{ maxWidth: '300px' }}>{children}</div>
-);
-
-const makeSuggestions = (
+export const makeSuggestions = (
   suggestions: Array<string | { text: string; description?: string }>,
-  inputValue: string,
   initialValue = 0,
 ) =>
-  suggestions
-    .map((suggestion) =>
-      typeof suggestion === 'string' ? { text: suggestion } : suggestion,
-    )
-    .filter(
-      ({ text }) => !inputValue || matchHighlights(text, inputValue).length,
-    )
-    .map(({ text, description }, i) => ({
-      text,
-      description,
-      value: i + initialValue,
-      // @ts-ignore
-      highlights: matchHighlights(text, inputValue).map(([start, end]) => ({
-        start,
-        end,
-      })),
-    }));
-
-interface Value {
-  text: string;
-  value?: number;
-}
+  suggestions.map((suggestion, i) => ({
+    ...(typeof suggestion === 'string' ? { text: suggestion } : suggestion),
+    value: i + initialValue,
+  }));
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  description: (
+  Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+    source(
+      <>
+        {setDefaultState('value', { text: '' })}
+
+        <Autosuggest
+          label="I like to eat"
+          id={id}
+          value={getState('value')}
+          onChange={setState('value')}
+          onClear={() => resetState('value')}
+          suggestions={filterSuggestions([
+            { text: 'Apples', value: 1 },
+            { text: 'Bananas', value: 2 },
+            { text: 'Broccoli', value: 3 },
+            { text: 'Carrots', value: 4 },
+          ])}
+        />
+      </>,
+    ),
+  accessibility: (
     <Text>
       Follows the{' '}
       <TextLink href="https://www.w3.org/TR/wai-aria-1.2/#combobox">
@@ -48,357 +51,328 @@ const docs: ComponentDocs = {
       </TextLink>
     </Text>
   ),
-  examples: [
+  alternatives: [
+    { name: 'Dropdown', description: 'For smaller lists.' },
+    { name: 'TextField', description: 'For free text.' },
+  ],
+  additional: [
     {
-      label: 'Standard suggestions',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
-        const [showRecent, setShowRecent] = useState(true);
-
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={[
-              ...(showRecent && value.text === ''
-                ? [
-                    {
-                      text: 'Apples',
-                      onClear: () => setShowRecent(false),
-                    },
-                  ]
-                : []),
-              ...makeSuggestions(
-                [
-                  ...(value.text !== '' ? ['Apples'] : []),
-                  'Bananas',
-                  'Broccoli',
-                  'Carrots',
-                ],
-                value.text,
-              ),
-            ]}
-          />
-        );
-      },
+      label: 'Client-side filtering',
+      description: (
+        <>
+          <Text>
+            The logic for filtering suggestions typically lives on the server
+            rather than the client because it’s impractical to send all possible
+            suggestions over the network. However, when prototyping in Playroom
+            or working with smaller datasets, you may want to perform this
+            filtering on the client instead. For this case, we provide a{' '}
+            <Strong>filterSuggestions</Strong> function to make this as painless
+            as possible.
+          </Text>
+          <Alert tone="info">
+            <Text>
+              All examples on this page use the{' '}
+              <Strong>filterSuggestions</Strong> function to demonstrate
+              real-world filtering behaviour, but this can be safely omitted if
+              the filtering is being performed server-side.
+            </Text>
+          </Alert>
+        </>
+      ),
     },
     {
-      label: 'Standard suggestions with automatic selection',
-      gallery: false,
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
+      label: 'Automatic selection',
+      description: (
+        <>
+          <Text>
+            You can automatically select the first suggestion when blurring the
+            field using the <Strong>automaticSelection</Strong> prop. Note that
+            this only occurs when text has been entered into the field to
+            prevent irrelevant suggestions being selected.
+          </Text>
+          <Text>
+            This is designed for scenarios where you’re effectively selecting an
+            item from a list rather than entering free text, e.g. selecting a
+            location.
+          </Text>
+        </>
+      ),
+      Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
 
-        return (
-          <Autosuggest
-            automaticSelection
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={makeSuggestions(
-              ['Apples', 'Bananas', 'Broccoli', 'Carrots'],
-              value.text,
-            )}
-          />
-        );
-      },
+            <Autosuggest
+              automaticSelection
+              label="I like to eat"
+              id={id}
+              value={getState('value')}
+              onChange={setState('value')}
+              onClear={() => resetState('value')}
+              suggestions={filterSuggestions([
+                { text: 'Apples', value: 1 },
+                { text: 'Bananas', value: 2 },
+                { text: 'Broccoli', value: 3 },
+                { text: 'Carrots', value: 4 },
+              ])}
+            />
+          </>,
+        ),
     },
     {
       label: 'Grouped suggestions',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
+      description: (
+        <Text>Suggestion items can optionally be nested into groups.</Text>
+      ),
+      Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
 
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={[
-              {
-                label: 'Fruit',
-                suggestions: makeSuggestions(['Apples', 'Bananas'], value.text),
-              },
-              {
-                label: 'Vegetables',
-                suggestions: makeSuggestions(
-                  ['Broccoli', 'Carrots'],
-                  value.text,
-                  2,
-                ),
-              },
-            ]}
-          />
-        );
-      },
-    },
-    {
-      label: 'Standard suggestions with descriptions',
-      storybook: false,
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
-        const [showRecent, setShowRecent] = useState(true);
-
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={[
-              ...(showRecent && value.text === ''
-                ? [
+            <Autosuggest
+              label="I like to eat"
+              id={id}
+              value={getState('value')}
+              onChange={setState('value')}
+              onClear={() => resetState('value')}
+              suggestions={filterSuggestions([
+                {
+                  label: 'Fruit',
+                  suggestions: [
                     {
                       text: 'Apples',
-                      description: 'Juicy and delicious',
-                      onClear: () => setShowRecent(false),
+                      value: 1,
                     },
-                  ]
-                : []),
-              ...makeSuggestions(
+                    {
+                      text: 'Bananas',
+                      value: 2,
+                    },
+                  ],
+                },
+                {
+                  label: 'Vegetables',
+                  suggestions: [
+                    {
+                      text: 'Broccoli',
+                      value: 3,
+                    },
+                    {
+                      text: 'Carrots',
+                      value: 4,
+                    },
+                  ],
+                },
+              ])}
+            />
+          </>,
+        ),
+    },
+    {
+      label: 'Suggestion descriptions',
+      description: (
+        <Text>Suggestion items can optionally contain a description.</Text>
+      ),
+      Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
+
+            <Autosuggest
+              label="I like to eat"
+              id={id}
+              value={getState('value')}
+              onChange={setState('value')}
+              onClear={() => resetState('value')}
+              suggestions={filterSuggestions([
+                {
+                  text: 'Apples',
+                  description: 'Juicy and delicious',
+                  value: 1,
+                },
+                {
+                  text: 'Bananas',
+                  description: 'High in potassium',
+                  value: 2,
+                },
+                {
+                  text: 'Broccoli',
+                  description: 'Looks like a tree',
+                  value: 3,
+                },
+                {
+                  text: 'Carrots',
+                  description: 'Orange and crunchy',
+                  value: 4,
+                },
+              ])}
+            />
+          </>,
+        ),
+    },
+    {
+      label: 'Clearable suggestions',
+      description: (
+        <Text>
+          Suggestion items can be made clearable using the{' '}
+          <Strong>onClear</Strong> property on suggestion objects. This is
+          particularly useful for giving users the ability to clear recent
+          entries.
+        </Text>
+      ),
+      Example: ({
+        id,
+        setDefaultState,
+        getState,
+        setState,
+        resetState,
+        toggleState,
+      }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
+
+            {setDefaultState('Apples', true)}
+            {setDefaultState('Bananas', true)}
+            {setDefaultState('Broccoli', true)}
+
+            <Autosuggest
+              label="I like to eat"
+              id={id}
+              value={getState('value')}
+              onChange={setState('value')}
+              onClear={() => resetState('value')}
+              suggestions={filterSuggestions(
                 [
-                  ...(value.text !== ''
-                    ? [{ text: 'Apples', description: 'Juicy and delicious' }]
-                    : []),
-                  { text: 'Bananas', description: 'High in potassium' },
-                  { text: 'Broccoli', description: 'Looks like a tree' },
-                  { text: 'Carrots', description: 'Orange and crunchy' },
-                ],
-                value.text,
-              ),
-            ]}
-          />
-        );
-      },
+                  {
+                    text: 'Apples',
+                    value: 1,
+                    onClear: () => toggleState('Apples'),
+                  },
+                  {
+                    text: 'Bananas',
+                    value: 2,
+                    onClear: () => toggleState('Bananas'),
+                  },
+                  {
+                    text: 'Broccoli',
+                    value: 3,
+                    onClear: () => toggleState('Broccoli'),
+                  },
+                ].filter((suggestion) => getState(suggestion.text)),
+              )}
+            />
+          </>,
+        ),
     },
     {
-      label: 'Grouped suggestions with descriptions',
-      storybook: false,
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
-
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={[
-              {
-                label: 'Fruit',
-                suggestions: makeSuggestions(
-                  [
-                    { text: 'Apples', description: 'Juicy and delicious' },
-                    { text: 'Bananas', description: 'High in potassium' },
-                  ],
-                  value.text,
-                ),
-              },
-              {
-                label: 'Vegetables',
-                suggestions: makeSuggestions(
-                  [
-                    { text: 'Broccoli', description: 'Looks like a tree' },
-                    { text: 'Carrots', description: 'Orange and crunchy' },
-                  ],
-                  value.text,
-                  2,
-                ),
-              },
-            ]}
-          />
-        );
-      },
-    },
-    {
-      label: 'Standard suggestions with an icon',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
-
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            icon={<IconSearch />}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={makeSuggestions(
-              ['Apples', 'Bananas', 'Broccoli', 'Carrots'],
-              value.text,
-            )}
-          />
-        );
-      },
-    },
-    {
-      label: 'Standard suggestions with brand background and mobile backdrop',
-      storybook: false,
-      gallery: false,
-      Container,
+      label: 'Mobile support',
+      description: (
+        <>
+          <Text>
+            You can optionally display an overlay behind the field on mobile
+            using the <Strong>showMobileBackdrop</Strong> prop. Note that, for
+            this visual style to work, the field needs to be on a dark
+            background.
+          </Text>
+          <Text>
+            You can also scroll the field to the top of the viewport on focus
+            using the <Strong>scrollToTopOnMobile</Strong> prop.
+          </Text>
+        </>
+      ),
       background: 'brand',
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
+      Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
 
-        return (
-          <Autosuggest
-            showMobileBackdrop
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            suggestions={makeSuggestions(
-              ['Apples', 'Bananas', 'Broccoli', 'Carrots'],
-              value.text,
-            )}
-          />
-        );
-      },
+            <Box height="full" background="brand">
+              <Autosuggest
+                showMobileBackdrop
+                scrollToTopOnMobile
+                label="I like to eat"
+                id={id}
+                value={getState('value')}
+                onChange={setState('value')}
+                onClear={() => resetState('value')}
+                suggestions={filterSuggestions([
+                  {
+                    text: 'Apples',
+                    value: 1,
+                  },
+                  {
+                    text: 'Bananas',
+                    value: 2,
+                  },
+                  {
+                    text: 'Broccoli',
+                    value: 3,
+                  },
+                  {
+                    text: 'Carrots',
+                    value: 4,
+                  },
+                ])}
+              />
+            </Box>
+          </>,
+        ),
     },
     {
-      label: 'Autosuggest with error',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState<Value>({ text: '' });
+      label: 'Messaging when no suggestions are available',
+      description: (
+        <>
+          <Text>
+            If no suggestions are available and you’d like to provide messaging
+            to the user, you can provide an object with a{' '}
+            <Strong>message</Strong> property to the{' '}
+            <Strong>suggestions</Strong> prop.
+          </Text>
+        </>
+      ),
+      Example: ({ id, setDefaultState, getState, setState, resetState }) =>
+        source(
+          <>
+            {setDefaultState('value', { text: '' })}
 
-        return (
-          <Autosuggest
-            label="I like to eat"
-            id={id}
-            value={value}
-            onChange={setValue}
-            onClear={() => setValue({ text: '' })}
-            tone="critical"
-            message="You must make a selection"
-            suggestions={makeSuggestions(
-              ['Apples', 'Bananas', 'Broccoli', 'Carrots'],
-              value.text,
-            )}
-          />
-        );
-      },
-    },
-  ],
-  snippets: [
-    {
-      name: 'Standard',
-      code: (
-        <PlayroomAutosuggest
-          id="fruit"
-          label="Fruit"
-          suggestions={[
-            { text: 'Apples' },
-            { text: 'Bananas' },
-            { text: 'Carrots' },
-          ]}
-        />
-      ),
-    },
-    {
-      name: 'Grouped suggestions',
-      code: (
-        <PlayroomAutosuggest
-          label="I like to eat"
-          id="grouped"
-          suggestions={[
-            {
-              label: 'Fruit',
-              suggestions: [
-                { text: 'Apples' },
-                { text: 'Bananas' },
-                { text: 'Carrots' },
-              ],
-            },
-            {
-              label: 'Vegetables',
-              suggestions: [
-                { text: 'Broccoli' },
-                { text: 'Carrots' },
-                { text: 'Carrots' },
-              ],
-            },
-          ]}
-        />
-      ),
-    },
-    {
-      name: 'With mobile backdrop',
-      code: (
-        <PlayroomAutosuggest
-          showMobileBackdrop
-          id="mobile"
-          label="Fruit"
-          suggestions={[
-            { text: 'Apples' },
-            { text: 'Bananas' },
-            { text: 'Carrots' },
-          ]}
-        />
-      ),
-    },
-    {
-      name: 'With error',
-      code: (
-        <PlayroomAutosuggest
-          label="I like to eat"
-          id="error"
-          tone="critical"
-          message="You must make a selection"
-          suggestions={[
-            { text: 'Apples' },
-            { text: 'Bananas' },
-            { text: 'Carrots' },
-          ]}
-        />
-      ),
-    },
-    {
-      name: 'With description',
-      code: (
-        <PlayroomAutosuggest
-          label="Fruit"
-          id="error"
-          description="Select your favourite fruit to eat from the available suggestions."
-          suggestions={[
-            { text: 'Apples' },
-            { text: 'Bananas' },
-            { text: 'Carrots' },
-          ]}
-        />
-      ),
-    },
-    {
-      name: 'With icon',
-      code: (
-        <PlayroomAutosuggest
-          id="location"
-          icon={<IconLocation />}
-          placeholder="Enter a location"
-          suggestions={[
-            { text: 'Adelaide' },
-            { text: 'Brisbane' },
-            { text: 'Darwin' },
-            { text: 'Hobart' },
-            { text: 'Melbourne' },
-            { text: 'Perth' },
-            { text: 'Sydney' },
-          ]}
-        />
-      ),
+            <Autosuggest
+              showMobileBackdrop
+              scrollToTopOnMobile
+              label="I like to eat"
+              id={id}
+              value={getState('value')}
+              onChange={setState('value')}
+              onClear={() => resetState('value')}
+              suggestions={(value) => {
+                const filteredSuggestions = filterSuggestions(
+                  [
+                    {
+                      text: 'Apples',
+                      value: 1,
+                    },
+                    {
+                      text: 'Bananas',
+                      value: 2,
+                    },
+                    {
+                      text: 'Broccoli',
+                      value: 3,
+                    },
+                    {
+                      text: 'Carrots',
+                      value: 4,
+                    },
+                  ],
+                  value,
+                );
+
+                return filteredSuggestions.length > 0
+                  ? filteredSuggestions
+                  : { message: 'No results found.' };
+              }}
+            />
+          </>,
+        ),
     },
   ],
 };

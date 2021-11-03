@@ -1,12 +1,11 @@
 import React, { ReactNode } from 'react';
-import { useStyles } from 'sku/react-treat';
 import { Box } from '../Box/Box';
 import { IconTick } from '../icons/IconTick/IconTick';
 import { MenuItemProps } from '../MenuItem/MenuItem';
 import { useMenuItem } from '../MenuItem/useMenuItem';
-import * as styleRefs from './MenuItemCheckbox.treat';
+import * as styles from './MenuItemCheckbox.css';
 
-interface MenuItemCheckboxProps extends Omit<MenuItemProps, 'onClick'> {
+interface MenuItemCheckboxProps extends Pick<MenuItemProps, 'data'> {
   children: ReactNode;
   onChange: (checked: boolean) => void;
   checked: boolean;
@@ -17,7 +16,6 @@ export const MenuItemCheckbox = ({
   checked,
   data,
 }: MenuItemCheckboxProps) => {
-  const styles = useStyles(styleRefs);
   const { menuItemProps, MenuItemChildren } = useMenuItem<HTMLButtonElement>({
     onClick: () => onChange(!checked),
     formElement: true,
@@ -54,7 +52,7 @@ export const MenuItemCheckbox = ({
           <IconTick size="fill" />
         </Box>
       </Box>
-      <MenuItemChildren>{children}</MenuItemChildren>
+      <MenuItemChildren tone={undefined}>{children}</MenuItemChildren>
     </Box>
   );
 };

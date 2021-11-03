@@ -1,13 +1,5 @@
 type Direction = 'horizontal' | 'vertical';
 
-const addDelay = (delay: number, func: () => void) => {
-  if (delay) {
-    setTimeout(func, delay);
-  } else {
-    func();
-  }
-};
-
 const easeModifier = (t: number) =>
   t > 0.5 ? 4 * Math.pow(t - 1, 3) + 1 : 4 * Math.pow(t, 3);
 
@@ -36,9 +28,10 @@ const getScrollOffset = (
 ) => {
   if (scrollContainer === window.document.documentElement) {
     const scrollPosition = getScrollPosition(scrollContainer, direction);
-    const positionOnScreen = targetElement.getBoundingClientRect()[
-      direction === 'horizontal' ? 'left' : 'top'
-    ];
+    const positionOnScreen =
+      targetElement.getBoundingClientRect()[
+        direction === 'horizontal' ? 'left' : 'top'
+      ];
 
     return positionOnScreen + scrollPosition;
   }
@@ -150,42 +143,51 @@ interface SmoothScrollOptions extends ScrollOptions {
   scrollContainer?: HTMLElement;
   direction?: Direction;
   offset?: number;
-  delay?: number;
+  position?: 'start' | 'end';
 }
 
 export const smoothScroll = (
-  targetElement: HTMLElement | string,
+  element: HTMLElement,
   {
     scrollContainer = window.document.documentElement,
     direction = 'vertical',
     offset = 0,
-    delay = 0,
+    position = 'start',
     ...scrollOptions
   }: SmoothScrollOptions = {},
 ) =>
-  new Promise((resolve) => {
-    addDelay(delay, () => {
-      let element = targetElement;
+  new Promise<void>((resolve) => {
+    const scrollOffset = getScrollOffset(scrollContainer, element, direction);
+    const scrollPosition =
+      position === 'end'
+        ? scrollOffset -
+          scrollContainer.offsetWidth +
+          element.offsetWidth +
+          offset
+        : scrollOffset - offset;
 
-      if (typeof element === 'string') {
-        const queriedElement = document.getElementById(element);
-
-        if (queriedElement === null) {
-          throw new Error(`No element found for query "${element}"`);
-        }
-
-        element = queriedElement;
-      }
-
-      const scrollPosition =
-        getScrollOffset(scrollContainer, element, direction) - offset;
-
-      scroll(
-        scrollContainer,
-        direction,
-        scrollPosition,
-        scrollOptions,
-        resolve,
-      );
-    });
+    scroll(scrollContainer, direction, scrollPosition, scrollOptions, resolve);
   });
+
+type SmoothScrollIntoViewOptions = Omit<SmoothScrollOptions, 'position'>;
+export const smoothScrollIntoView = (
+  element: HTMLElement,
+  options: SmoothScrollIntoViewOptions,
+) => {
+  const {
+    scrollContainer = window.document.documentElement,
+    direction = 'vertical',
+    offset = 0,
+  } = options;
+
+  const containerWidth = scrollContainer.offsetWidth;
+  const scrollOffset = getScrollOffset(scrollContainer, element, direction);
+  const positionOnScreen =
+    scrollOffset - getScrollPosition(scrollContainer, direction);
+
+  if (positionOnScreen < offset) {
+    smoothScroll(element, { ...options, position: 'start' });
+  } else if (positionOnScreen > containerWidth - element.offsetWidth - offset) {
+    smoothScroll(element, { ...options, position: 'end' });
+  }
+};

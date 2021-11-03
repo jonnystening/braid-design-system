@@ -4,14 +4,14 @@ const globby = require('globby');
 const cheerio = require('cheerio');
 const { pascalCase } = require('change-case');
 const dedent = require('dedent');
-const SVGO = require('svgo');
+const { optimize } = require('svgo');
 const { default: svgr } = require('@svgr/core');
 
 const componentTemplate = ({ template }, opts, { componentName, jsx }) => {
   const code = `
     import React from 'react';
     NEWLINE
-    import { SVGProps } from '../SVGTypes';
+    import type { SVGProps } from '../SVGTypes';
     NEWLINE
     export const COMPONENT_NAME = ({ title, titleId, ...props }: SVGProps) => COMPONENT_JSX;
   `;
@@ -26,19 +26,6 @@ const componentTemplate = ({ template }, opts, { componentName, jsx }) => {
     NEWLINE: '\n',
   });
 };
-
-const svgo = new SVGO({
-  multipass: true,
-  plugins: [
-    { removeViewBox: false },
-    {
-      inlineStyles: {
-        onlyMatchedOnce: false,
-      },
-    },
-    { convertStyleToAttrs: true },
-  ],
-});
 
 const svgrConfig = {
   svgProps: {
@@ -88,7 +75,26 @@ const iconComponentsDir = path.join(baseDir, 'lib/components/icons');
       const svg = rawSvg.replace(/ data-name=".*?"/g, '');
 
       // Run through SVGO
-      const optimisedSvg = (await svgo.optimize(svg)).data;
+      const optimisedSvg = optimize(svg, {
+        multipass: true,
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                removeViewBox: false,
+              },
+            },
+          },
+          {
+            name: 'inlineStyles',
+            params: {
+              onlyMatchedOnce: false,
+            },
+          },
+          { name: 'convertStyleToAttrs' },
+        ],
+      }).data;
 
       // Validate SVG before import
       const $ = cheerio.load(optimisedSvg);
@@ -162,19 +168,21 @@ const iconComponentsDir = path.join(baseDir, 'lib/components/icons');
         dedent`
           import React from 'react';
           import { ComponentDocs } from '../../../../site/src/types';
-          import { ${iconName} } from './${iconName}';
+          import source from '../../../utils/source.macro';
+          import { ${iconName}, Heading, Stack } from '../../';
 
           const docs: ComponentDocs = {
             category: 'Icon',
             migrationGuide: true,
-            foundation: true,
-            screenshotWidths: [],
-            examples: [
-              {
-                label: 'Default',
-                Example: () => <${iconName} />,
-              },
-            ],
+            Example: () =>
+              source(
+                <Stack space="none" align="center">
+                  <Heading component="div" level="1">
+                    <${iconName} />
+                  </Heading>
+                </Stack>,
+              ),
+            alternatives: [],
           };
 
           export default docs;

@@ -1,117 +1,131 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
+import source from '../../utils/source.macro';
 import {
   Actions,
   Button,
   TextLink,
-  Box,
-  Stack,
   Text,
-  IconNewWindow,
+  Strong,
+  IconSend,
+  IconDelete,
+  Card,
+  Stack,
 } from '../';
-import { background as boxBackgrounds } from '../Box/useBoxStyles.treat';
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320, 768],
-  description: (
-    <Stack space="large">
-      <Text>Typically used for actions at the end of forms.</Text>
-      <Text>
-        Should only contain{' '}
-        <TextLink href="/components/Button">Button,</TextLink>{' '}
-        <TextLink href="/components/ButtonLink">ButtonLink,</TextLink>{' '}
-        <TextLink href="/components/TextLink">TextLink</TextLink> and{' '}
-        <TextLink href="/components/TextLinkButton">TextLinkButton</TextLink>{' '}
-        elements.
-      </Text>
-    </Stack>
-  ),
-  examples: [
-    {
-      label: 'Actions with Strong Button and TextLink',
-      Example: () => (
+  Example: () =>
+    source(
+      <Card rounded>
         <Actions>
-          <Button weight="strong">Strong</Button>
-          <TextLink href="#">TextLink</TextLink>
+          <Button>Button 1</Button>
+          <Button>Button 2</Button>
+          <Button variant="transparent">Button 3</Button>
         </Actions>
-      ),
+      </Card>,
+    ),
+  alternatives: [
+    {
+      name: 'Inline',
+      description: 'For fine-grained control of spacing and alignment.',
     },
     {
-      label: 'Actions with Regular Button and Weak Button',
-      Example: () => (
-        <Actions>
-          <Button weight="regular">Regular</Button>
-          <Button weight="weak">Weak</Button>
-        </Actions>
-      ),
-    },
-    {
-      label: 'Actions with Weak Buttons and Regular Button',
-      Example: () => (
-        <Actions>
-          <Button weight="weak">Weak</Button>
-          <Button weight="weak">Weak</Button>
-          <Button weight="regular">Regular</Button>
-        </Actions>
-      ),
-    },
-    {
-      label: 'Actions Contrast',
-      docsSite: false,
-      Example: () => {
-        const backgrounds = Object.keys(boxBackgrounds) as Array<
-          keyof typeof boxBackgrounds
-        >;
-
-        return (
-          <Fragment>
-            {backgrounds.sort().map((background, i) => (
-              <Box key={i} background={background} padding="xsmall">
-                <Stack space="xsmall">
-                  <Text size="small">{background}</Text>
-                  <Actions>
-                    <Button weight="strong">Strong</Button>
-                    <TextLink href="#">
-                      TextLink <IconNewWindow />
-                    </TextLink>
-                  </Actions>
-                </Stack>
-              </Box>
-            ))}
-          </Fragment>
-        );
-      },
+      name: 'Columns',
+      description: 'For fine-grained control of widths, spacing and alignment.',
     },
   ],
-  snippets: [
+  additional: [
     {
-      name: 'Standard Button, Text Link',
-      code: (
-        <Actions>
-          <Button>Submit</Button>
-          <TextLink href="#">Cancel</TextLink>
-        </Actions>
+      label: 'Sizes',
+      description: (
+        <Text>
+          You can customise the size of the actions via the{' '}
+          <Strong>size</Strong> prop, which accepts either{' '}
+          <Strong>standard</Strong> or <Strong>small.</Strong>
+        </Text>
       ),
+      Example: () =>
+        source(
+          <Stack space="large">
+            <Stack space="small">
+              <Text tone="secondary" weight="strong">
+                Standard size
+              </Text>
+              <Actions>
+                <Button>Button 1</Button>
+                <Button variant="transparent">Button 2</Button>
+              </Actions>
+            </Stack>
+            <Stack space="small">
+              <Text tone="secondary" weight="strong">
+                Small size
+              </Text>
+              <Actions size="small">
+                <Button>Button 1</Button>
+                <Button variant="transparent">Button 2</Button>
+              </Actions>
+            </Stack>
+          </Stack>,
+        ),
     },
     {
-      name: 'Strong Button, Text Link',
-      code: (
-        <Actions>
-          <Button weight="strong">Submit</Button>
-          <TextLink href="#">Cancel</TextLink>
-        </Actions>
+      label: 'Icons',
+      description: (
+        <Text>
+          You can add icons to{' '}
+          <TextLink href="/components/Button">Button</TextLink> elements by
+          nesting icons inside. The size of the icon will adjust automatically
+          based on its surrounding context.
+        </Text>
       ),
+      Example: () =>
+        source(
+          <Stack space="large">
+            <Stack space="small">
+              <Text tone="secondary" weight="strong">
+                Standard size
+              </Text>
+              <Actions>
+                <Button>
+                  <IconSend /> Send
+                </Button>
+                <Button variant="transparent">Cancel</Button>
+              </Actions>
+            </Stack>
+            <Stack space="small">
+              <Text tone="secondary" weight="strong">
+                Small size
+              </Text>
+              <Actions size="small">
+                <Button>
+                  <IconSend /> Send
+                </Button>
+                <Button variant="transparent">Cancel</Button>
+              </Actions>
+            </Stack>
+          </Stack>,
+        ),
     },
     {
-      name: 'Weak Button, Text Link',
-      code: (
-        <Actions>
-          <Button weight="weak">Submit</Button>
-          <TextLink href="#">Cancel</TextLink>
-        </Actions>
+      label: 'Destructive actions',
+      description: (
+        <Text>
+          For destructive actions like “Delete” you can set the{' '}
+          <TextLink href="/components/Button">Button</TextLink> element’s{' '}
+          <Strong>tone</Strong> to <Strong>critical.</Strong>
+        </Text>
       ),
+      Example: () =>
+        source(
+          <Actions>
+            <Button tone="critical">
+              <IconDelete /> Delete
+            </Button>
+            <Button variant="transparent">Cancel</Button>
+          </Actions>,
+        ),
     },
   ],
 };

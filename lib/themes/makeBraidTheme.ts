@@ -1,149 +1,13 @@
 import './treatTheme.d';
 import { createTheme } from 'sku/treat';
-import { darken, lighten } from 'polished';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
+import { FontMetrics, getCapHeight } from '@capsizecss/core';
+
+import { breakpoints } from '../css/breakpoints';
 import { makeThemeUtils } from './themeUtils';
-import { getLightVariant, isLight } from '../utils';
-import { FontMetrics, getCapHeight } from 'capsize';
-
-export const breakpoints = ['mobile', 'tablet', 'desktop'] as const;
-type Breakpoint = typeof breakpoints[number];
-
-export type TextBreakpoint = Exclude<Breakpoint, 'desktop'>;
-
-type CapHeightText = {
-  capHeight: number;
-  rows: number;
-};
-
-type FontSizeText = {
-  fontSize: number;
-  rows: number;
-};
-
-export type TextDefinition = Record<
-  TextBreakpoint,
-  CapHeightText | FontSizeText
->;
-type FontWeight = 'regular' | 'medium' | 'strong';
-
-export interface TreatTokens {
-  name: string;
-  displayName: string;
-  typography: {
-    fontFamily: string;
-    webFont: string | null;
-    fontMetrics: FontMetrics;
-    fontWeight: Record<FontWeight, number>;
-    heading: {
-      weight: {
-        weak: FontWeight;
-        regular: FontWeight;
-      };
-      level: {
-        '1': TextDefinition;
-        '2': TextDefinition;
-        '3': TextDefinition;
-        '4': TextDefinition;
-      };
-    };
-    text: {
-      xsmall: TextDefinition;
-      small: TextDefinition;
-      standard: TextDefinition;
-      large: TextDefinition;
-    };
-  };
-  breakpoint: Record<Breakpoint, number>;
-  contentWidth: {
-    xsmall: number;
-    small: number;
-    medium: number;
-    large: number;
-  };
-  grid: number;
-  touchableSize: number;
-  space: {
-    gutter: number;
-    xxsmall: number;
-    xsmall: number;
-    small: number;
-    medium: number;
-    large: number;
-    xlarge: number;
-    xxlarge: number;
-  };
-  transforms: {
-    touchable: string;
-  };
-  transitions: {
-    fast: string;
-    touchable: string;
-  };
-  border: {
-    radius: {
-      standard: string;
-    };
-    width: {
-      standard: number;
-      large: number;
-    };
-    color: {
-      standard: string;
-      standardInverted: string;
-      field: string;
-      focus: string;
-      critical: string;
-      info: string;
-      promote: string;
-      positive: string;
-      caution: string;
-      formHover: string;
-      formAccent: string;
-    };
-  };
-  shadows: {
-    small: string;
-    medium: string;
-    large: string;
-  };
-  color: {
-    foreground: {
-      link: string;
-      linkHover: string;
-      linkVisited: string;
-      neutral: string;
-      neutralInverted: string;
-      formAccent: string;
-      critical: string;
-      info: string;
-      promote: string;
-      positive: string;
-      caution: string;
-      secondary: string;
-      secondaryInverted: string;
-      rating: string;
-    };
-    background: {
-      body: string;
-      brand: string;
-      input: string;
-      inputDisabled: string;
-      brandAccent: string;
-      formAccent: string;
-      formAccentDisabled: string;
-      selection: string;
-      info: string;
-      promote: string;
-      card: string;
-      critical: string;
-      caution: string;
-      positive: string;
-      neutral: string;
-    };
-  };
-}
+import { isLight } from '../utils';
+import { BraidTokens, TextDefinition } from './tokenType';
 
 const fontSizeToCapHeight = (
   definition: TextDefinition,
@@ -153,23 +17,17 @@ const fontSizeToCapHeight = (
 
   return {
     mobile: {
-      capHeight:
-        'fontSize' in mobile
-          ? getCapHeight({ fontSize: mobile.fontSize, fontMetrics })
-          : mobile.capHeight,
+      capHeight: getCapHeight({ fontSize: mobile.fontSize, fontMetrics }),
       rows: mobile.rows,
     },
     tablet: {
-      capHeight:
-        'fontSize' in tablet
-          ? getCapHeight({ fontSize: tablet.fontSize, fontMetrics })
-          : tablet.capHeight,
+      capHeight: getCapHeight({ fontSize: tablet.fontSize, fontMetrics }),
       rows: tablet.rows,
     },
   };
 };
 
-const normaliseSizingToCapHeight = (typography: TreatTokens['typography']) => {
+const normaliseSizingToCapHeight = (typography: BraidTokens['typography']) => {
   const { heading, text, fontMetrics } = typography;
 
   return {
@@ -191,39 +49,41 @@ const normaliseSizingToCapHeight = (typography: TreatTokens['typography']) => {
   };
 };
 
-const decorateTokens = (treatTokens: TreatTokens) => {
-  const { color, typography, ...restTokens } = treatTokens;
+const decorateTokens = (braidTokens: BraidTokens) => {
+  const {
+    border,
+    color,
+    contentWidth,
+    displayName,
+    grid,
+    name,
+    shadows,
+    space,
+    touchableSize,
+    transforms,
+    transitions,
+    typography,
+  } = braidTokens;
 
-  const getActiveColor = (x: string) =>
-    isLight(x) ? darken(0.1, x) : darken(0.05, x);
-
-  const getHoverColor = (x: string) =>
-    isLight(x) ? darken(0.05, x) : lighten(0.05, x);
-
-  const decoratedTokens = {
-    color: {
-      ...color,
-      background: {
-        ...color.background,
-        formAccentActive: getActiveColor(color.background.formAccent),
-        formAccentHover: getHoverColor(color.background.formAccent),
-        brandAccentActive: getActiveColor(color.background.brandAccent),
-        brandAccentHover: getHoverColor(color.background.brandAccent),
-        infoLight: getLightVariant(color.background.info),
-        promoteLight: getLightVariant(color.background.promote),
-        criticalLight: getLightVariant(color.background.critical),
-        positiveLight: getLightVariant(color.background.positive),
-        cautionLight: getLightVariant(color.background.caution),
-        neutralLight: getLightVariant(color.background.neutral),
-      },
-    },
+  const treatTokens = {
+    border,
+    breakpoint: breakpoints,
+    color,
+    contentWidth,
+    displayName,
+    grid,
+    name,
+    shadows,
+    space,
+    touchableSize,
+    transforms,
+    transitions,
     typography: normaliseSizingToCapHeight(typography),
-    ...restTokens,
   };
 
   return {
-    ...decoratedTokens,
-    utils: makeThemeUtils(decoratedTokens),
+    ...treatTokens,
+    utils: makeThemeUtils(treatTokens),
   };
 };
 
@@ -253,14 +113,16 @@ const makeRuntimeTokens = (tokens: TreatTheme) => ({
     grid: tokens.grid,
     space: tokens.space,
   },
-  breakpoint: tokens.breakpoint,
   color: tokens.color,
   backgroundLightness: mapValues(
     tokens.color.background,
     (background, name) => {
       // Manual override to ensure we use inverted neutral text
       // on JobsDB 'brandAccent' background and its variants.
-      if (tokens.name === 'jobsDb' && /^brandAccent/.test(name)) {
+      if (
+        tokens.name === 'jobsDb' &&
+        /^brandAccent(Active|Hover|$)/.test(name)
+      ) {
         return 'dark';
       }
 
@@ -290,13 +152,15 @@ const makeRuntimeTokens = (tokens: TreatTheme) => ({
         );
       }
 
-      return isLight(referenceColor) ? 'light' : 'dark';
+      return isLight(referenceColor, tokens.color.foreground.neutral)
+        ? 'light'
+        : 'dark';
     },
   ),
 });
 
-export function makeBraidTheme(treatTokens: TreatTokens) {
-  const decoratedTokens = decorateTokens(treatTokens);
+export function makeBraidTheme(braidTokens: BraidTokens) {
+  const decoratedTokens = decorateTokens(braidTokens);
 
   return {
     treatTheme: createTheme(decoratedTokens),

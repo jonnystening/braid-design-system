@@ -3,13 +3,28 @@ import {
   InlineField,
   InlineFieldProps,
 } from '../private/InlineField/InlineField';
+import { CheckboxChecked } from '../private/InlineField/StyledInput';
+import { resolveCheckedGroup } from './resolveCheckedGroup';
 
-export type CheckboxProps = InlineFieldProps;
+export interface CheckboxProps extends Omit<InlineFieldProps, 'checked'> {
+  checked: CheckboxChecked | Array<boolean>;
+}
 
-const NamedCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  (props, ref) => <InlineField {...props} type="checkbox" ref={ref} />,
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ checked, ...restProps }, ref) => {
+    const calculatedChecked = Array.isArray(checked)
+      ? resolveCheckedGroup(checked)
+      : checked;
+
+    return (
+      <InlineField
+        {...restProps}
+        checked={calculatedChecked}
+        type="checkbox"
+        ref={ref}
+      />
+    );
+  },
 );
 
-NamedCheckbox.displayName = 'Checkbox';
-
-export const Checkbox = NamedCheckbox;
+Checkbox.displayName = 'Checkbox';

@@ -1,97 +1,46 @@
-import React, {
-  ReactNode,
-  AllHTMLAttributes,
-  forwardRef,
-  ReactElement,
-} from 'react';
-import { useStyles } from 'sku/react-treat';
+import React, { ReactNode, forwardRef, ReactElement } from 'react';
 import { Box } from '../../Box/Box';
 import { FieldLabelProps } from '../../FieldLabel/FieldLabel';
 import {
   FieldMessage,
   FieldMessageProps,
 } from '../../FieldMessage/FieldMessage';
-import { FieldOverlay } from '../FieldOverlay/FieldOverlay';
 import { Text } from '../../Text/Text';
-import { IconTick } from '../../icons';
-import { useVirtualTouchable } from '../touchable/useVirtualTouchable';
-import buildDataAttributes, { DataAttributeMap } from '../buildDataAttributes';
-import { useBackgroundLightness } from '../../Box/BackgroundContext';
+import { virtualTouchable } from '../touchable/virtualTouchable';
 import { mergeIds } from '../mergeIds';
 import { BadgeProps } from '../../Badge/Badge';
 import { Inline } from '../../Inline/Inline';
-import * as styleRefs from './InlineField.treat';
+import {
+  StyledInput,
+  StyledInputProps,
+  PrivateStyledInputProps,
+} from './StyledInput';
+import * as styles from './InlineField.css';
 
-const tones = ['neutral', 'critical'] as const;
-type InlineFieldTone = typeof tones[number];
-
-type FormElementProps = AllHTMLAttributes<HTMLFormElement>;
-export interface InlineFieldProps {
-  id: NonNullable<FormElementProps['id']>;
+type InlineFieldBaseProps = {
   label: NonNullable<FieldLabelProps['label']>;
-  onChange: NonNullable<FormElementProps['onChange']>;
-  checked: NonNullable<FormElementProps['checked']>;
-  value?: FormElementProps['value'];
-  name?: FormElementProps['name'];
-  disabled?: FormElementProps['disabled'];
   message?: FieldMessageProps['message'];
   reserveMessageSpace?: FieldMessageProps['reserveMessageSpace'];
-  tone?: InlineFieldTone;
   children?: ReactNode;
   description?: ReactNode;
   badge?: ReactElement<BadgeProps>;
-  data?: DataAttributeMap;
-  required?: boolean;
-}
-
-type FieldType = 'checkbox' | 'radio';
-interface InternalInlineFieldProps extends InlineFieldProps {
-  type: FieldType;
-}
-
-const Indicator = ({
-  type,
-  hover = false,
-  disabled = false,
-}: {
-  type: FieldType;
-  hover?: boolean;
-  disabled?: boolean;
-}) => {
-  const styles = useStyles(styleRefs);
-  const isCheckbox = type === 'checkbox';
-
-  const iconTone = (() => {
-    if (disabled) {
-      return 'secondary';
-    }
-
-    if (hover) {
-      return 'formAccent';
-    }
-  })();
-
-  return isCheckbox ? (
-    <Box
-      height="full" // Needed for IE11
-      transition="fast"
-      className={styles.checkboxIndicator}
-    >
-      <IconTick size="fill" tone={iconTone} />
-    </Box>
-  ) : (
-    <Box
-      background={disabled ? 'formAccentDisabled' : 'formAccent'}
-      transition="fast"
-      width="full"
-      height="full"
-      borderRadius="full"
-      className={styles.radioIndicator}
-    />
-  );
 };
 
-export const InlineField = forwardRef<HTMLElement, InternalInlineFieldProps>(
+export type InlineFieldProps = Omit<
+  StyledInputProps,
+  'aria-label' | 'aria-labelledby'
+> &
+  InlineFieldBaseProps;
+
+type PrivateInlineFieldProps = PrivateStyledInputProps &
+  InlineFieldBaseProps & {
+    inList?: boolean;
+  };
+
+export const InlineField = forwardRef<
+  HTMLInputElement,
+  PrivateInlineFieldProps
+>(
   (
     {
       id,
@@ -110,107 +59,67 @@ export const InlineField = forwardRef<HTMLElement, InternalInlineFieldProps>(
       tone = 'neutral',
       disabled = false,
       required,
+      inList = false,
+      tabIndex,
+      size = 'standard',
+      'aria-describedby': ariaDescribedBy,
     },
-    ref,
+    forwardedRef,
   ) => {
-    const styles = useStyles(styleRefs);
-
-    if (tones.indexOf(tone) === -1) {
-      throw new Error(`Invalid tone: ${tone}`);
-    }
-
     const messageId = `${id}-message`;
     const descriptionId = `${id}-description`;
-    const isCheckbox = type === 'checkbox';
-    const fieldBorderRadius = isCheckbox ? 'standard' : 'full';
-    const accentBackground = disabled ? 'formAccentDisabled' : 'formAccent';
     const hasMessage = message || reserveMessageSpace;
-    const showFieldBorder =
-      useBackgroundLightness() === 'light' && (tone !== 'critical' || disabled);
 
     return (
       <Box position="relative" zIndex={0} className={styles.root}>
         <Box display="flex">
-          <Box
-            component="input"
+          <StyledInput
             type={type}
             id={id}
-            name={name}
-            onChange={onChange}
-            value={value}
             checked={checked}
-            position="absolute"
-            zIndex={1}
-            className={styles.realField}
-            cursor={!disabled ? 'pointer' : undefined}
-            opacity={0}
-            aria-describedby={mergeIds(messageId, descriptionId)}
-            aria-required={required}
+            name={name}
+            value={value}
+            data={data}
+            onChange={onChange}
             disabled={disabled}
-            ref={ref}
-            {...buildDataAttributes(data)}
+            tone={tone}
+            tabIndex={tabIndex}
+            required={required}
+            aria-describedby={mergeIds(
+              ariaDescribedBy,
+              message ? messageId : undefined,
+              description ? descriptionId : undefined,
+            )}
+            size={size}
+            ref={forwardedRef}
           />
-          <Box
-            flexShrink={0}
-            position="relative"
-            className={styles.fakeField}
-            background={disabled ? 'inputDisabled' : 'input'}
-            borderRadius={fieldBorderRadius}
-          >
-            <FieldOverlay
-              variant={disabled ? 'disabled' : 'default'}
-              borderRadius={fieldBorderRadius}
-              visible={showFieldBorder}
-            />
-            <FieldOverlay
-              variant="critical"
-              borderRadius={fieldBorderRadius}
-              visible={tone === 'critical' && !disabled}
-            />
-            <FieldOverlay
-              variant={tone === 'critical' && isCheckbox ? tone : undefined}
-              background={isCheckbox ? accentBackground : undefined}
-              borderRadius={fieldBorderRadius}
-              className={styles.selected}
-            >
-              <Indicator type={type} disabled={disabled} />
-            </FieldOverlay>
 
-            <FieldOverlay
-              variant="focus"
-              borderRadius={fieldBorderRadius}
-              className={styles.focusOverlay}
-            />
-            <FieldOverlay
-              variant="hover"
-              borderRadius={fieldBorderRadius}
-              className={styles.hoverOverlay}
-            >
-              <Indicator type={type} hover={true} />
-            </FieldOverlay>
-          </Box>
-          <Box paddingLeft="small">
+          <Box paddingLeft="small" flexGrow={1}>
             <Inline space="small">
               <Box
                 component="label"
                 htmlFor={id}
                 userSelect="none"
                 display="block"
-                className={[styles.label, useVirtualTouchable()]}
+                cursor={!disabled ? 'pointer' : undefined}
+                className={[styles.labelOffset[size], virtualTouchable()]}
               >
                 <Text
-                  weight={checked ? 'strong' : undefined}
+                  weight={checked && !inList ? 'strong' : undefined}
                   tone={disabled ? 'secondary' : undefined}
+                  size={size}
                 >
                   {label}
                 </Text>
               </Box>
-              {badge ? <Box className={styles.badgeOffset}>{badge}</Box> : null}
+              {badge ? (
+                <Box className={styles.badgeOffset[size]}>{badge}</Box>
+              ) : null}
             </Inline>
 
             {description ? (
               <Box paddingTop="small">
-                <Text tone="secondary" id={descriptionId}>
+                <Text tone="secondary" size={size} id={descriptionId}>
                   {description}
                 </Text>
               </Box>

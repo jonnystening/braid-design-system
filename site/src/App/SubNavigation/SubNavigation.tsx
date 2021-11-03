@@ -1,6 +1,5 @@
 import React from 'react';
 import map from 'lodash/map';
-import { useStyles } from 'sku/react-treat';
 import guides from '../routes/guides';
 import foundations from '../routes/foundations';
 import examples from '../routes/examples';
@@ -16,10 +15,11 @@ import { ThemeToggle } from '../ThemeSetting';
 import {
   categorisedComponents,
   documentedComponents,
+  documentedCss,
 } from '../navigationHelpers';
 import { useConfig } from '../ConfigContext';
-import * as styleRefs from './SubNavigation.treat';
 import { isNew } from '../Updates';
+import * as styles from './SubNavigation.css';
 
 type BadgeLabel = 'New' | 'Deprecated';
 
@@ -31,6 +31,10 @@ const toneForBadge = (badgeLabel: BadgeLabel) => {
 
   return toneMap[badgeLabel];
 };
+
+const componentsList = documentedComponents.filter(
+  ({ category }) => category !== 'Logic',
+);
 
 interface SubNavigationItem {
   badge?: BadgeLabel;
@@ -45,45 +49,41 @@ interface SubNavigationGroup {
   items: SubNavigationItem[];
 }
 
-const SubNavigationGroup = ({ title, items }: SubNavigationGroup) => {
-  const styles = useStyles(styleRefs);
+const SubNavigationGroup = ({ title, items }: SubNavigationGroup) => (
+  <Box component="nav">
+    <Stack space="large">
+      {title ? (
+        <Box className={styles.uppercase}>
+          <Text size="xsmall" weight="medium" component="h2">
+            {title}
+          </Text>
+        </Box>
+      ) : null}
 
-  return (
-    <Box component="nav">
-      <Stack space="large">
-        {title ? (
-          <Box className={styles.uppercase}>
-            <Text size="xsmall" weight="medium" component="h2">
-              {title}
+      <Stack component="ul" space="medium">
+        {items.map(({ name, badge, path, onClick, target }) => (
+          <Inline space="xsmall" alignY="center" key={name}>
+            <Text>
+              <TextLink
+                href={path}
+                onClick={onClick}
+                hitArea="large"
+                target={target}
+              >
+                {name}
+              </TextLink>
             </Text>
-          </Box>
-        ) : null}
-
-        <Stack component="ul" space="medium">
-          {items.map(({ name, badge, path, onClick, target }) => (
-            <Inline space="xsmall" alignY="center" key={name}>
-              <Text>
-                <TextLink
-                  href={path}
-                  onClick={onClick}
-                  hitArea="large"
-                  target={target}
-                >
-                  {name}
-                </TextLink>
-              </Text>
-              {badge ? (
-                <Badge bleedY tone={toneForBadge(badge)}>
-                  {badge}
-                </Badge>
-              ) : null}
-            </Inline>
-          ))}
-        </Stack>
+            {badge ? (
+              <Badge bleedY tone={toneForBadge(badge)}>
+                {badge}
+              </Badge>
+            ) : null}
+          </Inline>
+        ))}
       </Stack>
-    </Box>
-  );
-};
+    </Stack>
+  </Box>
+);
 
 interface SubNavigationProps {
   onSelect?: () => void;
@@ -115,7 +115,6 @@ export const SubNavigation = ({ onSelect }: SubNavigationProps) => {
           {
             name: 'Gallery',
             path: '/gallery',
-            badge: 'New',
           },
           {
             name: 'Playroom',
@@ -132,6 +131,7 @@ export const SubNavigation = ({ onSelect }: SubNavigationProps) => {
         title="Guides"
         items={map(guides, (guide, path) => ({
           name: guide.title,
+          badge: guide.badge,
           path,
           onClick: onSelect,
         }))}
@@ -141,6 +141,7 @@ export const SubNavigation = ({ onSelect }: SubNavigationProps) => {
         title="Foundations"
         items={map(foundations, (foundation, path) => ({
           name: foundation.title,
+          badge: foundation.badge,
           path,
           onClick: onSelect,
         }))}
@@ -150,27 +151,35 @@ export const SubNavigation = ({ onSelect }: SubNavigationProps) => {
         title="Examples"
         items={map(examples, (example, path) => ({
           name: example.title,
+          badge: example.badge,
           path,
           onClick: onSelect,
         }))}
       />
 
-      {['Layout', 'Content', 'Logic'].map((category) => (
-        <SubNavigationGroup
-          key={category}
-          title={category}
-          items={categorisedComponents[category].map((docs) => ({
-            name: docs.name,
-            badge: getBadge(docs),
-            path: `/components/${docs.name}`,
-            onClick: onSelect,
-          }))}
-        />
-      ))}
+      <SubNavigationGroup
+        title="Components"
+        items={componentsList.map((docs) => ({
+          name: docs.name,
+          badge: getBadge(docs),
+          path: `/components/${docs.name}`,
+          onClick: onSelect,
+        }))}
+      />
 
       <SubNavigationGroup
-        title="All Components"
-        items={documentedComponents.map((docs) => ({
+        title="CSS"
+        items={documentedCss.map((doc) => ({
+          name: doc.name,
+          badge: getBadge(doc),
+          path: `/css/${doc.name}`,
+          onClick: onSelect,
+        }))}
+      />
+
+      <SubNavigationGroup
+        title="Logic"
+        items={categorisedComponents.Logic.map((docs) => ({
           name: docs.name,
           badge: getBadge(docs),
           path: `/components/${docs.name}`,

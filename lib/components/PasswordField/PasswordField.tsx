@@ -8,14 +8,21 @@ import React, {
   MouseEvent,
 } from 'react';
 
-import { Field, FieldProps } from '../private/Field/Field';
+import {
+  Field,
+  FieldBaseProps,
+  FieldLabelVariant,
+} from '../private/Field/Field';
 import { Box } from '../Box/Box';
 import { IconButton } from '../iconButtons/IconButton';
 import { IconVisibility } from '../icons';
 
 type InputProps = AllHTMLAttributes<HTMLInputElement>;
-export interface PasswordFieldProps
-  extends Omit<FieldProps, 'labelId' | 'secondaryMessage' | 'icon'> {
+
+export type PasswordFieldBaseProps = Omit<
+  FieldBaseProps,
+  'value' | 'labelId' | 'secondaryMessage' | 'icon' | 'prefix'
+> & {
   value: NonNullable<InputProps['value']>;
   onChange: NonNullable<InputProps['onChange']>;
   onBlur?: InputProps['onBlur'];
@@ -23,9 +30,12 @@ export interface PasswordFieldProps
   placeholder?: InputProps['placeholder'];
   onVisibilityToggle?: (visible: boolean) => void;
   visibilityToggleLabel?: string;
-}
+};
+export type PasswordFieldLabelProps = FieldLabelVariant;
+export type PasswordFieldProps = PasswordFieldBaseProps &
+  PasswordFieldLabelProps;
 
-const NamedPasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
+export const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
   (
     {
       value,
@@ -69,8 +79,11 @@ const NamedPasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
         {...restProps}
         value={value}
         icon={undefined}
+        prefix={undefined}
         labelId={undefined}
+        disabled={disabled}
         secondaryMessage={null}
+        alwaysShowSecondaryIcon={!disabled}
         secondaryIcon={
           disabled ? null : (
             <IconButton
@@ -94,7 +107,7 @@ const NamedPasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
               onChange={onChange}
               onFocus={onFocus}
               onBlur={onBlur}
-              placeholder={placeholder}
+              placeholder={!disabled ? placeholder : undefined}
               {...fieldProps}
               ref={inputRef}
             />
@@ -107,6 +120,4 @@ const NamedPasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
   },
 );
 
-NamedPasswordField.displayName = 'PasswordField';
-
-export const PasswordField = NamedPasswordField;
+PasswordField.displayName = 'PasswordField';

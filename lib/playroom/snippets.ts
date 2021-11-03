@@ -1,27 +1,20 @@
-import reactElementToJsxString from 'react-element-to-jsx-string';
 import { flatten } from 'lodash';
-import { ComponentDocs } from '../../site/src/types';
-import { Snippets } from 'sku/playroom';
+import { BraidSnippet } from '../components/private/Snippets';
 
-const req = require.context('../components', true, /\.docs\.tsx?$/);
+const req = require.context('../components', true, /\.snippets\.tsx?$/);
 export default flatten(
   req.keys().map((filename) => {
-    const matches = filename.match(/([a-zA-Z]+)\.docs\.tsx?$/);
+    const matches = filename.match(/([a-zA-Z]+)\.snippets\.tsx?$/);
     if (!matches) {
       return [];
     }
 
-    const { snippets = [] } = req(filename).default as ComponentDocs;
+    const snippets = req(filename).snippets as BraidSnippet[];
+
     return snippets.map((snippet) => ({
       ...snippet,
       group: snippet.group || matches[1],
+      code: snippet.code.code,
     }));
   }),
-).map<Snippets[number]>((snippet) => ({
-  ...snippet,
-  group: snippet.group,
-  code: reactElementToJsxString(snippet.code, {
-    sortProps: false,
-    useBooleanShorthandSyntax: false,
-  }),
-}));
+);

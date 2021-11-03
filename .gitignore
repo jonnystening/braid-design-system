@@ -11,11 +11,9 @@ lib/components/icons/*/*Svg.tsx
 # managed by sku
 .eslintrc
 .prettierrc
-.ssl
 coverage/
 dist-storybook/
 report/
 site/dist/
-site/dist/playroom/
 tsconfig.json
 # end managed by sku

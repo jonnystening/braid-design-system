@@ -7,8 +7,7 @@ import {
   setLightness,
 } from 'polished';
 
-const AA_CONTRAST = 4.52;
-const AA_NON_TEXT_CONTRAST = 3;
+const AA_TEXT_CONTRAST = 4.52;
 
 // http://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html#key-terms
 export function contrast(color1: string, color2: string): number {
@@ -23,7 +22,7 @@ export function contrast(color1: string, color2: string): number {
 export function findClosestAccessibleLighterColor(
   inputColor: string,
   fixedColor: string,
-  contrastRatio: number = AA_CONTRAST,
+  contrastRatio: number = AA_TEXT_CONTRAST,
 ): string {
   const normalisedInput = toColorString(parseToRgb(inputColor));
   const normalisedFixed = toColorString(parseToRgb(fixedColor));
@@ -73,7 +72,7 @@ export function findClosestAccessibleLighterColor(
 export function findClosestAccessibleDarkerColor(
   inputColor: string,
   fixedColor: string,
-  contrastRatio: number = AA_CONTRAST,
+  contrastRatio: number = AA_TEXT_CONTRAST,
 ): string {
   const normalisedInput = toColorString(parseToRgb(inputColor));
   const normalisedFixed = toColorString(parseToRgb(fixedColor));
@@ -151,13 +150,10 @@ export function getLightVariant(color: string) {
   });
 }
 
-export function getAccessibleVariant(
-  color: string,
-  options: { nonText?: boolean } = {},
-) {
+export function getAccessibleVariant(color: string, background?: string) {
   return findClosestAccessibleDarkerColor(
     color,
-    getLightVariant(color),
-    options.nonText ? AA_NON_TEXT_CONTRAST : AA_CONTRAST,
+    background ?? getLightVariant(color),
+    AA_TEXT_CONTRAST,
   );
 }

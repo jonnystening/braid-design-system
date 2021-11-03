@@ -8,9 +8,9 @@ import React, {
   ReactNode,
   Ref,
 } from 'react';
-import { useStyles } from 'sku/react-treat';
 import flattenChildren from 'react-keyed-flatten-children';
-import { Box, BoxProps } from '../Box/Box';
+import { Box } from '../Box/Box';
+import type { ResponsiveSpace } from '../../css/atoms/atoms';
 import { MenuItem } from '../MenuItem/MenuItem';
 import { MenuItemCheckbox } from '../MenuItemCheckbox/MenuItemCheckbox';
 import { MenuItemLink } from '../MenuItem/MenuItemLink';
@@ -24,7 +24,7 @@ import { MenuRendererItemContext } from './MenuRendererItemContext';
 import buildDataAttributes, {
   DataAttributeMap,
 } from '../private/buildDataAttributes';
-import * as styleRefs from './MenuRenderer.treat';
+import * as styles from './MenuRenderer.css';
 
 interface TriggerProps {
   'aria-haspopup': boolean;
@@ -40,7 +40,7 @@ interface TriggerState {
 export interface MenuRendererProps {
   trigger: (props: TriggerProps, state: TriggerState) => ReactNode;
   align?: 'left' | 'right';
-  offsetSpace?: BoxProps['marginTop'];
+  offsetSpace?: ResponsiveSpace;
   onOpen?: () => void;
   onClose?: () => void;
   data?: DataAttributeMap;
@@ -84,6 +84,8 @@ const isDivider = (node: ReactNode) =>
   'type' in node &&
   node.type === MenuItemDivider;
 
+const borderRadius = 'large';
+
 export const MenuRenderer = ({
   onOpen,
   onClose,
@@ -93,7 +95,6 @@ export const MenuRenderer = ({
   children,
   data,
 }: MenuRendererProps) => {
-  const styles = useStyles(styleRefs);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const hasOpened = useRef<boolean>(false);
   const items = flattenChildren(children);
@@ -264,7 +265,10 @@ export const MenuRenderer = ({
 
   return (
     <MenuRendererContext.Provider value={true}>
-      <Box className={styles.root} {...buildDataAttributes(data)}>
+      <Box
+        className={styles.root}
+        {...(data ? buildDataAttributes(data) : undefined)}
+      >
         <Box display="inlineBlock" position="relative">
           {trigger(triggerProps, { open })}
 
@@ -277,7 +281,7 @@ export const MenuRenderer = ({
               focusTrigger();
             }}
             boxShadow="medium"
-            borderRadius="standard"
+            borderRadius={borderRadius}
             background="card"
             marginTop={offsetSpace}
             transition="fast"
@@ -285,7 +289,7 @@ export const MenuRenderer = ({
             opacity={!open ? 0 : undefined}
             className={!open && styles.menuIsClosed}
           >
-            <Box padding="xxsmall">
+            <Box paddingY="xxsmall">
               {items.map((item, i) => {
                 if (isDivider(item)) {
                   dividerCount++;
@@ -311,8 +315,8 @@ export const MenuRenderer = ({
             </Box>
             <Overlay
               boxShadow="borderStandard"
-              borderRadius="standard"
-              className={styles.showOverlay}
+              borderRadius={borderRadius}
+              visible
             />
           </Box>
         </Box>

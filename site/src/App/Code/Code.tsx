@@ -5,14 +5,15 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { useStyles } from 'react-treat';
 import copy from 'copy-to-clipboard';
+import dedent from 'dedent';
 import memoize from 'lodash/memoize';
-import reactElementToJSXString from 'react-element-to-jsx-string';
 import prettier from 'prettier/standalone';
+import reactElementToJsxString from 'react-element-to-jsx-string';
 import typescriptParser from 'prettier/parser-typescript';
-import { createUrl } from 'sku/playroom/utils';
+import { createUrl } from 'playroom/utils';
 import { useConfig } from '../ConfigContext';
+import { Source } from '../../../../lib/utils/source.macro';
 import {
   Box,
   Stack,
@@ -24,27 +25,48 @@ import {
 } from '../../../../lib/components';
 import { BoxProps } from '../../../../lib/components/Box/Box';
 import { FieldOverlay } from '../../../../lib/components/private/FieldOverlay/FieldOverlay';
-import { useBoxStyles } from '../../../../lib/components/Box/useBoxStyles';
 import { hideFocusRingsClassName } from '../../../../lib/components/private/hideFocusRings/hideFocusRings';
 import { CopyIcon } from './CopyIcon';
 import { PlayIcon } from './PlayIcon';
-import * as styleRefs from './Code.treat';
+import * as styles from './Code.css';
 
 // @ts-ignore
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import editorTheme from './editorTheme';
 import { ThemedExample } from '../ThemeSetting';
+import usePlayroomScope from '../../../../lib/playroom/useScope';
+import { PlayroomStateProvider } from '../../../../lib/playroom/playroomState';
 
-const formatSnippet = memoize(
-  (snippet) =>
-    prettier
-      .format(snippet, {
-        parser: 'typescript',
-        plugins: [typescriptParser],
-        semi: false,
-      })
-      .replace(/^;/, ''), // Remove leading semicolons from JSX
-);
+export const formatSnippet = memoize((snippet: string) => {
+  // Remove id props from code snippets since they're not needed in Playroom
+  const cleanedSnippet = snippet
+    .replace(/id={id}/g, '')
+    .replace(/id={`\${id}_[0-9a-zA-Z]+`}/g, '');
+
+  const formattedSnippet = prettier
+    .format(cleanedSnippet, {
+      parser: 'typescript',
+      plugins: [typescriptParser],
+      semi: false,
+    })
+    .replace(/^;/, '') // Remove leading semicolons from JSX
+    .replace(/[\r\n]+$/, ''); // Remove trailing newline
+
+  const lines = formattedSnippet.split('\n');
+
+  const firstLine = lines[0];
+  const lastLine = lines[lines.length - 1];
+
+  if (
+    (firstLine === '<>' && lastLine === '</>') ||
+    (firstLine === '<Fragment>' && lastLine === '</Fragment>') ||
+    (firstLine === '<React.Fragment>' && lastLine === '</React.Fragment>')
+  ) {
+    return dedent(lines.slice(1, lines.length - 1).join('\n'));
+  }
+
+  return formattedSnippet;
+});
 
 interface CodeButtonProps extends BoxProps {
   successLabel?: string;
@@ -58,7 +80,6 @@ export const CodeButton = ({
   successLabel,
   ...restProps
 }: CodeButtonProps) => {
-  const styles = useStyles(styleRefs);
   const [showSuccess, setShowSuccess] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -99,8 +120,9 @@ export const CodeButton = ({
   ) : (
     <Box
       component={component}
+      display="block"
       cursor="pointer"
-      borderRadius="standard"
+      borderRadius="large"
       paddingY="xxsmall"
       paddingX="xsmall"
       position="relative"
@@ -135,63 +157,91 @@ export const CodeBlock = ({
 }: {
   children: string;
   language?: string;
-}) => {
-  const styles = useStyles(styleRefs);
-
-  return (
-    <Box
-      position="relative"
-      padding="xxsmall"
-      borderRadius="standard"
-      className={styles.code}
-    >
-      <Box padding={['medium', 'medium', 'large']}>
-        <Text size="small" component="pre" baseline={false}>
-          <SyntaxHighlighter language={language} style={editorTheme}>
-            {children}
-          </SyntaxHighlighter>
-        </Text>
-      </Box>
+}) => (
+  <Box
+    position="relative"
+    padding="xxsmall"
+    borderRadius="large"
+    className={styles.code}
+  >
+    <Box padding={['medium', 'medium', 'large']}>
+      <Text size="small" component="pre" baseline={false}>
+        <SyntaxHighlighter language={language} style={editorTheme}>
+          {children}
+        </SyntaxHighlighter>
+      </Text>
     </Box>
+  </Box>
+);
+
+const isSource = function <Value>(input: any): input is Source<Value> {
+  return (
+    typeof input === 'object' &&
+    input !== null &&
+    'code' in input &&
+    'value' in input
   );
+};
+
+const parseInput = (
+  input: ReactChild | Source<ReactChild>,
+): Source<ReactChild> => {
+  if (typeof input === 'string') {
+    const code = formatSnippet(input);
+
+    return {
+      code,
+      value: code,
+    };
+  }
+
+  return isSource(input)
+    ? {
+        code: formatSnippet(input.code),
+        value: input.value,
+      }
+    : {
+        code: formatSnippet(
+          reactElementToJsxString(input, {
+            useBooleanShorthandSyntax: false,
+            showDefaultProps: false,
+            showFunctions: false,
+            filterProps: ['onChange', 'onBlur', 'onFocus'],
+          }),
+        ),
+        value: input,
+      };
 };
 
 interface CodeProps {
   playroom?: boolean;
   collapsedByDefault?: boolean;
-  children: ReactChild;
+  children:
+    | ReactChild
+    | Source<ReactChild>
+    | ((
+        playroomScope: ReturnType<typeof usePlayroomScope>,
+      ) => Source<ReactChild>);
 }
-export default ({
+const Code = ({
   playroom = true,
   collapsedByDefault = false,
   children,
 }: CodeProps) => {
   const [hideCode, setHideCode] = useState(collapsedByDefault);
   const { playroomUrl } = useConfig();
-
-  const snippet = formatSnippet(
-    typeof children === 'string'
-      ? children
-      : reactElementToJSXString(children, {
-          useBooleanShorthandSyntax: false,
-          showDefaultProps: false,
-          showFunctions: false,
-          filterProps: ['onChange', 'onBlur', 'onFocus'],
-        }),
+  const playroomScope = usePlayroomScope();
+  const { code, value } = parseInput(
+    typeof children === 'function' ? children(playroomScope) : children,
   );
 
   return (
-    <Box
-      position="relative"
-      style={{
-        maxWidth: 864,
-      }}
-    >
+    <Box position="relative">
       <Stack space="xsmall">
         {typeof children !== 'string' && (
-          <ThemedExample background="body">{children}</ThemedExample>
+          <ThemedExample background="body">{value}</ThemedExample>
         )}
-        {hideCode ? null : <CodeBlock>{snippet}</CodeBlock>}
+        {hideCode ? null : <CodeBlock>{code}</CodeBlock>}
         <Inline space="xxsmall" align="right">
           {collapsedByDefault ? (
             <CodeButton onClick={() => setHideCode(!hideCode)}>
@@ -207,22 +257,18 @@ export default ({
           ) : null}
           {hideCode ? null : (
             <CodeButton
-              onClick={() => copy(snippet)}
+              onClick={() => copy(code)}
               title="Copy code to clipboard"
               successLabel="Copied!"
             >
               <CopyIcon /> Copy
             </CodeButton>
           )}
-          {/^import/m.test(snippet) || !playroom ? null : (
+          {/^import/m.test(code) || !playroom ? null : (
             <CodeButton
               component="a"
               target="_blank"
-              href={createUrl({ baseUrl: playroomUrl, code: snippet })}
-              className={useBoxStyles({
-                component: 'a',
-                display: 'block',
-              })}
+              href={createUrl({ baseUrl: playroomUrl, code })}
               title="Open in Playroom"
             >
               <PlayIcon />{' '}
@@ -237,3 +283,9 @@ export default ({
     </Box>
   );
 };
+
+export default (props: CodeProps) => (
+  <PlayroomStateProvider>
+    <Code {...props} />
+  </PlayroomStateProvider>
+);

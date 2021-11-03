@@ -1,7 +1,12 @@
 import React, { forwardRef, Fragment, AllHTMLAttributes, useRef } from 'react';
 import { Box } from '../Box/Box';
-import { Field, FieldProps } from '../private/Field/Field';
+import {
+  Field,
+  FieldBaseProps,
+  FieldLabelVariant,
+} from '../private/Field/Field';
 import { ClearField } from '../private/Field/ClearField';
+import { getCharacterLimitStatus } from '../private/Field/getCharacterLimitStatus';
 
 const validTypes = {
   text: 'text',
@@ -14,8 +19,11 @@ const validTypes = {
 };
 
 type InputProps = AllHTMLAttributes<HTMLInputElement>;
-export interface TextFieldProps
-  extends Omit<FieldProps, 'labelId' | 'secondaryMessage'> {
+
+export type TextFieldBaseProps = Omit<
+  FieldBaseProps,
+  'value' | 'labelId' | 'secondaryMessage'
+> & {
   value: NonNullable<InputProps['value']>;
   type?: keyof typeof validTypes;
   onChange: NonNullable<InputProps['onChange']>;
@@ -23,9 +31,12 @@ export interface TextFieldProps
   onFocus?: InputProps['onFocus'];
   onClear?: () => void;
   placeholder?: InputProps['placeholder'];
-}
+  characterLimit?: number;
+};
+export type TextFieldLabelProps = FieldLabelVariant;
+export type TextFieldProps = TextFieldBaseProps & TextFieldLabelProps;
 
-const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
+export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
   (
     {
       value,
@@ -35,6 +46,7 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
       onFocus,
       onClear,
       placeholder,
+      characterLimit,
       ...restProps
     },
     forwardedRef,
@@ -46,6 +58,7 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
 
     const clearable = Boolean(
       typeof onClear !== 'undefined' &&
+        !restProps.disabled &&
         typeof value === 'string' &&
         value.length > 0,
     );
@@ -55,7 +68,14 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
         {...restProps}
         value={value}
         labelId={undefined}
-        secondaryMessage={null}
+        secondaryMessage={
+          characterLimit
+            ? getCharacterLimitStatus({
+                value,
+                characterLimit,
+              })
+            : null
+        }
         secondaryIcon={
           onClear ? (
             <ClearField
@@ -66,9 +86,10 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
           ) : null
         }
       >
-        {(overlays, fieldProps, icon, secondaryIcon) => (
+        {(overlays, fieldProps, icon, secondaryIcon, prefix) => (
           <Fragment>
             {icon}
+            {prefix}
             <Box
               component="input"
               type={validTypes[type]}
@@ -76,7 +97,7 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
               onChange={onChange}
               onFocus={onFocus}
               onBlur={onBlur}
-              placeholder={placeholder}
+              placeholder={!restProps.disabled ? placeholder : undefined}
               {...fieldProps}
               ref={inputRef}
             />
@@ -89,6 +110,4 @@ const NamedTextField = forwardRef<HTMLInputElement, TextFieldProps>(
   },
 );
 
-NamedTextField.displayName = 'TextField';
-
-export const TextField = NamedTextField;
+TextField.displayName = 'TextField';

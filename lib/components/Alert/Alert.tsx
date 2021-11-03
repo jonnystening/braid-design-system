@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { useStyles } from 'sku/react-treat';
 import { Box, BoxProps } from '../Box/Box';
 import {
   IconInfo,
@@ -14,34 +13,39 @@ import { Columns } from '../Columns/Columns';
 import { Column } from '../Column/Column';
 import { Overlay } from '../private/Overlay/Overlay';
 import { useBackground } from '../Box/BackgroundContext';
-import { useTextAlignedToIcon } from '../../hooks/useTextAlignedToIcon/useTextAlignedToIcon';
-import * as styleRefs from './Alert.treat';
+import { textAlignedToIcon } from '../../css/textAlignedToIcon.css';
+import buildDataAttributes, {
+  DataAttributeMap,
+} from '../private/buildDataAttributes';
 
 type Tone = 'promote' | 'info' | 'positive' | 'caution' | 'critical';
 
 type CloseProps = AllOrNone<{ onClose: () => void; closeLabel: string }>;
 
+const borderRadius = 'large';
+
 export type AlertProps = {
   tone?: Tone;
   children: ReactNode;
+  data?: DataAttributeMap;
   id?: string;
 } & CloseProps;
 
-const backgroundForTone = {
+const backgroundForTone: Record<Tone, BoxProps['background']> = {
   promote: 'promoteLight',
   info: 'infoLight',
   positive: 'positiveLight',
   caution: 'cautionLight',
   critical: 'criticalLight',
-} as Record<Tone, BoxProps['background']>;
+};
 
-const borderForTone = {
-  promote: 'borderPromote',
-  info: 'borderInfo',
-  positive: 'borderPositive',
-  caution: 'borderCaution',
-  critical: 'borderCritical',
-} as Record<Tone, BoxProps['boxShadow']>;
+const borderForTone: Record<Tone, BoxProps['boxShadow']> = {
+  promote: 'borderPromoteLight',
+  info: 'borderInfoLight',
+  positive: 'borderPositiveLight',
+  caution: 'borderCautionLight',
+  critical: 'borderCriticalLight',
+};
 
 const icons = {
   positive: IconPositive,
@@ -58,9 +62,9 @@ export const Alert = ({
   children,
   id,
   closeLabel = 'Close',
+  data,
   onClose,
 }: AlertProps) => {
-  const styles = useStyles(styleRefs);
   const parentBackground = useBackground();
   const Icon = icons[tone];
 
@@ -69,11 +73,12 @@ export const Alert = ({
       id={id}
       background={backgroundForTone[tone]}
       padding="medium"
-      borderRadius="standard"
+      borderRadius={borderRadius}
       position="relative"
       overflow="hidden"
       role="alert"
       aria-live="polite"
+      {...(data ? buildDataAttributes(data) : undefined)}
     >
       <Box paddingLeft={highlightBarSize}>
         <Columns space="small">
@@ -81,7 +86,7 @@ export const Alert = ({
             <Icon tone={tone} />
           </Column>
           <Column>
-            <Box className={useTextAlignedToIcon('standard')}>{children}</Box>
+            <Box className={textAlignedToIcon.standard}>{children}</Box>
           </Column>
           {onClose ? (
             <Column width="content">
@@ -96,13 +101,9 @@ export const Alert = ({
       </Box>
       {parentBackground !== 'card' && (
         <Overlay
-          borderRadius="standard"
+          borderRadius={borderRadius}
           boxShadow={borderForTone[tone]}
           visible
-          className={{
-            [styles.toneBorder]: tone !== 'caution',
-            [styles.cautionBorder]: tone === 'caution',
-          }}
         />
       )}
       <Box

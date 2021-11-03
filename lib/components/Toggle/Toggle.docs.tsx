@@ -1,104 +1,92 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { Toggle, Box } from '../';
-import { Toggle as PlayroomToggle } from '../../playroom/components';
-
-const handler = () => {
-  /* no op for docs examples */
-};
+import { Toggle } from '../';
+import { Text } from '../Text/Text';
+import { Strong } from '../Strong/Strong';
+import source from '../../utils/source.macro';
+import { Stack } from '../Stack/Stack';
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  examples: [
+  Example: ({ id, getState, toggleState }) =>
+    source(
+      <Toggle
+        label="Label"
+        id={id}
+        on={getState('toggle')}
+        onChange={() => toggleState('toggle')}
+      />,
+    ),
+  alternatives: [
     {
-      label: 'Toggle off',
-      Example: ({ id }) => (
-        <Toggle on={false} label="Toggled off" id={id} onChange={handler} />
-      ),
-    },
-    {
-      label: 'Toggle on',
-      Example: ({ id }) => (
-        <Toggle on={true} label="Toggled on" id={id} onChange={handler} />
-      ),
-    },
-    {
-      label: 'Right aligned',
-      Container: ({ children }) => (
-        <div style={{ maxWidth: '300px' }}>{children}</div>
-      ),
-      Example: ({ id }) => (
-        <Toggle
-          on={true}
-          align="right"
-          label="Aligned right"
-          id={id}
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'Justified',
-      Container: ({ children }) => (
-        <div style={{ maxWidth: '300px' }}>{children}</div>
-      ),
-      Example: ({ id }) => (
-        <Toggle
-          on={true}
-          align="justify"
-          label="Justified"
-          id={id}
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label:
-        'Test: Should have space between the label and the toggle when justified in a flex container',
-      docsSite: false,
-      gallery: false,
-      Container: ({ children }) => (
-        <div style={{ maxWidth: '300px' }}>{children}</div>
-      ),
-      Example: ({ id }) => (
-        <Box display="flex">
-          <Toggle
-            on={true}
-            align="justify"
-            label="Justified"
-            id={id}
-            onChange={handler}
-          />
-        </Box>
-      ),
+      name: 'Checkbox',
+      description: 'For selections part of a form submission.',
     },
   ],
-  snippets: [
+  additional: [
     {
-      name: 'On',
-      code: <PlayroomToggle label="Toggled on" on />,
+      label: 'Alignment',
+      description: (
+        <Text>
+          Toggles can be aligned via the <Strong>align</Strong> prop.
+        </Text>
+      ),
+      Example: ({ id, getState, toggleState }) =>
+        source(
+          <Stack space="large" dividers>
+            <Toggle
+              label="Left"
+              id={`${id}_1`}
+              on={getState('toggle1')}
+              onChange={() => toggleState('toggle1')}
+              align="left"
+            />
+            <Toggle
+              label="Justify"
+              id={`${id}_2`}
+              on={getState('toggle2')}
+              onChange={() => toggleState('toggle2')}
+              align="justify"
+            />
+            <Toggle
+              label="Right"
+              id={`${id}_3`}
+              on={getState('toggle3')}
+              onChange={() => toggleState('toggle3')}
+              align="right"
+            />
+          </Stack>,
+        ),
     },
     {
-      name: 'Off',
-      code: <PlayroomToggle label="Toggled off" on={false} />,
-    },
-    {
-      name: 'On, Aligned right',
-      code: <PlayroomToggle label="Toggled on" align="right" on />,
-    },
-    {
-      name: 'Off, Aligned right',
-      code: <PlayroomToggle label="Toggled off" align="right" on={false} />,
-    },
-    {
-      name: 'On, Justified',
-      code: <PlayroomToggle label="Toggled on" align="justify" on />,
-    },
-    {
-      name: 'Off, Justified',
-      code: <PlayroomToggle label="Toggled off" align="justify" on={false} />,
+      label: 'Sizes',
+      description: (
+        <Text>
+          You can customise the size of the toggle via the <Strong>size</Strong>{' '}
+          prop, which accepts either <Strong>standard</Strong> or{' '}
+          <Strong>small.</Strong>
+        </Text>
+      ),
+      Example: ({ id, getState, toggleState }) =>
+        source(
+          <Stack space="medium">
+            <Toggle
+              id={`${id}_standard`}
+              label="Standard"
+              on={getState('two')}
+              onChange={() => toggleState('two')}
+              size="standard"
+            />
+            <Toggle
+              id={`${id}_small`}
+              label="Small"
+              on={getState('one')}
+              onChange={() => toggleState('one')}
+              size="small"
+            />
+          </Stack>,
+        ),
     },
   ],
 };

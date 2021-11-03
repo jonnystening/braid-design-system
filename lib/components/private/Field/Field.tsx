@@ -1,6 +1,6 @@
+import assert from 'assert';
 import React, { Fragment, ReactNode, AllHTMLAttributes } from 'react';
-import { useStyles } from 'sku/react-treat';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { Box, BoxProps } from '../../Box/Box';
 import { useBackgroundLightness } from '../../Box/BackgroundContext';
 import { FieldLabel, FieldLabelProps } from '../../FieldLabel/FieldLabel';
@@ -11,23 +11,40 @@ import {
 import { FieldOverlay } from '../FieldOverlay/FieldOverlay';
 import { Stack } from '../../Stack/Stack';
 import buildDataAttributes, { DataAttributeMap } from '../buildDataAttributes';
-import { useText, useTouchableSpace } from '../../../hooks/typography';
+import { useText, touchableText } from '../../../hooks/typography';
 import { Text } from '../../Text/Text';
 import { mergeIds } from '../mergeIds';
-import * as styleRefs from './Field.treat';
+import * as styles from './Field.css';
 
 type FormElementProps = AllHTMLAttributes<HTMLFormElement>;
-export interface FieldProps {
+
+export type FieldLabelVariant =
+  | {
+      'aria-labelledby': string;
+      secondaryLabel?: never;
+      tertiaryLabel?: never;
+      description?: never;
+    }
+  | {
+      'aria-label': string;
+      secondaryLabel?: never;
+      tertiaryLabel?: never;
+      description?: never;
+    }
+  | {
+      label: FieldLabelProps['label'];
+      secondaryLabel?: FieldLabelProps['secondaryLabel'];
+      tertiaryLabel?: FieldLabelProps['tertiaryLabel'];
+      description?: FieldLabelProps['description'];
+    };
+
+export type FieldBaseProps = {
   id: NonNullable<FormElementProps['id']>;
   value?: FormElementProps['value'];
   labelId?: string;
   name?: FormElementProps['name'];
   disabled?: FormElementProps['disabled'];
   autoComplete?: FormElementProps['autoComplete'];
-  label?: FieldLabelProps['label'];
-  secondaryLabel?: FieldLabelProps['secondaryLabel'];
-  tertiaryLabel?: FieldLabelProps['tertiaryLabel'];
-  description?: FieldLabelProps['description'];
   message?: FieldMessageProps['message'];
   secondaryMessage?: FieldMessageProps['secondaryMessage'];
   reserveMessageSpace?: FieldMessageProps['reserveMessageSpace'];
@@ -36,8 +53,9 @@ export interface FieldProps {
   data?: DataAttributeMap;
   autoFocus?: boolean;
   icon?: ReactNode;
+  prefix?: string;
   required?: boolean;
-}
+};
 
 type PassthroughProps =
   | 'id'
@@ -45,7 +63,7 @@ type PassthroughProps =
   | 'disabled'
   | 'autoComplete'
   | 'autoFocus';
-interface FieldRenderProps extends Pick<FieldProps, PassthroughProps> {
+interface FieldRenderProps extends Pick<FieldBaseProps, PassthroughProps> {
   background: BoxProps['background'];
   borderRadius: BoxProps['borderRadius'];
   width: BoxProps['width'];
@@ -54,18 +72,23 @@ interface FieldRenderProps extends Pick<FieldProps, PassthroughProps> {
   outline: BoxProps['outline'];
   'aria-describedby'?: string;
   'aria-required'?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
   className: string;
 }
 
-interface InternalFieldProps extends FieldProps {
-  secondaryIcon?: ReactNode;
-  children(
-    overlays: ReactNode,
-    props: FieldRenderProps,
-    icon: ReactNode,
-    secondaryIcon: ReactNode,
-  ): ReactNode;
-}
+type InternalFieldProps = FieldBaseProps &
+  FieldLabelVariant & {
+    secondaryIcon?: ReactNode;
+    alwaysShowSecondaryIcon?: boolean;
+    children(
+      overlays: ReactNode,
+      props: FieldRenderProps,
+      icon: ReactNode,
+      secondaryIcon: ReactNode,
+      prefix: ReactNode,
+    ): ReactNode;
+  };
 
 export const Field = ({
   id,
@@ -74,10 +97,6 @@ export const Field = ({
   name,
   disabled,
   autoComplete,
-  label,
-  secondaryLabel,
-  tertiaryLabel,
-  description,
   children,
   message,
   secondaryMessage,
@@ -86,19 +105,31 @@ export const Field = ({
   'aria-describedby': ariaDescribedBy,
   data,
   secondaryIcon,
+  alwaysShowSecondaryIcon = false,
   autoFocus,
   icon,
+  prefix,
   required,
+  ...restProps
 }: InternalFieldProps) => {
-  const styles = useStyles(styleRefs);
+  assert(
+    prefix === undefined || typeof prefix === 'string',
+    'Prefix must be a string',
+  );
 
   const messageId = `${id}-message`;
-  const descriptionId = description ? `${id}-description` : undefined;
+  const descriptionId =
+    'description' in restProps && restProps.description
+      ? `${id}-description`
+      : undefined;
   const fieldBackground = disabled ? 'inputDisabled' : 'input';
   const showFieldBorder =
     useBackgroundLightness() === 'light' && (tone !== 'critical' || disabled);
 
   const hasValue = typeof value === 'string' ? value.length > 0 : value != null;
+  const hasVisualLabel = 'label' in restProps;
+  const showSecondaryIcon =
+    alwaysShowSecondaryIcon || (secondaryIcon && hasValue);
 
   const overlays = (
     <Fragment>
@@ -115,16 +146,25 @@ export const Field = ({
     </Fragment>
   );
 
+  const fieldPadding = 'small';
+
   return (
     <Stack space="xsmall">
-      {label ? (
+      {hasVisualLabel ? (
         <FieldLabel
           id={labelId}
           htmlFor={id}
-          label={label}
-          secondaryLabel={secondaryLabel}
-          tertiaryLabel={tertiaryLabel}
-          description={description}
+          label={'label' in restProps ? restProps.label : undefined}
+          disabled={disabled}
+          secondaryLabel={
+            'secondaryLabel' in restProps ? restProps.secondaryLabel : undefined
+          }
+          tertiaryLabel={
+            'tertiaryLabel' in restProps ? restProps.tertiaryLabel : undefined
+          }
+          description={
+            'description' in restProps ? restProps.description : undefined
+          }
           descriptionId={descriptionId}
         />
       ) : null}
@@ -133,7 +173,8 @@ export const Field = ({
         position="relative"
         background={fieldBackground}
         borderRadius="standard"
-        className={secondaryIcon ? styles.secondaryIconSpace : undefined}
+        display="flex"
+        className={showSecondaryIcon ? styles.secondaryIconSpace : undefined}
       >
         {children(
           overlays,
@@ -142,31 +183,37 @@ export const Field = ({
             name,
             background: fieldBackground,
             width: 'full',
-            paddingLeft: 'small',
-            paddingRight: secondaryIcon ? undefined : 'small',
+            paddingLeft: fieldPadding,
+            paddingRight: showSecondaryIcon ? undefined : fieldPadding,
             borderRadius: 'standard',
             outline: 'none',
             'aria-describedby': mergeIds(
               ariaDescribedBy,
-              messageId,
+              message || secondaryMessage ? messageId : undefined,
               descriptionId,
             ),
             'aria-required': required,
+            ...('aria-label' in restProps
+              ? { 'aria-label': restProps['aria-label'] }
+              : {}),
+            ...('aria-labelledby' in restProps
+              ? { 'aria-labelledby': restProps['aria-labelledby'] }
+              : {}),
             disabled,
             autoComplete,
             autoFocus,
             ...buildDataAttributes(data),
-            className: classnames(
+            className: clsx(
               styles.field,
               styles.placeholderColor,
               useText({
                 backgroundContext: fieldBackground,
-                tone: hasValue ? 'neutral' : 'secondary',
+                tone: hasValue && !disabled ? 'neutral' : 'secondary',
                 size: 'standard',
                 baseline: false,
               }),
-              useTouchableSpace('standard'),
-              icon ? styles.iconSpace : null,
+              touchableText.standard,
+              icon && !prefix ? styles.iconSpace : null,
             ),
           },
           icon ? (
@@ -181,11 +228,14 @@ export const Field = ({
               top={0}
               left={0}
             >
-              <Text baseline={false}>{icon}</Text>
+              <Text baseline={false} tone={prefix ? 'secondary' : undefined}>
+                {icon}
+              </Text>
             </Box>
           ) : null,
           secondaryIcon ? (
             <Box
+              component="span"
               position="absolute"
               width="touchable"
               height="touchable"
@@ -196,6 +246,25 @@ export const Field = ({
               right={0}
             >
               {secondaryIcon}
+            </Box>
+          ) : null,
+          prefix ? (
+            <Box
+              component="label"
+              htmlFor={id}
+              display="flex"
+              alignItems="center"
+              paddingLeft={icon ? undefined : fieldPadding}
+              height="touchable"
+              flexShrink={0}
+              className={icon ? styles.iconSpace : null}
+            >
+              <Text tone="secondary" baseline={false}>
+                {prefix}
+              </Text>
+              <Box padding={fieldPadding} paddingRight="none" height="full">
+                <Box height="full" className={styles.verticalDivider} />
+              </Box>
             </Box>
           ) : null,
         )}

@@ -1,3 +1,6 @@
+import assert from 'assert';
+import clsx from 'clsx';
+import dedent from 'dedent';
 import React, {
   createContext,
   useContext,
@@ -7,108 +10,265 @@ import React, {
   CSSProperties,
   ComponentType,
 } from 'react';
-import { useStyles } from 'sku/react-treat';
-import { useBoxStyles, UseBoxStylesProps } from '../Box/useBoxStyles';
+import { Atoms, atoms } from '../../css/atoms/atoms';
 import {
   BackgroundProvider,
+  BackgroundVariant,
   useBackgroundLightness,
 } from '../Box/BackgroundContext';
-import { Box } from '../Box/Box';
+import { Box, BoxProps } from '../Box/Box';
 import { Text, TextProps } from '../Text/Text';
 import { FieldOverlay } from '../private/FieldOverlay/FieldOverlay';
-import { useTouchableSpace } from '../../hooks/typography';
-import * as styleRefs from './ButtonRenderer.treat';
+import { touchableText } from '../../hooks/typography';
+import { virtualTouchable } from '../private/touchable/virtualTouchable';
+import ActionsContext from '../Actions/ActionsContext';
+import * as styles from './ButtonRenderer.css';
 
-type ButtonWeight = 'weak' | 'regular' | 'strong';
-type ButtonVariant = 'strong' | 'regular' | 'weak' | 'weakInverted';
-const buttonVariants: Record<
+export const buttonVariants = [
+  'solid',
+  'ghost',
+  'soft',
+  'transparent',
+] as const;
+
+export const buttonWeights = ['weak', 'regular', 'strong'] as const;
+
+const borderRadius = 'large';
+
+type ButtonSize = 'standard' | 'small';
+type ButtonTone = 'brandAccent' | 'critical';
+type ButtonWeight = typeof buttonWeights[number];
+type ButtonVariant = typeof buttonVariants[number];
+type ButtonStyles = {
+  textTone: TextProps['tone'];
+  backgroundContext: BackgroundVariant | undefined;
+  backgroundClassName: BoxProps['className'];
+  backgroundHoverClassName: BoxProps['className'];
+  backgroundActiveClassName: BoxProps['className'];
+  boxShadow: Atoms['boxShadow'];
+};
+
+const buttonVariantStyles: Record<
   ButtonVariant,
-  {
-    textTone: TextProps['tone'];
-    background: UseBoxStylesProps['background'];
-    backgroundHover: UseBoxStylesProps['background'];
-    backgroundActive: UseBoxStylesProps['background'];
-    boxShadow: UseBoxStylesProps['boxShadow'];
-  }
+  Record<'default' | ButtonTone, ButtonStyles>
 > = {
-  strong: {
-    textTone: undefined,
-    background: 'brandAccent',
-    backgroundHover: 'brandAccentHover',
-    backgroundActive: 'brandAccentActive',
-    boxShadow: undefined,
+  solid: {
+    default: {
+      textTone: undefined,
+      backgroundContext: 'formAccent',
+      backgroundClassName: atoms({ background: 'formAccent' }),
+      backgroundHoverClassName: atoms({ background: 'formAccentHover' }),
+      backgroundActiveClassName: atoms({ background: 'formAccentActive' }),
+      boxShadow: undefined,
+    },
+    brandAccent: {
+      textTone: undefined,
+      backgroundContext: 'brandAccent',
+      backgroundClassName: atoms({ background: 'brandAccent' }),
+      backgroundHoverClassName: atoms({ background: 'brandAccentHover' }),
+      backgroundActiveClassName: atoms({ background: 'brandAccentActive' }),
+      boxShadow: undefined,
+    },
+    critical: {
+      textTone: undefined,
+      backgroundContext: 'critical',
+      backgroundClassName: atoms({ background: 'critical' }),
+      backgroundHoverClassName: atoms({ background: 'criticalHover' }),
+      backgroundActiveClassName: atoms({ background: 'criticalActive' }),
+      boxShadow: undefined,
+    },
   },
-  regular: {
-    textTone: undefined,
-    background: 'formAccent',
-    backgroundHover: 'formAccentHover',
-    backgroundActive: 'formAccentActive',
-    boxShadow: undefined,
+  ghost: {
+    default: {
+      textTone: 'formAccent',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'formAccentSoft' }),
+      backgroundActiveClassName: atoms({
+        background: 'formAccentSoftActive',
+      }),
+      boxShadow: 'borderFormAccentLarge',
+    },
+    brandAccent: {
+      textTone: 'brandAccent',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'brandAccentSoft' }),
+      backgroundActiveClassName: atoms({
+        background: 'brandAccentSoftActive',
+      }),
+      boxShadow: 'borderBrandAccentLarge',
+    },
+    critical: {
+      textTone: 'critical',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'criticalSoft' }),
+      backgroundActiveClassName: atoms({ background: 'criticalSoftActive' }),
+      boxShadow: 'borderCriticalLarge',
+    },
   },
-  weak: {
-    textTone: 'formAccent',
-    background: undefined,
-    backgroundHover: 'formAccentHover',
-    backgroundActive: 'formAccentActive',
-    boxShadow: 'borderFormAccentLarge',
+  soft: {
+    default: {
+      textTone: 'formAccent',
+      backgroundContext: 'formAccentSoft',
+      backgroundClassName: atoms({ background: 'formAccentSoft' }),
+      backgroundHoverClassName: atoms({ background: 'formAccentSoftHover' }),
+      backgroundActiveClassName: atoms({
+        background: 'formAccentSoftActive',
+      }),
+      boxShadow: undefined,
+    },
+    brandAccent: {
+      textTone: 'brandAccent',
+      backgroundContext: 'brandAccentSoft',
+      backgroundClassName: atoms({ background: 'brandAccentSoft' }),
+      backgroundHoverClassName: atoms({
+        background: 'brandAccentSoftHover',
+      }),
+      backgroundActiveClassName: atoms({
+        background: 'brandAccentSoftActive',
+      }),
+      boxShadow: undefined,
+    },
+    critical: {
+      textTone: 'critical',
+      backgroundContext: 'criticalSoft',
+      backgroundClassName: atoms({ background: 'criticalSoft' }),
+      backgroundHoverClassName: atoms({ background: 'criticalSoftHover' }),
+      backgroundActiveClassName: atoms({ background: 'criticalSoftActive' }),
+      boxShadow: undefined,
+    },
   },
-  weakInverted: {
-    textTone: undefined,
-    background: undefined,
-    backgroundHover: 'card',
-    backgroundActive: 'card',
-    boxShadow: 'borderStandardInvertedLarge',
+  transparent: {
+    default: {
+      textTone: 'formAccent',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'formAccentSoft' }),
+      backgroundActiveClassName: atoms({
+        background: 'formAccentSoftActive',
+      }),
+      boxShadow: undefined,
+    },
+    brandAccent: {
+      textTone: 'brandAccent',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'brandAccentSoft' }),
+      backgroundActiveClassName: atoms({
+        background: 'brandAccentSoftActive',
+      }),
+      boxShadow: undefined,
+    },
+    critical: {
+      textTone: 'critical',
+      backgroundContext: undefined,
+      backgroundClassName: undefined,
+      backgroundHoverClassName: atoms({ background: 'criticalSoft' }),
+      backgroundActiveClassName: atoms({ background: 'criticalSoftActive' }),
+      boxShadow: undefined,
+    },
   },
 };
 
-const useButtonVariant = (weight: ButtonWeight) => {
-  const variantName =
-    useBackgroundLightness() === 'dark' && weight === 'weak'
-      ? 'weakInverted'
-      : weight;
+const useButtonVariant = (variant: ButtonVariant, tone?: ButtonTone) => {
+  if (useBackgroundLightness() === 'dark' && !tone && variant !== 'solid') {
+    return {
+      textTone: undefined,
+      backgroundClassName:
+        variant === 'soft' ? styles.invertedBackgrounds.soft : undefined,
+      backgroundHoverClassName: styles.invertedBackgrounds.hover,
+      backgroundActiveClassName: styles.invertedBackgrounds.active,
+      boxShadow:
+        variant === 'ghost' ? 'borderStandardInvertedLarge' : undefined,
+    } as ButtonStyles;
+  }
 
-  return buttonVariants[variantName];
+  return (
+    buttonVariantStyles[variant][tone ?? 'default'] ??
+    buttonVariantStyles[variant].default
+  );
 };
 
 const ButtonChildrenContext = createContext<{
-  weight: ButtonWeight;
+  size: ButtonSize;
+  tone: ButtonTone | undefined;
+  variant: ButtonVariant;
   loading: boolean;
-}>({ weight: 'regular', loading: false });
+}>({
+  size: 'standard',
+  variant: 'solid',
+  tone: undefined,
+  loading: false,
+});
 
 interface ButtonChildrenProps {
   children: ReactNode;
 }
 
 const ButtonChildren = ({ children }: ButtonChildrenProps) => {
-  const styles = useStyles(styleRefs);
-  const { weight, loading } = useContext(ButtonChildrenContext);
-  const buttonVariant = useButtonVariant(weight);
+  const { size, variant, tone, loading } = useContext(ButtonChildrenContext);
+  const buttonVariant = useButtonVariant(variant, tone);
 
   return (
     <Fragment>
       <FieldOverlay
+        borderRadius={borderRadius}
+        className={buttonVariant.backgroundClassName}
+        visible={Boolean(buttonVariant.backgroundClassName)}
+      />
+      <FieldOverlay
+        borderRadius={borderRadius}
         variant="focus"
         onlyVisibleForKeyboardNavigation
         className={styles.focusOverlay}
       />
       <FieldOverlay
-        background={buttonVariant.backgroundHover}
-        className={styles.hoverOverlay}
+        borderRadius={borderRadius}
+        className={[
+          buttonVariant.backgroundHoverClassName,
+          styles.hoverOverlay,
+        ]}
       />
       <FieldOverlay
-        background={buttonVariant.backgroundActive}
-        className={styles.activeOverlay}
+        borderRadius={borderRadius}
+        className={[
+          buttonVariant.backgroundActiveClassName,
+          styles.activeOverlay,
+        ]}
       />
+      {buttonVariant.boxShadow ? (
+        <Box
+          boxShadow={buttonVariant.boxShadow}
+          borderRadius={borderRadius}
+          position="absolute"
+          top={0}
+          bottom={0}
+          left={0}
+          right={0}
+        />
+      ) : null}
       <Box
         position="relative"
-        paddingX="gutter"
+        paddingX={
+          size === 'small' || variant === 'transparent' ? 'small' : 'medium'
+        }
+        paddingY={
+          size === 'small' ? styles.constants.smallButtonPaddingSize : undefined
+        }
         pointerEvents="none"
         textAlign="center"
         overflow="hidden"
         userSelect="none"
-        className={useTouchableSpace('standard')}
+        className={size === 'standard' ? touchableText.standard : undefined}
       >
-        <Text baseline={false} weight="medium" tone={buttonVariant.textTone}>
+        <Text
+          baseline={false}
+          weight="medium"
+          tone={buttonVariant.textTone}
+          size={size === 'small' ? 'small' : undefined}
+        >
           {children}
           {loading ? (
             <Box aria-hidden component="span" display="inlineBlock">
@@ -129,7 +289,12 @@ const ButtonChildren = ({ children }: ButtonChildrenProps) => {
   );
 };
 
-export interface ButtonRendererProps {
+export interface PrivateButtonRendererProps {
+  size?: ButtonSize;
+  tone?: ButtonTone;
+  variant?: ButtonVariant;
+  bleedY?: boolean;
+  /** @deprecated The `weight` prop has been deprecated. Please choose a [variant](https://seek-oss.github.io/braid-design-system/components/Button#variants) instead. */
   weight?: ButtonWeight;
   loading?: boolean;
   children: (
@@ -141,38 +306,120 @@ export interface ButtonRendererProps {
   ) => ReactNode;
 }
 
-export const ButtonRenderer = ({
-  weight = 'regular',
+const resolveToneAndVariant = ({
+  weight,
+  tone,
+  variant = 'solid',
+}: {
+  weight?: ButtonWeight;
+  tone?: ButtonTone;
+  variant?: ButtonVariant;
+}): { variant: ButtonVariant; tone?: ButtonTone } => {
+  if (weight === 'strong') {
+    return {
+      tone: tone || 'brandAccent',
+      variant: 'solid',
+    };
+  }
+
+  if (weight === 'regular') {
+    return {
+      tone,
+      variant: 'solid',
+    };
+  }
+
+  if (weight === 'weak') {
+    return {
+      tone,
+      variant: 'ghost',
+    };
+  }
+
+  return {
+    tone,
+    variant,
+  };
+};
+
+export const PrivateButtonRenderer = ({
+  size: sizeProp,
+  tone: toneProp,
+  variant: variantProp,
+  bleedY,
+  weight,
   loading = false,
   children,
-}: ButtonRendererProps) => {
-  const styles = useStyles(styleRefs);
-  const isWeak = weight === 'weak';
-  const { background, boxShadow } = useButtonVariant(weight);
+}: PrivateButtonRendererProps) => {
+  const actionsContext = useContext(ActionsContext);
 
-  const buttonStyles = useBoxStyles({
-    component: 'button',
-    cursor: 'pointer',
-    width: 'full',
-    position: 'relative',
-    display: 'block',
-    borderRadius: 'standard',
-    boxShadow,
-    background,
-    transform: 'touchable',
-    transition: 'touchable',
-    outline: 'none',
-    className: [
-      styles.root,
-      isWeak ? styles.weak : null,
-      useBackgroundLightness() === 'dark' ? styles.inverted : null,
-    ],
+  assert(
+    !(actionsContext && sizeProp),
+    'You shouldn\'t set a "size" prop on Button elements nested inside Actions. Instead, set the size on the Actions element, e.g. <Actions size="small"><Button>...</Button></Actions>',
+  );
+
+  assert(
+    !(weight && variantProp),
+    'You shouldn\'t set a "weight" and "variant" prop together. Please migrate from "weight" to "variant".',
+  );
+
+  const { tone, variant } = resolveToneAndVariant({
+    weight,
+    tone: toneProp,
+    variant: variantProp,
   });
 
-  const buttonChildrenContextValue = useMemo(() => ({ weight, loading }), [
-    weight,
-    loading,
-  ]);
+  if (process.env.NODE_ENV !== 'production') {
+    if (weight && /^(strong|regular|weak)$/.test(weight)) {
+      const needsTone = Boolean(tone);
+      const needsVariant = variant && variant !== 'solid';
+
+      // eslint-disable-next-line no-console
+      console.warn(
+        dedent`
+          The \`weight\` prop has been deprecated.${
+            needsVariant || needsTone
+              ? ` Please migrate to${needsVariant ? ` \`variant\`` : ''}${
+                  needsTone ? `${needsVariant ? ' and' : ''} \`tone\`` : ''
+                }.`
+              : ` You can migrate by removing the \`weight="${weight}"\` prop.`
+          }
+          %c  -<Button weight="${weight}">...</Button>
+          %c  +<Button${needsTone ? ` tone="${tone}"` : ''}${
+          needsVariant ? ` variant="${variant}"` : ''
+        }>...</Button>
+        `,
+        'color: red',
+        'color: green',
+      );
+    }
+  }
+
+  const size = sizeProp ?? actionsContext?.size ?? 'standard';
+  const { backgroundContext } = useButtonVariant(variant, tone);
+
+  const buttonStyles = clsx(
+    atoms({
+      reset: 'button',
+      cursor: !loading ? 'pointer' : undefined,
+      width: 'full',
+      position: 'relative',
+      display: 'block',
+      borderRadius,
+      transform: { active: 'touchable' },
+      transition: 'touchable',
+      outline: 'none',
+    }),
+    styles.root,
+    size === 'small' ? virtualTouchable({ xAxis: false }) : null,
+    size === 'standard' ? styles.standard : styles.small,
+    bleedY ? styles.bleedY : null,
+  );
+
+  const buttonChildrenContextValue = useMemo(
+    () => ({ size, tone, variant, loading }),
+    [size, tone, variant, loading],
+  );
 
   const buttonProps = {
     style: {},
@@ -185,9 +432,12 @@ export const ButtonRenderer = ({
     </ButtonChildrenContext.Provider>
   );
 
-  return background ? (
-    <BackgroundProvider value={background}>{button}</BackgroundProvider>
+  return backgroundContext ? (
+    <BackgroundProvider value={backgroundContext}>{button}</BackgroundProvider>
   ) : (
     button
   );
 };
+
+/** @deprecated `ButtonRenderer` has been deprecated. Use [Button](https://seek-oss.github.io/braid-design-system/components/Button) or [ButtonLink](https://seek-oss.github.io/braid-design-system/components/ButtonLink) instead. If your usage of `ButtonRenderer` is not covered by either of these, please let us know. */
+export const ButtonRenderer = PrivateButtonRenderer;

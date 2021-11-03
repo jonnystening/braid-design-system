@@ -1,72 +1,57 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
+import source from '../../utils/source.macro';
 import { ComponentDocs } from '../../../site/src/types';
-import { ButtonLink, Stack, Text } from '../';
+import { ButtonLink, Strong, Text, Card, Inline } from '../';
 import { TextLink } from '../TextLink/TextLink';
-
-const Container = ({ children }: { children: ReactNode }) => (
-  <div style={{ maxWidth: '300px' }}>{children}</div>
-);
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  gallery: false,
-  description: (
-    <Stack space="large">
-      <Text>
-        Renders a semantic link that looks like a{' '}
-        <TextLink href="/components/Button">Button</TextLink>.
-      </Text>
-      <Text>
-        This component renders a native `a` element by default, but this can be
-        customised via the `linkComponent` prop on{' '}
-        <TextLink href="/components/BraidProvider">BraidProvider</TextLink>.
-      </Text>
-      <Text>
-        Extends both the <TextLink href="/components/Button">Button</TextLink>{' '}
-        and <TextLink href="/components/Link">Link</TextLink> component APIs.
-      </Text>
-      <Text tone="secondary">
-        If you want a button that looks like a{' '}
-        <TextLink href="/components/TextLink">TextLink,</TextLink> check out{' '}
-        <TextLink href="/components/TextLinkButton">TextLinkButton.</TextLink>
-      </Text>
-    </Stack>
+  Example: () =>
+    source(
+      <Card rounded>
+        <Inline space="small" collapseBelow="desktop">
+          <ButtonLink href="#">Solid</ButtonLink>
+          <ButtonLink href="#" variant="ghost">
+            Ghost
+          </ButtonLink>
+          <ButtonLink href="#" variant="soft">
+            Soft
+          </ButtonLink>
+          <ButtonLink href="#" variant="transparent">
+            Transparent
+          </ButtonLink>
+        </Inline>
+      </Card>,
+    ),
+  accessibility: (
+    <Text>
+      Even though it looks like a{' '}
+      <TextLink href="/components/Button">Button</TextLink>, this is actually a
+      semantic link.
+    </Text>
   ),
-  examples: [
+  alternatives: [
     {
-      label: 'Default Button Link',
-      Container,
-      Example: () => <ButtonLink href="#">Submit</ButtonLink>,
+      name: 'Button',
+      description: 'For a semantic button.',
     },
     {
-      label: 'Strong Button Link',
-      Container,
-      Example: () => (
-        <ButtonLink href="#" weight="strong">
-          Submit
-        </ButtonLink>
-      ),
+      name: 'TextLinkButton',
+      description: 'For a semantic button that looks like a TextLink.',
     },
+  ],
+  additional: [
     {
-      label: 'Weak Button Link',
-      Container,
-      Example: () => (
-        <ButtonLink href="#" weight="weak">
-          Submit
-        </ButtonLink>
+      label: 'Custom link rendering',
+      description: (
+        <Text>
+          This component renders a native <Strong>a</Strong> element by default,
+          but this can be customised via the <Strong>linkComponent</Strong> prop
+          on <TextLink href="/components/BraidProvider">BraidProvider</TextLink>
+          .
+        </Text>
       ),
-    },
-    {
-      label: 'Loading Button Link',
-      Container,
-      Example: () => (
-        <ButtonLink href="#" loading>
-          Loading
-        </ButtonLink>
-      ),
-      storybook: false,
     },
   ],
 };

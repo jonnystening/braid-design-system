@@ -1,224 +1,317 @@
-import React, { useState, ReactNode } from 'react';
+import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
-import { IconSearch, TextField, TextLink } from '../';
-import { TextField as PlayroomTextField } from '../../playroom/components';
-
-const Container = ({ children }: { children: ReactNode }) => (
-  <div style={{ maxWidth: '300px' }}>{children}</div>
-);
+import {
+  IconSearch,
+  TextField,
+  TextLink,
+  Text,
+  Strong,
+  List,
+  IconHelp,
+  Stack,
+  Heading,
+} from '../';
+import source from '../../utils/source.macro';
 
 const docs: ComponentDocs = {
   category: 'Content',
   migrationGuide: true,
-  screenshotWidths: [320],
-  examples: [
+  Example: ({ id, getState, setState }) =>
+    source(
+      <TextField
+        label="Label"
+        id={id}
+        onChange={setState('textfield')}
+        value={getState('textfield')}
+        onClear={() => setState('textfield', '')}
+      />,
+    ),
+  alternatives: [
+    { name: 'Autosuggest', description: 'For autocompletion.' },
     {
-      label: 'TextField',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Job Title"
-          id={id}
-          onChange={handler}
-          value="Senior Developer"
-        />
-      ),
+      name: 'PasswordField',
+      description: 'For password input.',
     },
-    {
-      docsSite: false,
-      label: 'TextField with default padding',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Job Title"
-          id={id}
-          onChange={handler}
-          value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        />
-      ),
-    },
-    {
-      label: 'TextField with clear button',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState('Clear me');
-
-        return (
-          <TextField
-            label="Job Title"
-            id={id}
-            onChange={(e) => setValue(e.currentTarget.value)}
-            onClear={() => setValue('')}
-            value={value}
-          />
-        );
-      },
-    },
-    {
-      label: 'TextField with icon',
-      Container,
-      Example: ({ id }) => {
-        const [value, setValue] = useState('');
-
-        return (
-          <TextField
-            label="Job Title"
-            id={id}
-            icon={<IconSearch />}
-            placeholder="Enter a job title"
-            onChange={(e) => setValue(e.currentTarget.value)}
-            value={value}
-          />
-        );
-      },
-    },
-    {
-      docsSite: false,
-      label: 'TextField with clear button padding',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Job Title"
-          id={id}
-          onChange={handler}
-          onClear={handler}
-          value="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-        />
-      ),
-    },
-    {
-      label: 'TextField with message',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Job Title"
-          id={id}
-          value=""
-          message="e.g. Senior Developer"
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField with secondary label',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Title"
-          secondaryLabel="Optional"
-          id={id}
-          value=""
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField with tertiary label',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Title"
-          secondaryLabel="Optional"
-          tertiaryLabel={<TextLink href="#">Help?</TextLink>}
-          id={id}
-          value=""
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField with description',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Title"
-          secondaryLabel="Optional"
-          description="Longer description of this field"
-          id={id}
-          value=""
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField with error',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Do you like Braid?"
-          tone="critical"
-          id={id}
-          value="No"
-          message="Answer is incorrect"
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField with postive message',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Do you like Braid?"
-          id={id}
-          value="Yes"
-          message="Nice one!"
-          tone="positive"
-          onChange={handler}
-        />
-      ),
-    },
-    {
-      label: 'TextField on Brand Background',
-      gallery: false,
-      background: 'brand',
-      Container,
-      Example: ({ id, handler }) => (
-        <TextField
-          label="Job Title"
-          id={id}
-          onChange={handler}
-          value="Senior Developer"
-        />
-      ),
-    },
+    { name: 'Textarea', description: 'For long-form text.' },
   ],
-  snippets: [
+  additional: [
     {
-      name: 'Standard',
-      code: <PlayroomTextField label="Label" />,
-    },
-    {
-      name: 'Optional',
-      code: <PlayroomTextField label="Label" secondaryLabel="Optional" />,
-    },
-    {
-      name: 'With error',
-      code: (
-        <PlayroomTextField label="Label" tone="critical" message="Required" />
+      label: 'Additional labels',
+      description: (
+        <>
+          <Text>
+            Supports all three levels of{' '}
+            <TextLink href="/components/FieldLabel">FieldLabel</TextLink>:
+          </Text>
+          <List>
+            <Text>
+              <Strong>label</Strong> — primary title of the field,
+            </Text>
+            <Text>
+              <Strong>secondaryLabel</Strong> — additional context, typically
+              used to indicate optionality of a field,
+            </Text>
+            <Text>
+              <Strong>tertiaryLabel</Strong> — further context, typically used
+              for providing assistance with a field.
+            </Text>
+          </List>
+        </>
       ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            secondaryLabel="optional"
+            tertiaryLabel={
+              <TextLink href="#">
+                <IconHelp /> Help
+              </TextLink>
+            }
+          />,
+        ),
     },
     {
-      name: 'With description',
-      code: (
-        <PlayroomTextField
-          label="Label"
-          description="More detailed description of field."
-        />
+      label: 'Message and tone',
+      description: (
+        <>
+          <Text>
+            A <Strong>message</Strong> is typically used to communicate the
+            status of a field, such as an error message. This will be announced
+            on focus of the field and can be combined with a{' '}
+            <TextLink href="/foundations/tones">tone</TextLink> to illustrate
+            its purpose.
+          </Text>
+          <Text>
+            The supported tones are: <Strong>{'"critical"'}</Strong>,{' '}
+            <Strong>{'"positive"'}</Strong>, and <Strong>{'"neutral"'}</Strong>.
+          </Text>
+        </>
       ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <Stack space="large">
+            <TextField
+              label="Label"
+              id={`${id}_1`}
+              onChange={setState('textfield')}
+              value={getState('textfield')}
+              tone="critical"
+              message="Critical message"
+            />
+            <TextField
+              label="Label"
+              id={`${id}_2`}
+              onChange={setState('textfield2')}
+              value={getState('textfield2')}
+              tone="positive"
+              message="Positive message"
+            />
+            <TextField
+              label="Label"
+              id={`${id}_3`}
+              onChange={setState('textfield3')}
+              value={getState('textfield3')}
+              tone="neutral"
+              message="Neutral message"
+            />
+          </Stack>,
+        ),
     },
     {
-      name: 'With icon',
-      code: <PlayroomTextField icon={<IconSearch />} placeholder="Search" />,
-    },
-    {
-      name: 'With tertiary label',
-      code: (
-        <PlayroomTextField
-          label="Label"
-          tertiaryLabel={<TextLink href="#">Help</TextLink>}
-        />
+      label: 'Field description',
+      description: (
+        <Text>
+          Additional context can be provided with a <Strong>description</Strong>
+          . This will display below the field label and also be announced by a
+          screen reader when the field is focused.
+        </Text>
       ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            description="Extra information about the field"
+          />,
+        ),
+    },
+    {
+      label: 'Disabled field',
+      description: (
+        <Text>
+          Mark the field as disabled by passing <Strong>true</Strong> to the{' '}
+          <Strong>disabled</Strong> prop.
+        </Text>
+      ),
+      background: 'card',
+      Example: ({ id, setState }) =>
+        source(
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value="Text in disabled field"
+            disabled={true}
+          />,
+        ),
+    },
+    {
+      label: 'Placeholder prompt',
+      description: (
+        <Text>
+          Providing a <Strong>placeholder</Strong> will display as a prompt to
+          the user no value is selected.
+        </Text>
+      ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            placeholder="Enter text"
+          />,
+        ),
+    },
+    {
+      label: 'Clearing the field',
+      description: (
+        <Text>
+          A <TextLink href="/components/IconClear">clear icon</TextLink> button
+          will appear in the field when the user has entered text. You must pass
+          a function to the <Strong>onClear</Strong> prop, which will be called
+          when the button is clicked.
+        </Text>
+      ),
+      Example: ({ id, getState, setState, setDefaultState }) =>
+        source(
+          <>
+            {setDefaultState('textfield', 'User entered text')}
+
+            <TextField
+              label="Label"
+              id={id}
+              onChange={setState('textfield')}
+              value={getState('textfield')}
+              onClear={() => setState('textfield', '')}
+            />
+          </>,
+        ),
+    },
+    {
+      label: 'Inserting an icon',
+      description: (
+        <Text>
+          For decoration and help distinguishing fields an <Strong>icon</Strong>{' '}
+          can be provided. This will be placed in the left of the field and is
+          not interactive.
+        </Text>
+      ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <TextField
+            id={id}
+            label="Label"
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            icon={<IconSearch />}
+            placeholder="Enter text"
+          />,
+        ),
+    },
+    {
+      label: 'Adding a prefix',
+      description: (
+        <Text>
+          The <Strong>prefix</Strong> prop allows you to prepend read-only
+          content on the left-hand side of the field. This is typically used for
+          currency symbols, country codes, etc.
+        </Text>
+      ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <TextField
+            id={id}
+            label="Phone number"
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            prefix="+61"
+          />,
+        ),
+    },
+    {
+      label: 'Limiting the number of characters',
+      description: (
+        <>
+          <Text>
+            Providing a <Strong>characterLimit</Strong> will communicate when
+            the input text approaches or exceeds the specified limit.
+          </Text>
+          <Text>
+            To prevent loss of information, exceeding the limit is permitted,
+            however the count will be presented in a critical tone.
+          </Text>
+        </>
+      ),
+      Example: ({ id, getState, setState, setDefaultState }) =>
+        source(
+          <>
+            {setDefaultState(
+              'text',
+              'A long piece of text exceeding the specified character limit of 50',
+            )}
+
+            <TextField
+              label="Label"
+              id={id}
+              onChange={setState('text')}
+              value={getState('text')}
+              description="Chactacter limit of 50"
+              characterLimit={50}
+            />
+          </>,
+        ),
+    },
+    {
+      label: 'Indirect or hidden field labels',
+      description: (
+        <Text>
+          In some cases it may be necessary for a field to be labelled by
+          another element or even not to have a visual label. Instead of
+          providing a <Strong>label</Strong> either <Strong>aria-label</Strong>{' '}
+          or <Strong>aria-labelledby</Strong> can be provided.
+        </Text>
+      ),
+      Example: ({ id, getState, setState }) =>
+        source(
+          <Stack space="large">
+            <Heading level="2" id="field1Label">
+              Custom field label
+            </Heading>
+            <TextField
+              aria-labelledby="field1Label"
+              id={`${id}_1`}
+              onChange={setState('text')}
+              value={getState('text')}
+              message="The label for this field is the Heading element before it."
+            />
+
+            <TextField
+              aria-label="Hidden label for field"
+              id={`${id}_2`}
+              onChange={setState('text2')}
+              value={getState('text2')}
+              message="The label for this field is hidden."
+            />
+          </Stack>,
+        ),
     },
   ],
 };

@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import { RouteProps } from 'react-router';
-import { Snippets } from 'sku/playroom';
-import { Optional } from 'utility-types';
 import { ReactNodeNoStrings } from './../../lib/components/private/ReactNodeNoStrings';
+import { Source } from '../../lib/utils/source.macro';
 import { BoxProps } from '../../lib/components/Box/Box';
+import useScope from '../../lib/playroom/useScope';
 
 export interface AppConfig {
   playroomUrl: string;
@@ -22,36 +22,55 @@ export interface RenderContext {
 
 export interface Page extends RouteProps {
   title: string;
-}
-
-interface DocsSnippet extends Optional<Snippets[number], 'group'> {
-  code: ReactChild;
+  badge?: 'New';
 }
 
 export interface ComponentDocs {
   category: 'Logic' | 'Layout' | 'Content' | 'Icon';
   deprecationWarning?: ReactNodeNoStrings;
+  banner?: ReactNodeNoStrings;
   migrationGuide?: boolean;
-  foundation?: boolean;
-  screenshotWidths: Array<320 | 768 | 1200>;
-  screenshotOnlyInWireframe?: boolean;
-  examples: ComponentExample[];
-  gallery?: boolean;
-  snippets?: DocsSnippet[];
   description?: ReactNodeNoStrings;
   subComponents?: string[];
+  Example?: (props: ExampleProps) => Source<ReactChild>;
+  alternatives: Array<{ name: string; description: string }>;
+  accessibility?: ReactNodeNoStrings;
+  additional?: ComponentExample[];
+}
+
+export interface CssDoc {
+  banner?: ReactNodeNoStrings;
+  usage: ReactNodeNoStrings;
+  description?: ReactNodeNoStrings;
+  additional?: Array<{
+    label?: string;
+    description?: ReactNodeNoStrings;
+  }>;
+}
+
+interface ExampleProps extends ReturnType<typeof useScope> {
+  id: string;
+  handler: () => void;
 }
 
 export interface ComponentExample {
   label?: string;
   description?: ReactNodeNoStrings;
-  docsSite?: boolean;
-  storybook?: boolean;
   background?: NonNullable<BoxProps['background']>;
-  Example?: (props: { id: string; handler: () => void }) => JSX.Element;
-  Container?: (props: { children: ReactNode }) => JSX.Element;
+  Example?: (props: ExampleProps) => Source<ReactChild>;
+  Container?: (props: { children: ReactNode }) => ReactElement;
   code?: string;
   showCodeByDefault?: boolean;
   playroom?: boolean;
-  gallery?: boolean;
+}
+
+export interface ComponentScreenshot {
+  screenshotWidths: Array<320 | 768 | 992 | 1200>;
+  screenshotOnlyInWireframe?: boolean;
+  examples: {
+    label?: string;
+    background?: NonNullable<BoxProps['background']>;
+    Example?: (props: ExampleProps) => ReactChild;
+    Container?: (props: { children: ReactNode }) => ReactElement;
+  }[];
 }

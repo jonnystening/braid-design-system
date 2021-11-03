@@ -7,8 +7,8 @@ import React, {
 } from 'react';
 import { Box } from '../Box/Box';
 import {
-  TextLinkRenderer,
-  TextLinkRendererProps,
+  PrivateTextLinkRenderer,
+  PrivateTextLinkRendererProps,
 } from '../TextLinkRenderer/TextLinkRenderer';
 import buildDataAttributes, {
   DataAttributeMap,
@@ -16,7 +16,10 @@ import buildDataAttributes, {
 
 type NativeSpanProps = AllHTMLAttributes<HTMLSpanElement>;
 export interface TextLinkButtonProps
-  extends Omit<TextLinkRendererProps, 'children' | 'showVisited'> {
+  extends Omit<
+    PrivateTextLinkRendererProps,
+    'reset' | 'children' | 'showVisited'
+  > {
   id?: NativeSpanProps['id'];
   onClick?: NativeSpanProps['onClick'];
   data?: DataAttributeMap;
@@ -51,7 +54,7 @@ export const TextLinkButton = ({
   );
 
   return (
-    <TextLinkRenderer weight={weight} hitArea={hitArea}>
+    <PrivateTextLinkRenderer reset={false} weight={weight} hitArea={hitArea}>
       {(styleProps) => (
         <Box
           ref={buttonRef}
@@ -65,11 +68,11 @@ export const TextLinkButton = ({
           aria-describedby={ariaDescribedBy}
           id={id}
           {...styleProps}
-          {...buildDataAttributes(data)}
+          {...(data ? buildDataAttributes(data) : undefined)}
         >
           {children}
         </Box>
       )}
-    </TextLinkRenderer>
+    </PrivateTextLinkRenderer>
   );
 };
