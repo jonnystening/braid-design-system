@@ -23,6 +23,8 @@ type TypographicDefinition =
 
 export const fontFamily = style({
   fontFamily: vars.fontFamily,
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
 });
 
 export const fontWeight = styleVariants(

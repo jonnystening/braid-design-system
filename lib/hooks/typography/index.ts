@@ -21,6 +21,8 @@ export const globalTextStyle = ({
   fontFamily: vars.fontFamily,
   fontWeight: vars.textWeight[weight],
   color: vars.foregroundColor.neutral,
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
   ...responsiveStyle({
     mobile: {
       fontSize: vars.textSize[size].mobile.fontSize,
@@ -65,6 +67,8 @@ export const globalHeadingStyle = ({
   fontFamily: vars.fontFamily,
   fontWeight: vars.headingWeight[weight],
   color: vars.foregroundColor.neutral,
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
   ...responsiveStyle({
     mobile: {
       fontSize: vars.headingLevel[level].mobile.fontSize,
