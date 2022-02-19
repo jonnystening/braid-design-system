@@ -11,9 +11,11 @@ import atomsPlugin from './plugin-deprecate/plugin-deprecate-atoms';
 import propsPlugin from './plugin-deprecate/plugin-deprecate-props';
 import varsPlugin from './plugin-deprecate/plugin-deprecate-vars';
 import importUpdatePlugin from './plugin-deprecate/plugin-import-update';
+import removeColumnsPlugin from './plugin-decolumn/plugin-remove-columns';
 
 const pluginsForVersion = {
   v31: [propsPlugin, atomsPlugin, varsPlugin, importUpdatePlugin],
+  'v31.6': [removeColumnsPlugin],
 };
 
 type Version = keyof typeof pluginsForVersion;
