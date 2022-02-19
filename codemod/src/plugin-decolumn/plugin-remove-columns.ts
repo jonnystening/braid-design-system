@@ -2,6 +2,7 @@
 import type { NodePath, PluginObj, PluginPass } from '@babel/core';
 import { types as t } from '@babel/core';
 
+type ElementPath = NodePath<t.JSXElement>;
 interface Context extends PluginPass {
   componentNames: Set<string>;
 }
@@ -36,6 +37,8 @@ export default function (): PluginObj<Context> {
                       this.componentNames.add(local.name);
                     }
                   }
+                } else if (specifier.type === 'ImportNamespaceSpecifier') {
+                  this.componentNames.add(specifier.local.name);
                 }
               }
             }
@@ -53,6 +56,8 @@ export default function (): PluginObj<Context> {
           for (const referencePath of referencePaths) {
             const parentPath = referencePath.parentPath;
 
+            let jsxElementPath: ElementPath | null = null;
+
             if (parentPath && parentPath.parentPath) {
               if (parentPath.type === 'JSXOpeningElement') {
                 const jsxOpeningElement =
@@ -62,13 +67,36 @@ export default function (): PluginObj<Context> {
                   jsxOpeningElement.parentPath.type === 'JSXElement' &&
                   jsxOpeningElement.node.attributes.length === 0
                 ) {
-                  const jsxElementPath =
-                    jsxOpeningElement.parentPath as NodePath<t.JSXElement>;
-
-                  jsxElementPath.replaceWithMultiple(
-                    jsxElementPath.node.children,
-                  );
+                  jsxElementPath = jsxOpeningElement.parentPath as ElementPath;
                 }
+              } else if (parentPath.type === 'JSXMemberExpression') {
+                const jsxExpression =
+                  parentPath as NodePath<t.JSXMemberExpression>;
+
+                const expressionProperty = jsxExpression.node.property;
+
+                if (
+                  expressionProperty.type === 'JSXIdentifier' &&
+                  componentsToGet.includes(expressionProperty.name)
+                ) {
+                  const jsxOpeningElementPath = jsxExpression.parentPath;
+
+                  if (jsxOpeningElementPath.type === 'JSXOpeningElement') {
+                    if (
+                      jsxOpeningElementPath.parentPath &&
+                      jsxOpeningElementPath.parentPath.type === 'JSXElement'
+                    ) {
+                      jsxElementPath =
+                        jsxOpeningElementPath.parentPath as ElementPath;
+                    }
+                  }
+                }
+              }
+
+              if (jsxElementPath) {
+                jsxElementPath.replaceWithMultiple(
+                  jsxElementPath.node.children,
+                );
               }
             }
           }
