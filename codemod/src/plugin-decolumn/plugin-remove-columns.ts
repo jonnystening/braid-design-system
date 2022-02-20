@@ -93,7 +93,11 @@ export default function (): PluginObj<Context> {
               const children = jsxElementPath.node.children.filter(
                 (child) => !t.isJSXText(child),
               );
-              jsxElementPath.replaceWithMultiple(children);
+
+              // If a Column has multiple children, removing it would make them all columns
+              if (children.length === 1) {
+                jsxElementPath.replaceWithMultiple(children);
+              }
             }
           }
         },

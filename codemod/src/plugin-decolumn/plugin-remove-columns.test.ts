@@ -139,6 +139,33 @@ const tests: Parameters<typeof pluginTester>[0]['tests'] = [
     import { Box, Column, Text } from 'braid-design-system';
     export default () => <Text>This is a top level Column</Text>;`,
   },
+  {
+    title: 'Leave Column component with multiple children',
+    code: dedent`
+    import { Box, Column, Text } from 'braid-design-system';
+    export default () => {
+      return (
+        <Box padding="large">
+          <Column>
+            <Text>This is a Column</Text>
+            <Text>This is a second child</Text>
+          </Column>
+        </Box>
+      );
+    };`,
+    output: dedent`
+    import { Box, Column, Text } from 'braid-design-system';
+    export default () => {
+      return (
+        <Box padding="large">
+          <Column>
+            <Text>This is a Column</Text>
+            <Text>This is a second child</Text>
+          </Column>
+        </Box>
+      );
+    };`,
+  },
 ];
 
 pluginTester({
