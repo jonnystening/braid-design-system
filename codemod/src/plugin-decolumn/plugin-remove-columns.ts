@@ -58,46 +58,42 @@ export default function (): PluginObj<Context> {
 
             let jsxElementPath: ElementPath | null = null;
 
-            if (parentPath && parentPath.parentPath) {
-              if (parentPath.type === 'JSXOpeningElement') {
-                const jsxOpeningElement =
-                  parentPath as NodePath<t.JSXOpeningElement>;
+            if (!parentPath) {
+              continue;
+            }
+
+            if (parentPath.isJSXOpeningElement()) {
+              // E.g. <Column>
+              const jsxOpeningElement = parentPath;
+
+              if (
+                jsxOpeningElement.parentPath.isJSXElement() &&
+                jsxOpeningElement.node.attributes.length === 0
+              ) {
+                jsxElementPath = jsxOpeningElement.parentPath;
+              }
+            } else if (parentPath.isJSXMemberExpression()) {
+              // E.g. <Braid.Column>
+              const expressionProperty = parentPath.node.property;
+
+              if (componentsToGet.includes(expressionProperty.name)) {
+                const jsxOpeningElementPath = parentPath.parentPath;
 
                 if (
-                  jsxOpeningElement.parentPath.type === 'JSXElement' &&
-                  jsxOpeningElement.node.attributes.length === 0
+                  jsxOpeningElementPath.isJSXOpeningElement() &&
+                  jsxOpeningElementPath.parentPath.isJSXElement()
                 ) {
-                  jsxElementPath = jsxOpeningElement.parentPath as ElementPath;
-                }
-              } else if (parentPath.type === 'JSXMemberExpression') {
-                const jsxExpression =
-                  parentPath as NodePath<t.JSXMemberExpression>;
-
-                const expressionProperty = jsxExpression.node.property;
-
-                if (
-                  expressionProperty.type === 'JSXIdentifier' &&
-                  componentsToGet.includes(expressionProperty.name)
-                ) {
-                  const jsxOpeningElementPath = jsxExpression.parentPath;
-
-                  if (jsxOpeningElementPath.type === 'JSXOpeningElement') {
-                    if (
-                      jsxOpeningElementPath.parentPath &&
-                      jsxOpeningElementPath.parentPath.type === 'JSXElement'
-                    ) {
-                      jsxElementPath =
-                        jsxOpeningElementPath.parentPath as ElementPath;
-                    }
-                  }
+                  jsxElementPath = jsxOpeningElementPath.parentPath;
                 }
               }
+            }
 
-              if (jsxElementPath) {
-                jsxElementPath.replaceWithMultiple(
-                  jsxElementPath.node.children,
-                );
-              }
+            if (jsxElementPath) {
+              // JSXText elements can't be the first item in a block, so we take them out
+              const children = jsxElementPath.node.children.filter(
+                (child) => !t.isJSXText(child),
+              );
+              jsxElementPath.replaceWithMultiple(children);
             }
           }
         },

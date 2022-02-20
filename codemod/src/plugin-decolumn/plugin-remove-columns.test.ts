@@ -63,11 +63,8 @@ const tests: Parameters<typeof pluginTester>[0]['tests'] = [
       return (
         <Box padding="large">
           <Text>This is a Column</Text>
-
           <Text>This is a Column</Text>
-
           <Text>This is a Column</Text>
-
           <Column width="1/3">
             <Text>This Column has attributes</Text>
           </Column>
@@ -128,6 +125,19 @@ const tests: Parameters<typeof pluginTester>[0]['tests'] = [
         </Braid.Box>
       );
     };`,
+  },
+  {
+    title: 'Remove Column components at top level',
+    code: dedent`
+    import { Box, Column, Text } from 'braid-design-system';
+    export default () => (
+      <Column>
+        <Text>This is a top level Column</Text>
+      </Column>
+    );`,
+    output: dedent`
+    import { Box, Column, Text } from 'braid-design-system';
+    export default () => <Text>This is a top level Column</Text>;`,
   },
 ];
 
