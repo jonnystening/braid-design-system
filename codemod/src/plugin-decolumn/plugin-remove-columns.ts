@@ -13,6 +13,8 @@ export default function (): PluginObj<Context> {
   return {
     pre() {
       this.componentNames = new Set<string>();
+      // @ts-expect-error
+      this.file.metadata.hasChanged = this.file.metadata.hasChanged ?? false;
     },
     visitor: {
       Program: {
@@ -97,6 +99,8 @@ export default function (): PluginObj<Context> {
               // If a Column has multiple children, removing it would make them all columns
               if (children.length === 1) {
                 jsxElementPath.replaceWithMultiple(children);
+                // @ts-expect-error
+                this.file.metadata.hasChanged = true;
               }
             }
           }
