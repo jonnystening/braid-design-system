@@ -8,12 +8,8 @@ export const snippets: Snippets = [
     name: '2 Columns',
     code: source(
       <Columns space="gutter">
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
       </Columns>,
     ),
   },
@@ -21,12 +17,8 @@ export const snippets: Snippets = [
     name: '2 Columns (Collapse Below Tablet)',
     code: source(
       <Columns space="gutter" collapseBelow="tablet">
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
       </Columns>,
     ),
   },
@@ -34,15 +26,9 @@ export const snippets: Snippets = [
     name: '3 Columns',
     code: source(
       <Columns space="gutter">
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
       </Columns>,
     ),
   },
@@ -50,15 +36,9 @@ export const snippets: Snippets = [
     name: '3 Columns (Collapse Below Tablet)',
     code: source(
       <Columns space="gutter" collapseBelow="tablet">
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
-        <Column>
-          <Placeholder height={60} label="Column" />
-        </Column>
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
+        <Placeholder height={60} label="Column" />
       </Columns>,
     ),
   },
@@ -69,9 +49,7 @@ export const snippets: Snippets = [
         <Column width="2/3">
           <Placeholder height={400} label="Main" />
         </Column>
-        <Column>
-          <Placeholder height={100} label="Sidebar" />
-        </Column>
+        <Placeholder height={100} label="Sidebar" />
       </Columns>,
     ),
   },

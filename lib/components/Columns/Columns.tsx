@@ -1,7 +1,7 @@
 import assert from 'assert';
 import React, { ReactElement } from 'react';
 import { Box } from '../Box/Box';
-import { ColumnProps } from '../Column/Column';
+import { Column, ColumnProps } from '../Column/Column';
 import { ResponsiveSpace } from '../../css/atoms/atoms';
 import { negativeMargin } from '../../css/negativeMargin/negativeMargin';
 import {
@@ -88,7 +88,15 @@ export const Columns = ({
           component,
         }}
       >
-        {orderChildren(children)}
+        {orderChildren(children).map((child, index) =>
+          typeof child === 'object' &&
+          'type' in child &&
+          child.type === Column ? (
+            child
+          ) : (
+            <Column key={index}>{child}</Column>
+          ),
+        )}
       </ColumnsContext.Provider>
     </Box>
   );
