@@ -1,7 +1,7 @@
 import assert from 'assert';
 import React, { ReactElement } from 'react';
 import { Box } from '../Box/Box';
-import { Column, ColumnProps } from '../Column/Column';
+import { AutoColumn, Column, ColumnProps } from '../Column/Column';
 import { ResponsiveSpace } from '../../css/atoms/atoms';
 import { negativeMargin } from '../../css/negativeMargin/negativeMargin';
 import {
@@ -94,7 +94,7 @@ export const Columns = ({
           child.type === Column ? (
             child
           ) : (
-            <Column key={index}>{child}</Column>
+            <AutoColumn key={index}>{child}</AutoColumn>
           ),
         )}
       </ColumnsContext.Provider>

@@ -1,6 +1,10 @@
 import fs from 'fs';
 import { parse, print } from 'recast';
-import { transformFromAstSync, parseSync } from '@babel/core';
+import {
+  transformFromAstSync,
+  parseSync,
+  BabelFileMetadata,
+} from '@babel/core';
 import prettier from 'prettier';
 // @ts-expect-error
 import jsxSyntax from '@babel/plugin-syntax-jsx';
@@ -11,12 +15,18 @@ import atomsPlugin from './plugin-deprecate/plugin-deprecate-atoms';
 import propsPlugin from './plugin-deprecate/plugin-deprecate-props';
 import varsPlugin from './plugin-deprecate/plugin-deprecate-vars';
 import importUpdatePlugin from './plugin-deprecate/plugin-import-update';
+import removeColumnsPlugin from './plugin-decolumn/plugin-remove-columns';
 
 const pluginsForVersion = {
   v31: [propsPlugin, atomsPlugin, varsPlugin, importUpdatePlugin],
+  v32: [removeColumnsPlugin],
 };
 
 type Version = keyof typeof pluginsForVersion;
+interface BraidUpgradeMetadata extends BabelFileMetadata {
+  warnings?: Array<string>;
+  hasChanged?: boolean;
+}
 
 export function babelRecast({
   version,
@@ -68,13 +78,18 @@ export function babelRecast({
       };
     }
 
-    const { ast: transformedAST, metadata } = transformResult;
+    const { ast: transformedAST } = transformResult;
+    const metadata = (transformResult.metadata || {}) as BraidUpgradeMetadata;
 
     return {
-      // @ts-expect-error
-      warnings: metadata ? metadata.warnings : [],
-      // @ts-expect-error
-      hasChanged: metadata ? metadata.hasChanged : false,
+      warnings:
+        'warnings' in metadata && Array.isArray(metadata.warnings)
+          ? metadata.warnings
+          : [],
+      hasChanged:
+        'hasChanged' in metadata && typeof metadata.hasChanged === 'boolean'
+          ? metadata.hasChanged
+          : false,
       // @ts-expect-error
       source: print(transformedAST).code,
     };

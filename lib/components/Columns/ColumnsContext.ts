@@ -8,7 +8,7 @@ type CollapsibleAlignmentChildProps = ReturnType<
   typeof resolveCollapsibleAlignmentProps
 >['collapsibleAlignmentChildProps'];
 
-interface ColumnsContextValue {
+export interface ColumnsContextValue {
   collapseMobile: boolean;
   collapseTablet: boolean;
   collapseDesktop: boolean;

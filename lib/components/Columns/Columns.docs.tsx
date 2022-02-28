@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
 import { Placeholder } from '../private/Placeholder/Placeholder';
-import { Columns, Column, Strong, Text, Stack } from '../';
+import { Columns, Column, Strong, Text, Stack, List } from '../';
 import source from '../../utils/source.macro';
 import { TextLink } from '../TextLink/TextLink';
 
@@ -254,6 +254,36 @@ const docs: ComponentDocs = {
             <Placeholder height={60} label="Second" />
           </Columns>,
         ),
+    },
+    {
+      label: 'Developer considerations',
+      description: (
+        <>
+          <Text>
+            When creating column layouts using explicit <Strong>Column</Strong>{' '}
+            components as children, it is important that they are not abstracted
+            away into their own components.
+          </Text>
+          <Stack space="medium">
+            <Text>
+              Keeping the <Strong>Column</Strong> co-located with the parent{' '}
+              <Strong>Columns</Strong> component is required for two reasons:
+            </Text>
+            <List type="number">
+              <Text>
+                Streamlines the use of <Strong>Columns</Strong>, allowing it to
+                identify which children are required to be automatically wrapped
+                in a <Strong>Column</Strong>.
+              </Text>
+              <Text>
+                The <Strong>width</Strong> of a <Strong>Column</Strong> is
+                typically relevant to how it distributes available space
+                relative to its siblings.
+              </Text>
+            </List>
+          </Stack>
+        </>
+      ),
     },
   ],
 };
