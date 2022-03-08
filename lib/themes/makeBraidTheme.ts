@@ -107,7 +107,10 @@ const makeWebFonts = (tokens: TreatTheme) => {
 const makeRuntimeTokens = (tokens: TreatTheme) => ({
   name: tokens.name,
   displayName: tokens.displayName,
-  background: tokens.color.background.body,
+  background: {
+    lightMode: tokens.color.background.body,
+    darkMode: tokens.color.background.bodyDark,
+  },
   webFonts: makeWebFonts(tokens),
   space: {
     grid: tokens.grid,
@@ -117,15 +120,6 @@ const makeRuntimeTokens = (tokens: TreatTheme) => ({
   backgroundLightness: mapValues(
     tokens.color.background,
     (background, name) => {
-      // Manual override to ensure we use inverted neutral text
-      // on JobsDB 'brandAccent' background and its variants.
-      if (
-        tokens.name === 'jobsDb' &&
-        /^brandAccent(Active|Hover|$)/.test(name)
-      ) {
-        return 'dark';
-      }
-
       // This color map is used to ensure that all "hover" and "active"
       // variants are considered as a single set. If we don't do this,
       // colors might flip from light to dark during user interactions.

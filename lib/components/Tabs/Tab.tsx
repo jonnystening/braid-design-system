@@ -30,7 +30,8 @@ import buildDataAttributes, {
 } from '../private/buildDataAttributes';
 import { TabListContext } from './TabListContext';
 import { Overlay } from '../private/Overlay/Overlay';
-import { BadgeProps, Badge } from '../Badge/Badge';
+import { BadgeProps } from '../Badge/Badge';
+import { Divider } from '../Divider/Divider';
 import { useResponsiveValue } from '../useResponsiveValue/useResponsiveValue';
 import { smoothScroll, smoothScrollIntoView } from '../private/smoothScroll';
 import { useSpace } from '../useSpace/useSpace';
@@ -54,7 +55,8 @@ export const Tab = ({ children, data, badge, item }: TabProps) => {
   );
 
   assert(
-    !badge || badge.type === Badge,
+    // @ts-expect-error
+    !badge || badge.type.__isBadge__,
     `Tab badge prop can only be an instance of Badge. e.g. <Tab badge={<Badge>New</Badge>}>`,
   );
 
@@ -227,15 +229,7 @@ export const Tab = ({ children, data, badge, item }: TabProps) => {
         <Box paddingLeft="xsmall">{cloneElement(badge, { bleedY: true })}</Box>
       ) : null}
 
-      <Box
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
-        bottom={0}
-        overflow="hidden"
-        pointerEvents="none"
-      >
+      <Box position="absolute" inset={0} overflow="hidden" pointerEvents="none">
         {divider === 'minimal' ? (
           <Box
             position="absolute"
@@ -244,10 +238,12 @@ export const Tab = ({ children, data, badge, item }: TabProps) => {
             right={0}
             bottom={0}
             className={styles.divider}
-          />
+          >
+            <Divider />
+          </Box>
         ) : null}
         <Box
-          background="neutral"
+          background={{ lightMode: 'neutral', darkMode: 'neutralLight' }}
           position="absolute"
           zIndex={2}
           transition="fast"
@@ -271,6 +267,7 @@ export const Tab = ({ children, data, badge, item }: TabProps) => {
           bottom={0}
           className={[
             styles.tabUnderline,
+            styles.tabUnderlineActiveDarkMode,
             !isSelected ? styles.tabUnderlineAnimation : undefined,
             tabListItemIndex > 0 ? styles.hairlineMarginLeft : null,
           ]}

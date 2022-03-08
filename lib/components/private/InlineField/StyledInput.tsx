@@ -6,11 +6,10 @@ import React, {
   AllHTMLAttributes,
 } from 'react';
 
-import { useBackgroundLightness } from '../../Box/BackgroundContext';
 import { FieldOverlay } from '../FieldOverlay/FieldOverlay';
 import { IconMinus, IconTick } from '../../icons';
 import buildDataAttributes, { DataAttributeMap } from '../buildDataAttributes';
-import { Box } from '../../Box/Box';
+import { Box, BoxProps } from '../../Box/Box';
 import * as styles from './InlineField.css';
 import type { Size } from './InlineField.css';
 
@@ -75,10 +74,7 @@ const Indicator = ({
     >
       <Box
         position="absolute"
-        top={0}
-        bottom={0}
-        left={0}
-        right={0}
+        inset={0}
         transition="fast"
         opacity={checked !== 'mixed' ? 0 : undefined}
       >
@@ -86,10 +82,7 @@ const Indicator = ({
       </Box>
       <Box
         position="absolute"
-        top={0}
-        bottom={0}
-        left={0}
-        right={0}
+        inset={0}
         transition="fast"
         opacity={checked !== true ? 0 : undefined}
       >
@@ -98,7 +91,11 @@ const Indicator = ({
     </Box>
   ) : (
     <Box
-      background={disabled ? 'formAccentDisabled' : 'formAccent'}
+      background={
+        disabled
+          ? { lightMode: 'neutralLight', darkMode: 'surfaceDark' }
+          : 'formAccent'
+      }
       transition="fast"
       width="full"
       height="full"
@@ -144,11 +141,13 @@ export const StyledInput = forwardRef<
 
     const isCheckbox = type === 'checkbox';
     const fieldBorderRadius = isCheckbox ? 'standard' : 'full';
-    const accentBackground = disabled ? 'formAccentDisabled' : 'formAccent';
-    const showFieldBorder =
-      useBackgroundLightness() === 'light' && (tone !== 'critical' || disabled);
-
+    const accentBackground: BoxProps['background'] = disabled
+      ? 'neutralLight'
+      : 'formAccent';
     const isMixed = isCheckbox && checked === 'mixed';
+    const fieldBackground: BoxProps['background'] = disabled
+      ? { lightMode: 'neutralSoft', darkMode: 'neutral' }
+      : { lightMode: 'surface' };
 
     useEffect(() => {
       if (ref && typeof ref === 'object' && ref.current && isCheckbox) {
@@ -205,13 +204,13 @@ export const StyledInput = forwardRef<
           flexShrink={0}
           position="relative"
           className={[styles.fakeField, styles.fakeFieldSize[size]]}
-          background={disabled ? 'inputDisabled' : 'input'}
+          background={fieldBackground}
           borderRadius={fieldBorderRadius}
         >
           <FieldOverlay
             variant={disabled ? 'disabled' : 'default'}
             borderRadius={fieldBorderRadius}
-            visible={showFieldBorder}
+            visible={tone !== 'critical' || disabled}
           />
           <FieldOverlay
             variant="critical"

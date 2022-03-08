@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, LinkProps } from '../Link/Link';
 import { useMenuItem } from './useMenuItem';
 import { MenuItemProps } from './MenuItem';
+import { Box } from '../Box/Box';
 
 export interface MenuItemLinkProps
   extends MenuItemProps,
@@ -15,6 +16,8 @@ export const MenuItemLink = ({
   tone,
   data,
   children,
+  badge,
+  icon,
 }: MenuItemLinkProps) => {
   const { menuItemProps, MenuItemChildren } = useMenuItem<HTMLAnchorElement>({
     displayName: 'MenuItemLink',
@@ -24,8 +27,17 @@ export const MenuItemLink = ({
   });
 
   return (
-    <Link {...menuItemProps} href={href} target={target} rel={rel}>
-      <MenuItemChildren tone={tone}>{children}</MenuItemChildren>
-    </Link>
+    <Box
+      component={Link}
+      {...menuItemProps}
+      href={href}
+      target={target}
+      rel={rel}
+    >
+      <MenuItemChildren tone={tone} icon={icon} badge={badge}>
+        {children}
+      </MenuItemChildren>
+    </Box>
   );
 };
+MenuItemLink.__isMenuItem__ = true;

@@ -14,9 +14,9 @@ import { Stack } from '../../Stack/Stack';
 import { Columns } from '../../Columns/Columns';
 import { Column } from '../../Column/Column';
 import { Overlay } from '../Overlay/Overlay';
+import { Bleed } from '../../Bleed/Bleed';
 import { ReactNodeNoStrings } from '../ReactNodeNoStrings';
 import { IconClear } from '../../icons';
-import { negativeMarginTop } from '../../../css/negativeMargin/negativeMargin';
 import { virtualTouchable } from '../touchable/virtualTouchable';
 import buildDataAttributes, { DataAttributeMap } from '../buildDataAttributes';
 import * as styles from './Modal.css';
@@ -30,7 +30,7 @@ export interface ModalContentProps {
   width: BoxProps['maxWidth'] | 'content';
   description?: ReactNodeNoStrings;
   illustration?: ReactNodeNoStrings;
-  position: 'center' | 'right';
+  position: 'center' | 'right' | 'left';
   headingLevel: '2' | '3';
   scrollLock?: boolean;
   headingRef?: Ref<HTMLElement>;
@@ -104,9 +104,9 @@ export const ModalContent = ({
     }
   };
 
-  const justifyContent = ({ center: 'center', right: 'flexEnd' } as const)[
-    position
-  ];
+  const justifyContent = (
+    { left: 'flexStart', center: 'center', right: 'flexEnd' } as const
+  )[position];
 
   return (
     <Box
@@ -128,20 +128,24 @@ export const ModalContent = ({
         display="flex"
         alignItems="center"
         justifyContent={justifyContent}
-        height={position === 'right' ? 'full' : undefined}
+        height={
+          position === 'right' || position === 'left' ? 'full' : undefined
+        }
         width={width !== 'content' ? 'full' : undefined}
         maxWidth={width !== 'content' ? width : undefined}
       >
         {/* modalRef gets forwarded down to UL by RemoveScroll by `forwardProps` */}
         <RemoveScroll ref={modalRef} forwardProps enabled={scrollLock}>
           <Box
-            background="card"
+            background="surface"
             borderRadius={position === 'center' ? 'xlarge' : undefined}
             overflow="auto"
             position="relative"
             boxShadow="large"
             width={width !== 'content' ? 'full' : undefined}
-            height={position === 'right' ? 'full' : undefined}
+            height={
+              position === 'right' || position === 'left' ? 'full' : undefined
+            }
             padding={modalPadding}
             className={[
               styles.pointerEventsAll,
@@ -201,12 +205,7 @@ export const ModalContent = ({
             paddingRight={modalPadding}
             className={position === 'center' && styles.maxSize[position]}
           >
-            <Box
-              className={[
-                negativeMarginTop('xsmall'),
-                styles.negativeMarginRightXSmall,
-              ]}
-            >
+            <Bleed top="xsmall" right="xsmall">
               <Box
                 position="relative"
                 className={styles.cropIconSpace[headingLevel]}
@@ -215,7 +214,7 @@ export const ModalContent = ({
                   component="button"
                   aria-label={closeLabel}
                   borderRadius="full"
-                  background="card"
+                  background="surface"
                   padding="xsmall"
                   cursor="pointer"
                   position="relative"
@@ -247,7 +246,7 @@ export const ModalContent = ({
                   </Box>
                 </Box>
               </Box>
-            </Box>
+            </Bleed>
           </Box>
         </Box>
       </Box>

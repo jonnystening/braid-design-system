@@ -1,25 +1,19 @@
-import React, { createContext, useContext, ReactElement } from 'react';
-import { BoxProps } from './Box';
+import { createContext, useContext } from 'react';
+import { BoxBackgroundVariant } from './Box';
 import { useBraidTheme } from '../BraidProvider/BraidThemeContext';
+import { mapColorModeValue } from '../../css/atoms/sprinkles.css';
 
-export type BackgroundVariant =
-  | NonNullable<BoxProps['background']>
-  | 'UNKNOWN_DARK'
-  | 'UNKNOWN_LIGHT';
+type BackgroundContextValue = {
+  lightMode: BoxBackgroundVariant;
+  darkMode: BoxBackgroundVariant;
+};
 
-const backgroundContext = createContext<BackgroundVariant>('body');
+const backgroundContext = createContext<BackgroundContextValue>({
+  lightMode: 'body',
+  darkMode: 'bodyDark',
+});
 
 export const BackgroundProvider = backgroundContext.Provider;
-
-export const renderBackgroundProvider = (
-  background: BackgroundVariant | undefined,
-  element: ReactElement | null,
-) =>
-  background ? (
-    <BackgroundProvider value={background}>{element}</BackgroundProvider>
-  ) : (
-    element
-  );
 
 export const useBackground = () => useContext(backgroundContext);
 
@@ -29,17 +23,29 @@ export const useBackgroundLightness = (
   const backgroundFromContext = useBackground();
   const background = backgroundOverride || backgroundFromContext;
   const { backgroundLightness } = useBraidTheme();
-  const defaultLightness = backgroundLightness.body;
+  const lightnessMap = {
+    ...backgroundLightness,
+    customDark: 'dark',
+    customLight: 'light',
+  } as const;
 
-  if (background === 'UNKNOWN_DARK') {
-    return 'dark';
-  }
+  return {
+    lightMode: lightnessMap[background.lightMode],
+    darkMode: lightnessMap[background.darkMode],
+  };
+};
 
-  if (background === 'UNKNOWN_LIGHT') {
-    return 'light';
-  }
+export type ColorContrastValue<Value> =
+  | { light: Value; dark: Value }
+  | ((contrast: 'light' | 'dark', background: BoxBackgroundVariant) => Value);
+export const useColorContrast = () => {
+  const background = useBackground();
+  const backgroundLightness = useBackgroundLightness();
 
-  return background
-    ? backgroundLightness[background] || defaultLightness
-    : defaultLightness;
+  return <Value extends string>(map: ColorContrastValue<Value>) =>
+    mapColorModeValue(backgroundLightness, (lightness, mode) =>
+      typeof map === 'function'
+        ? map(lightness, background[mode])
+        : map[lightness],
+    );
 };

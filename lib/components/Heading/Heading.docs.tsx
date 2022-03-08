@@ -125,21 +125,22 @@ const docs: ComponentDocs = {
             background the foreground colour is inverted.
           </Text>
           <Text>
-            When using custom backgrounds or images, this behaviour can be
-            applied using the{' '}
-            <TextLink href="/components/BackgroundProvider">
-              BackgroundProvider
-            </TextLink>{' '}
-            and specifying whether the background is dark or light.
+            When using custom backgrounds or images on a{' '}
+            <TextLink href="components/Box">Box</TextLink> component, this
+            behaviour can be applied by setting the <Strong>background</Strong>{' '}
+            to either <Strong>customLight</Strong> or{' '}
+            <Strong>customDark</Strong>.
           </Text>
         </>
       ),
-      background: 'brand',
+      background: 'neutral',
       Example: () =>
         source(
-          <Heading level="2">
-            This Heading is inverted to improve contrast.
-          </Heading>,
+          <Box background="neutral">
+            <Heading level="2">
+              This Heading is inverted to improve contrast.
+            </Heading>
+          </Box>,
         ),
     },
   ],

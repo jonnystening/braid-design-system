@@ -1,10 +1,15 @@
-import { darken, lighten, mix, tint } from 'polished';
-import { getAccessibleVariant, getLightVariant, isLight } from '../../utils';
+import { darken, lighten, tint } from 'polished';
+import {
+  findClosestAccessibleLighterColor,
+  getAccessibleVariant,
+  getLightVariant,
+  isLight,
+} from '../../utils';
 import { BraidTokens } from '../tokenType';
 
-const formAccent = '#404040';
+const formAccent = '#767676';
 const critical = '#ef3e4a';
-const criticalLight = '#fbe9eb';
+const criticalLightBackground = '#fbe9eb';
 const positive = '#00af50';
 const info = '#2c88f7';
 const promote = '#855be5';
@@ -16,7 +21,23 @@ const white = '#fff';
 const link = '#4c77bb';
 const linkVisited = 'DarkViolet';
 const secondary = '#777';
-const neutral = '#edeef1';
+const neutral = '#333';
+const neutralSoft = lighten(0.02, getLightVariant(neutral));
+const brandAccentLight = findClosestAccessibleLighterColor(
+  brandAccent,
+  neutral,
+);
+const formAccentLight = findClosestAccessibleLighterColor(formAccent, neutral);
+const criticalLight = findClosestAccessibleLighterColor(critical, neutral);
+const cautionLight = findClosestAccessibleLighterColor(caution, neutral);
+const infoLight = findClosestAccessibleLighterColor(info, neutral);
+const linkLight = findClosestAccessibleLighterColor(link, neutral);
+const linkLightVisited = findClosestAccessibleLighterColor(
+  linkVisited,
+  neutral,
+);
+const positiveLight = findClosestAccessibleLighterColor(positive, neutral);
+const promoteLight = findClosestAccessibleLighterColor(promote, neutral);
 
 const getActiveColor = (x: string) =>
   isLight(x) ? darken(0.1, x) : darken(0.05, x);
@@ -170,22 +191,24 @@ const tokens: BraidTokens = {
     },
     color: {
       brandAccent,
+      brandAccentLight,
       caution,
-      cautionLight: mix(0.6, caution, getLightVariant(caution)),
+      cautionLight,
       critical,
-      criticalLight: mix(0.3, critical, criticalLight),
+      criticalLight,
       field: '#333',
       focus,
       formAccent,
-      formHover: formAccent,
+      formAccentLight,
       info,
-      infoLight: mix(0.3, info, getLightVariant(info)),
+      infoLight,
+      neutral: black,
+      neutralInverted: white,
+      neutralLight: '#777',
       positive,
-      positiveLight: mix(0.3, positive, getLightVariant(positive)),
+      positiveLight,
       promote,
-      promoteLight: mix(0.3, promote, getLightVariant(promote)),
-      standard: '#777',
-      standardInverted: white,
+      promoteLight,
     },
   },
   focusRingSize: 2,
@@ -200,23 +223,33 @@ const tokens: BraidTokens = {
   color: {
     foreground: {
       brandAccent,
+      brandAccentLight,
       caution: getAccessibleVariant(caution, caution),
+      cautionLight,
       critical: getAccessibleVariant(critical),
+      criticalLight,
       formAccent,
+      formAccentLight,
       info: getAccessibleVariant(info),
+      infoLight,
       link,
       linkHover: link,
+      linkLight,
+      linkLightVisited,
       linkVisited,
       neutral: black,
       neutralInverted: white,
       positive: getAccessibleVariant(positive),
+      positiveLight,
       promote: getAccessibleVariant(promote),
+      promoteLight,
       rating: black,
       secondary,
       secondaryInverted: 'hsla(0, 0%, 100%, 0.65)',
     },
     background: {
       body: 'whitesmoke',
+      bodyDark: 'black',
       brand: black,
       brandAccent,
       brandAccentActive: getActiveColor(brandAccent),
@@ -224,34 +257,36 @@ const tokens: BraidTokens = {
       brandAccentSoft: tint(0.925, brandAccent),
       brandAccentSoftActive: tint(0.85, brandAccent),
       brandAccentSoftHover: tint(0.9, brandAccent),
-      card: white,
       caution,
       cautionLight: getLightVariant(caution),
       critical,
       criticalActive: getActiveColor(critical),
       criticalHover: getHoverColor(critical),
-      criticalLight,
+      criticalLight: criticalLightBackground,
       criticalSoft: tint(0.925, critical),
       criticalSoftActive: tint(0.85, critical),
       criticalSoftHover: tint(0.9, critical),
       formAccent,
       formAccentActive: getActiveColor(formAccent),
-      formAccentDisabled: '#ccc',
       formAccentHover: getHoverColor(formAccent),
       formAccentSoft: tint(0.925, formAccent),
       formAccentSoftActive: tint(0.85, formAccent),
       formAccentSoftHover: tint(0.9, formAccent),
       info,
       infoLight: getLightVariant(info),
-      input: white,
-      inputDisabled: '#eee',
       neutral,
-      neutralLight: getLightVariant(neutral),
+      neutralActive: darken(0.05, neutral),
+      neutralHover: lighten(0.05, neutral),
+      neutralLight: darken(0.04, getLightVariant(neutral)),
+      neutralSoft,
+      neutralSoftActive: darken(0.05, neutralSoft),
+      neutralSoftHover: darken(0.025, neutralSoft),
       positive,
       positiveLight: getLightVariant(positive),
       promote,
       promoteLight: getLightVariant(promote),
-      selection: '#f1f7ff',
+      surface: white,
+      surfaceDark: '#222',
     },
   },
 };

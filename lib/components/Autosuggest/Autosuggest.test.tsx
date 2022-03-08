@@ -2,7 +2,8 @@ import '@testing-library/jest-dom/extend-expect';
 import React, { useState, useRef, useEffect, Dispatch } from 'react';
 import { render, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BraidTestProvider, Autosuggest } from '..';
+import { BraidTestProvider } from '../../../test';
+import { Autosuggest } from '..';
 import { AutosuggestProps } from './Autosuggest';
 
 function renderAutosuggest<Value>({
@@ -138,9 +139,11 @@ describe('Autosuggest', () => {
     expect(changeHandler).not.toHaveBeenCalled();
 
     const suggestion = queryByLabelText('Apples');
-    if (suggestion) {
-      fireEvent.click(suggestion);
+    if (!suggestion) {
+      throw new Error('Suggestion not found');
     }
+
+    userEvent.click(suggestion);
 
     expect(getInputValue()).toBe('Apples');
     expect(changeHandler).toHaveBeenNthCalledWith(1, {
@@ -171,7 +174,7 @@ describe('Autosuggest', () => {
       throw new Error('Suggestion not found');
     }
 
-    fireEvent.click(suggestion);
+    userEvent.click(suggestion);
 
     expect(getInputValue()).toBe('Apples');
     expect(changeHandler).toHaveBeenNthCalledWith(1, {
@@ -213,9 +216,11 @@ describe('Autosuggest', () => {
     userEvent.click(input);
 
     const suggestion = queryByLabelText('Apples');
-    if (suggestion) {
-      fireEvent.click(suggestion);
+    if (!suggestion) {
+      throw new Error('Suggestion not found');
     }
+
+    userEvent.click(suggestion);
 
     expect(getInputValue()).toBe('');
     expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu is still open
@@ -482,7 +487,7 @@ describe('Autosuggest', () => {
         });
 
       userEvent.click(input);
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(getInputValue()).toBe('');
       expect(changeHandler).not.toHaveBeenCalled();
@@ -518,22 +523,22 @@ describe('Autosuggest', () => {
       expect(getInputValue()).toBe('');
 
       userEvent.click(input);
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Bananas');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Carrots');
 
-      fireEvent.keyDown(input, { key: 'ArrowUp' });
+      userEvent.keyboard('{arrowup}');
       expect(getInputValue()).toBe('Bananas');
 
       // Ensure no changes have been committed yet
       expect(changeHandler).not.toHaveBeenCalled();
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(getInputValue()).toBe('Bananas');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
@@ -571,21 +576,21 @@ describe('Autosuggest', () => {
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: 'app' });
       changeHandler.mockClear();
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'Escape' });
+      userEvent.keyboard('{esc}');
       expect(changeHandler).not.toHaveBeenCalled();
       expect(getInputValue()).toBe('app');
 
       expect(queryByLabelText('Apples')).toBe(null); // Ensure menu has closed
 
-      fireEvent.keyDown(input, { key: 'Escape' });
+      userEvent.keyboard('{esc}');
       expect(getInputValue()).toBe('');
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: '' });
       expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu has re-opened
 
-      fireEvent.keyDown(input, { key: 'Escape' });
+      userEvent.keyboard('{esc}');
       expect(queryByLabelText('Apples')).toBe(null); // Ensure menu has closed again
     });
 
@@ -604,10 +609,10 @@ describe('Autosuggest', () => {
 
       userEvent.click(input);
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(getInputValue()).toBe('Apples');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
@@ -649,10 +654,10 @@ describe('Autosuggest', () => {
 
       userEvent.click(input);
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(getInputValue()).toBe('');
       expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu is still open
@@ -696,22 +701,22 @@ describe('Autosuggest', () => {
       });
       userEvent.click(input);
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Bananas');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Broccoli');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Carrots');
 
-      fireEvent.keyDown(input, { key: 'ArrowUp' });
+      userEvent.keyboard('{arrowup}');
       expect(getInputValue()).toBe('Broccoli');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
       expect(getInputValue()).toBe('Broccoli');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
         text: 'Broccoli',
@@ -737,8 +742,8 @@ describe('Autosuggest', () => {
       ],
     });
     userEvent.click(input);
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    fireEvent.keyDown(input, { key: 'Enter' });
+    userEvent.keyboard('{arrowdown}');
+    userEvent.keyboard('{enter}');
     expect(changeHandler).toHaveBeenNthCalledWith(1, {
       text: 'Apples',
       value: 'apples',
@@ -794,7 +799,7 @@ describe('Autosuggest', () => {
         ],
       });
       userEvent.click(input);
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
       expect(getInputValue()).toBe('');
       expect(changeHandler).not.toHaveBeenCalled();
     });
@@ -890,10 +895,10 @@ describe('Autosuggest', () => {
         text: 'B',
       });
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Bananas');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
       expect(getInputValue()).toBe('Bananas');
       expect(changeHandler).toHaveBeenNthCalledWith(2, {
         text: 'Bananas',
@@ -962,7 +967,7 @@ describe('Autosuggest', () => {
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: 'a' });
       changeHandler.mockClear();
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
       expect(getInputValue()).toBe('Apples');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
         text: 'Apples',
@@ -1006,7 +1011,7 @@ describe('Autosuggest', () => {
 
       expect(queryByLabelText('Apples')).toBeInTheDocument(); // Ensure menu has opened
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(queryByLabelText('Apples')).not.toBeInTheDocument(); // Ensure menu has closed
 
@@ -1036,10 +1041,10 @@ describe('Autosuggest', () => {
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: 'a' });
       changeHandler.mockClear();
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Apples');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
       expect(getInputValue()).toBe('Apples');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
         text: 'Apples',
@@ -1113,13 +1118,13 @@ describe('Autosuggest', () => {
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: 'a' });
       changeHandler.mockClear();
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Bananas');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Carrots');
 
-      fireEvent.keyDown(input, { key: 'Enter' });
+      userEvent.keyboard('{enter}');
 
       expect(getInputValue()).toBe('Carrots');
       expect(changeHandler).toHaveBeenNthCalledWith(1, {
@@ -1155,10 +1160,10 @@ describe('Autosuggest', () => {
       expect(changeHandler).toHaveBeenNthCalledWith(1, { text: 'a' });
       changeHandler.mockClear();
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Bananas');
 
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      userEvent.keyboard('{arrowdown}');
       expect(getInputValue()).toBe('Carrots');
 
       // Wait a bit because we ignore blurs that happens too quickly

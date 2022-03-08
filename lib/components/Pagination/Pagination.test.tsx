@@ -4,7 +4,8 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BraidTestProvider, Pagination } from '..';
+import { BraidTestProvider } from '../../../test';
+import { Pagination } from '..';
 
 describe('Pagination', () => {
   it('should render valid html structure', () => {
@@ -60,7 +61,7 @@ describe('Pagination', () => {
       </BraidTestProvider>,
     );
 
-    expect(queryByLabelText('Prev')).not.toBeInTheDocument();
+    expect(queryByLabelText('Prev')).not.toBeVisible();
     expect(document.body).toHaveFocus();
     userEvent.tab();
     expect(getByLabelText('Pg 1')).toHaveFocus();
@@ -86,7 +87,7 @@ describe('Pagination', () => {
       </BraidTestProvider>,
     );
 
-    expect(queryByLabelText('Next')).not.toBeInTheDocument();
+    expect(queryByLabelText('Next')).not.toBeVisible();
     expect(document.body).toHaveFocus();
     userEvent.tab();
     expect(getByLabelText('Prev')).toHaveFocus();

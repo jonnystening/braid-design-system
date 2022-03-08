@@ -137,7 +137,7 @@ function SuggestionItem({
         component="span"
         display="flex"
         justifyContent="spaceBetween"
-        background={highlighted ? 'selection' : undefined}
+        background={highlighted ? 'formAccentSoft' : undefined}
         paddingX="small"
         paddingRight={onClear ? 'none' : undefined}
       >
@@ -496,6 +496,19 @@ export const Autosuggest = forwardRef(function <Value>(
     tablet: false,
   });
 
+  useEffect(() => {
+    if (menuRef.current && isOpen && !isMobile) {
+      const { bottom: menuBottom } = menuRef.current.getBoundingClientRect();
+      const viewportHeight = document.documentElement.clientHeight;
+
+      if (menuBottom > viewportHeight) {
+        menuRef.current.scrollIntoView(false);
+      }
+    }
+    // re-running this effect if the suggestionCount changes
+    // to ensure asychronous updates aren't left out of view.
+  }, [isOpen, isMobile, suggestionCount]);
+
   const inputProps = {
     value: previewValue ? previewValue.text : value.text,
     type: type === 'search' ? type : 'text',
@@ -688,7 +701,7 @@ export const Autosuggest = forwardRef(function <Value>(
                     display={isOpen ? 'block' : 'none'}
                     position="absolute"
                     zIndex="dropdown"
-                    background="card"
+                    background="surface"
                     borderRadius="standard"
                     boxShadow="medium"
                     width="full"

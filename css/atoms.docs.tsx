@@ -7,10 +7,10 @@ import {
   PseudoProperties,
   unresponsiveProperties,
   UnresponsiveProperties,
+  BoxShadow,
 } from '../lib/css/atoms/atomicProperties';
-import { Atoms, atoms } from '../lib/css/atoms/atoms';
+import { atoms } from '../css';
 import {
-  Box,
   Stack,
   Columns,
   Column,
@@ -21,13 +21,16 @@ import {
   Strong,
   Alert,
 } from '../lib/components';
+// TODO: COLORMODE RELEASE
+// Use public import
+import { Box } from '../lib/components/Box/Box';
 import source from '../lib/utils/source.macro';
 import Code from '../site/src/App/Code/Code';
 import { ThemedExample } from '../site/src/App/ThemeSetting';
 import { CssDoc } from '../site/src/types';
 import { VanillaMigrationBanner } from './VanillaMigrationBanner';
 
-type BoxShadowDocs = Required<Record<NonNullable<Atoms['boxShadow']>, string>>;
+type BoxShadowDocs = Required<Record<BoxShadow, string>>;
 const validateBoxShadows = (boxShadows: BoxShadowDocs) => boxShadows;
 
 interface AtomicPropertyProps {
@@ -168,7 +171,7 @@ const docs: CssDoc = {
               };
             `}
           </Code>
-          <ThemedExample background="body">
+          <ThemedExample>
             <Stack space="gutter" align="center">
               <Inline space="gutter" align="center" alignY="center">
                 <Box
@@ -313,7 +316,7 @@ const docs: CssDoc = {
               };
             `}
           </Code>
-          <ThemedExample background="body">
+          <ThemedExample>
             <Inline space="medium" align="center">
               <Box
                 background="formAccentHover"
@@ -372,29 +375,35 @@ const docs: CssDoc = {
               ways when upgrading Braid.
             </Text>
           </Alert>
-          <ThemedExample background="body">
+          <ThemedExample>
             <Tiles space="large" columns={{ mobile: 1, desktop: 2 }}>
               {Object.entries(
                 validateBoxShadows({
                   small: 'Used for small shadows.',
                   medium: 'Used for medium shadows.',
                   large: 'Used for large shadows.',
-                  borderStandard: 'Used for neutral element borders.',
-                  borderStandardInverted:
-                    'Used for standard borders on dark backgrounds.',
-                  borderStandardInvertedLarge:
-                    'Used for large standard borders on dark backgrounds.',
+                  borderNeutral: 'Used for neutral element borders.',
+                  borderNeutralLarge: 'Used for large neutral element borders.',
+                  borderNeutralInverted:
+                    'Used for neutral borders on dark backgrounds.',
+                  borderNeutralInvertedLarge:
+                    'Used for large neutral borders on dark backgrounds.',
+                  borderNeutralLight: 'Used for light neutral element borders.',
                   borderField: 'Used for borders around form fields.',
-                  borderFormHover:
-                    'Used for borders around form fields on hover.',
                   outlineFocus:
                     'Used for focus states of interactive elements.',
                   borderFormAccent:
                     'Used for borders around prominent interactive elements.',
                   borderFormAccentLarge:
                     'Used for large borders around prominent interactive elements.',
+                  borderFormAccentLight:
+                    'Used for borders around prominent interactive elements in a dark context.',
+                  borderFormAccentLightLarge:
+                    'Used for large borders around prominent interactive elements in a dark context.',
                   borderBrandAccentLarge:
                     'Used for large borders around branded elements.',
+                  borderBrandAccentLightLarge:
+                    'Used for large borders around branded elements in a dark context.',
                   borderPositive:
                     'Used for borders around “positive” elements.',
                   borderPositiveLight:
@@ -405,6 +414,8 @@ const docs: CssDoc = {
                     'Used for large borders around “critical” elements.',
                   borderCriticalLight:
                     'Used for borders around “criticalLight” elements.',
+                  borderCriticalLightLarge:
+                    'Used for large borders around “criticalLight” elements.',
                   borderCaution: 'Used for borders around “caution” elements.',
                   borderCautionLight:
                     'Used for borders around “cautionLight” elements.',
@@ -419,14 +430,22 @@ const docs: CssDoc = {
                 <Columns key={boxShadow} space="medium" alignY="center">
                   <Column width="content">
                     <Box
-                      background={
-                        boxShadow.includes('Inverted') ? 'brand' : 'card'
-                      }
+                      background={{
+                        lightMode: boxShadow.includes('Inverted')
+                          ? 'neutral'
+                          : 'surface',
+                        darkMode: /^border|outline/.test(boxShadow)
+                          ? 'surfaceDark'
+                          : 'surface',
+                      }}
                       borderRadius="standard"
                       padding="gutter"
                     >
                       <Box
-                        boxShadow={boxShadow as keyof BoxShadowDocs}
+                        boxShadow={{
+                          lightMode: boxShadow as keyof BoxShadowDocs,
+                          darkMode: boxShadow as keyof BoxShadowDocs,
+                        }}
                         borderRadius="standard"
                         padding="gutter"
                       />

@@ -26,6 +26,7 @@ export interface PaginationProps {
   pageLabel?: (page: number) => string;
   nextLabel?: string;
   previousLabel?: string;
+  pageLimit?: number;
   data?: DataAttributeMap;
 }
 
@@ -52,7 +53,7 @@ const PageNav = ({
     >
       <Overlay
         component="span"
-        background="selection"
+        background="formAccentSoft"
         borderRadius={borderRadius}
         transition="fast"
         className={styles.background}
@@ -93,7 +94,7 @@ const Page = ({ number, current }: { number: number; current: boolean }) => {
     >
       <Overlay
         component="span"
-        background={current ? 'formAccent' : 'selection'}
+        background={current ? 'formAccent' : 'formAccentSoft'}
         transition={current ? undefined : 'fast'}
         borderRadius={borderRadius}
         className={[styles.background, current ? styles.current : undefined]}
@@ -102,11 +103,12 @@ const Page = ({ number, current }: { number: number; current: boolean }) => {
         component="span"
         borderRadius={borderRadius}
         boxShadow="borderFormAccent"
-        className={
-          parentBackground !== 'card' && current
-            ? styles.currentKeyline
-            : undefined
-        }
+        className={{
+          [styles.lightModeCurrentKeyline]:
+            parentBackground.lightMode !== 'surface' && current,
+          [styles.darkModeCurrentKeyline]:
+            parentBackground.darkMode !== 'surface' && current,
+        }}
       />
       <Box component="span" zIndex={1} userSelect="none">
         <Text
@@ -122,6 +124,8 @@ const Page = ({ number, current }: { number: number; current: boolean }) => {
   );
 };
 
+export const defaultPageLimit = 7;
+
 export const Pagination = ({
   page,
   total,
@@ -130,12 +134,17 @@ export const Pagination = ({
   pageLabel = (p: number) => `Go to page ${p}`,
   nextLabel = 'Next',
   previousLabel = 'Previous',
+  pageLimit = defaultPageLimit,
   data,
 }: PaginationProps) => {
   assert(total >= 1, `\`total\` must be at least 1`);
   assert(page >= 1 && page <= total, `\`page\` must be between 1 and ${total}`);
+  assert(
+    pageLimit >= 1 && pageLimit <= defaultPageLimit,
+    `\`pageLimit\` must be between 1 and ${defaultPageLimit}`,
+  );
 
-  const pages = paginate({ page, total });
+  const pages = paginate({ page, total, maxPages: pageLimit });
   const showPrevious = page > 1;
   const showNext = page < total;
 
@@ -146,30 +155,45 @@ export const Pagination = ({
       {...(data ? buildDataAttributes(data) : undefined)}
     >
       <Box component="ul" display="flex" justifyContent="center">
-        {showPrevious ? (
-          <Box component="li" paddingRight={['medium', tabletButtonSpacing]}>
-            <Link
-              {...linkProps({ page: page - 1, type: 'previous' })}
-              rel="prev"
-              aria-label={previousLabel}
-              title={previousLabel}
-            >
-              <PageNav label={previousLabel} direction="prev" />
-            </Link>
-          </Box>
-        ) : null}
+        <Box
+          component="li"
+          paddingRight={{
+            mobile: 'medium',
+            tablet: pageLimit > 2 ? tabletButtonSpacing : undefined,
+          }}
+          transition="fast"
+          opacity={!showPrevious ? 0 : undefined}
+          pointerEvents={!showPrevious ? 'none' : undefined}
+        >
+          <Link
+            {...linkProps({ page: page - 1, type: 'previous' })}
+            rel="prev"
+            aria-label={previousLabel}
+            title={previousLabel}
+            aria-hidden={!showPrevious}
+            tabIndex={!showPrevious ? -1 : undefined}
+          >
+            <PageNav label={previousLabel} direction="prev" />
+          </Link>
+        </Box>
 
         {pages.map((pageNumber, index) => {
           const current = page === pageNumber;
+          const isNotLast = pages.length - 1 !== index;
 
           return (
             <Box
               component="li"
-              display={!current ? ['none', 'block'] : undefined}
-              paddingRight={[
-                'none',
-                pages.length - 1 === index ? 'none' : tabletButtonSpacing,
-              ]}
+              display={
+                !current ? { mobile: 'none', tablet: 'block' } : undefined
+              }
+              paddingRight={
+                pageLimit > 2 && isNotLast
+                  ? {
+                      tablet: tabletButtonSpacing,
+                    }
+                  : undefined
+              }
               key={pageNumber}
             >
               <Link
@@ -184,18 +208,27 @@ export const Pagination = ({
           );
         })}
 
-        {showNext ? (
-          <Box component="li" paddingLeft={['medium', tabletButtonSpacing]}>
-            <Link
-              {...linkProps({ page: page + 1, type: 'next' })}
-              rel="next"
-              aria-label={nextLabel}
-              title={nextLabel}
-            >
-              <PageNav label={nextLabel} direction="next" />
-            </Link>
-          </Box>
-        ) : null}
+        <Box
+          component="li"
+          paddingLeft={{
+            mobile: 'medium',
+            tablet: pageLimit > 2 ? tabletButtonSpacing : undefined,
+          }}
+          transition="fast"
+          opacity={!showNext ? 0 : undefined}
+          pointerEvents={!showNext ? 'none' : undefined}
+        >
+          <Link
+            {...linkProps({ page: page + 1, type: 'next' })}
+            rel="next"
+            aria-label={nextLabel}
+            title={nextLabel}
+            aria-hidden={!showNext}
+            tabIndex={!showNext ? -1 : undefined}
+          >
+            <PageNav label={nextLabel} direction="next" />
+          </Link>
+        </Box>
       </Box>
     </Box>
   );

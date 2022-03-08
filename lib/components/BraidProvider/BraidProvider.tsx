@@ -17,6 +17,8 @@ import { BraidTestProviderContext } from '../BraidTestProvider/BraidTestProvider
 import { BreakpointProvider } from './BreakpointContext';
 import { BraidThemeContext } from './BraidThemeContext';
 import { BraidTheme } from '../../themes/BraidTheme';
+import { darkMode } from '../../css/atoms/sprinkles.css';
+import { VanillaThemeContainer } from './VanillaThemeContainer';
 import './BraidProvider.css';
 
 if (process.env.NODE_ENV === 'development') {
@@ -93,9 +95,15 @@ export const BraidProvider = ({
     <BraidThemeContext.Provider value={theme}>
       <TreatProvider theme={theme.treatTheme}>
         {styleBody ? (
-          <style type="text/css">{`body{margin:0;padding:0;background:${theme.background}}`}</style>
+          <style type="text/css">{`
+            html,body{margin:0;padding:0;background:${theme.background.lightMode}}
+            html.${darkMode},html.${darkMode} body{color-scheme:dark;background:${theme.background.darkMode}}
+          `}</style>
         ) : null}
-        <div className={theme.vanillaTheme}>
+        <VanillaThemeContainer
+          theme={theme.vanillaTheme}
+          setDefaultTextTones={!alreadyInBraidProvider}
+        >
           <LinkComponentContext.Provider
             value={linkComponent || linkComponentFromContext}
           >
@@ -105,7 +113,7 @@ export const BraidProvider = ({
               <BreakpointProvider>{children}</BreakpointProvider>
             )}
           </LinkComponentContext.Provider>
-        </div>
+        </VanillaThemeContainer>
       </TreatProvider>
     </BraidThemeContext.Provider>
   );

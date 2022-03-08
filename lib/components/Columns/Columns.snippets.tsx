@@ -1,6 +1,6 @@
 import React from 'react';
 import { Snippets } from '../private/Snippets';
-import { Columns, Column, Stack, Placeholder } from '../../playroom/components';
+import { Columns, Column, Placeholder } from '../../playroom/components';
 import source from '../../utils/source.macro';
 
 export const snippets: Snippets = [
@@ -9,14 +9,10 @@ export const snippets: Snippets = [
     code: source(
       <Columns space="gutter">
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
       </Columns>,
     ),
@@ -26,14 +22,10 @@ export const snippets: Snippets = [
     code: source(
       <Columns space="gutter" collapseBelow="tablet">
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
       </Columns>,
     ),
@@ -43,19 +35,13 @@ export const snippets: Snippets = [
     code: source(
       <Columns space="gutter">
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
       </Columns>,
     ),
@@ -65,19 +51,13 @@ export const snippets: Snippets = [
     code: source(
       <Columns space="gutter" collapseBelow="tablet">
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={60} label="Column" />
-          </Stack>
+          <Placeholder height={60} label="Column" />
         </Column>
       </Columns>,
     ),
@@ -87,14 +67,10 @@ export const snippets: Snippets = [
     code: source(
       <Columns space="gutter" collapseBelow="tablet">
         <Column width="2/3">
-          <Stack space="small">
-            <Placeholder height={400} label="Main" />
-          </Stack>
+          <Placeholder height={400} label="Main" />
         </Column>
         <Column>
-          <Stack space="small">
-            <Placeholder height={100} label="Sidebar" />
-          </Stack>
+          <Placeholder height={100} label="Sidebar" />
         </Column>
       </Columns>,
     ),

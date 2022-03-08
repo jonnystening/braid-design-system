@@ -9,11 +9,12 @@
     "makeLinkComponent",
     "MenuItemLink",
     "RadioItem",
+    "Step",
     "Tab",
     "TabsProvider",
     "TabPanel",
     "TabPanels",
     "ToastProvider"
   ],
-  "css": ["Breakpoint"]
+  "css": ["Breakpoint", "colorModeStyle"]
 }

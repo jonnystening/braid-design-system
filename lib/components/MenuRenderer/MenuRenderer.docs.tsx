@@ -15,29 +15,35 @@ import {
   Button,
   Dialog,
   IconDelete,
+  Inline,
+  IconBookmark,
+  IconProfile,
+  MenuItemDivider,
 } from '..';
 
 const docs: ComponentDocs = {
   category: 'Content',
   Example: () =>
     source(
-      <MenuRenderer
-        offsetSpace="small"
-        trigger={(triggerProps, { open }) => (
-          <Box userSelect="none" cursor="pointer" {...triggerProps}>
-            <Text>
-              Menu{' '}
-              <IconChevron
-                direction={open ? 'up' : 'down'}
-                alignY="lowercase"
-              />
-            </Text>
-          </Box>
-        )}
-      >
-        <MenuItem onClick={() => {}}>Button</MenuItem>
-        <MenuItemLink href="#">Link</MenuItemLink>
-      </MenuRenderer>,
+      <Inline space="none">
+        <MenuRenderer
+          offsetSpace="small"
+          trigger={(triggerProps, { open }) => (
+            <Box userSelect="none" cursor="pointer" {...triggerProps}>
+              <Text>
+                Menu{' '}
+                <IconChevron
+                  direction={open ? 'up' : 'down'}
+                  alignY="lowercase"
+                />
+              </Text>
+            </Box>
+          )}
+        >
+          <MenuItem onClick={() => {}}>Button</MenuItem>
+          <MenuItemLink href="#">Link</MenuItemLink>
+        </MenuRenderer>
+      </Inline>,
     ),
   description: (
     <Stack space="large">
@@ -53,7 +59,7 @@ const docs: ComponentDocs = {
   accessibility: (
     <Text>
       Follows the{' '}
-      <TextLink href="https://www.w3.org/TR/wai-aria-practices-1.1/#menu">
+      <TextLink href="https://www.w3.org/TR/wai-aria-practices-1.2/#menu">
         WAI-ARIA Menu Pattern.
       </TextLink>
     </Text>
@@ -75,7 +81,7 @@ const docs: ComponentDocs = {
       ),
       Example: () =>
         source(
-          <Box style={{ paddingLeft: '40px', maxWidth: '220px' }}>
+          <Inline space="none">
             <MenuRenderer
               align="right"
               offsetSpace="small"
@@ -94,7 +100,39 @@ const docs: ComponentDocs = {
               <MenuItem onClick={() => {}}>Button</MenuItem>
               <MenuItemLink href="#">Link</MenuItemLink>
             </MenuRenderer>
-          </Box>,
+          </Inline>,
+        ),
+    },
+    {
+      label: 'Placement',
+      description: (
+        <Text>
+          The menu is placed below the <Strong>trigger</Strong> by default, but
+          this can be customised via the <Strong>placement</Strong> prop.
+        </Text>
+      ),
+      Example: () =>
+        source(
+          <Inline space="none">
+            <MenuRenderer
+              placement="top"
+              offsetSpace="small"
+              trigger={(triggerProps, { open }) => (
+                <Box userSelect="none" cursor="pointer" {...triggerProps}>
+                  <Text>
+                    Placed on top{' '}
+                    <IconChevron
+                      direction={open ? 'down' : 'up'}
+                      alignY="lowercase"
+                    />
+                  </Text>
+                </Box>
+              )}
+            >
+              <MenuItem onClick={() => {}}>Button</MenuItem>
+              <MenuItemLink href="#">Link</MenuItemLink>
+            </MenuRenderer>
+          </Inline>,
         ),
     },
     {
@@ -111,23 +149,80 @@ const docs: ComponentDocs = {
       ),
       Example: () =>
         source(
-          <MenuRenderer
-            offsetSpace={{ mobile: 'xsmall', tablet: 'small' }}
-            trigger={(triggerProps, { open }) => (
-              <Box userSelect="none" cursor="pointer" {...triggerProps}>
-                <Text>
-                  Custom space{' '}
-                  <IconChevron
-                    direction={open ? 'up' : 'down'}
-                    alignY="lowercase"
-                  />
-                </Text>
-              </Box>
-            )}
-          >
-            <MenuItem onClick={() => {}}>Button</MenuItem>
-            <MenuItemLink href="#">Link</MenuItemLink>
-          </MenuRenderer>,
+          <Inline space="none">
+            <MenuRenderer
+              offsetSpace={{ mobile: 'xsmall', tablet: 'small' }}
+              trigger={(triggerProps, { open }) => (
+                <Box userSelect="none" cursor="pointer" {...triggerProps}>
+                  <Text>
+                    Custom space{' '}
+                    <IconChevron
+                      direction={open ? 'up' : 'down'}
+                      alignY="lowercase"
+                    />
+                  </Text>
+                </Box>
+              )}
+            >
+              <MenuItem onClick={() => {}}>Button</MenuItem>
+              <MenuItemLink href="#">Link</MenuItemLink>
+            </MenuRenderer>
+          </Inline>,
+        ),
+    },
+    {
+      label: 'Width',
+      description: (
+        <>
+          <Text>
+            The <Strong>width</Strong> prop can be used to control the width of
+            the menu. By default, it is set to <Strong>content</Strong> growing
+            to the length of the longest menu item.
+          </Text>
+          <Text>
+            Alternatively, choose from <Strong>small</Strong>,{' '}
+            <Strong>medium</Strong> or <Strong>large</Strong> which are ratios
+            of the{' '}
+            <TextLink href="/css/vars#vars.contentwidth">contentWidth</TextLink>{' '}
+            scale for the selected theme.
+          </Text>
+        </>
+      ),
+      Example: ({ setState, getState, setDefaultState }) =>
+        source(
+          <>
+            {setDefaultState('width', 'content')}
+            <Inline space="none">
+              <MenuRenderer
+                offsetSpace="small"
+                width={getState('width')}
+                trigger={(triggerProps, { open }) => (
+                  <Box userSelect="none" cursor="pointer" {...triggerProps}>
+                    <Text>
+                      Menu width: <Strong>{getState('width')}</Strong>{' '}
+                      <IconChevron
+                        direction={open ? 'up' : 'down'}
+                        alignY="lowercase"
+                      />
+                    </Text>
+                  </Box>
+                )}
+              >
+                <MenuItem onClick={() => setState('width', 'content')}>
+                  Content
+                </MenuItem>
+                <MenuItem onClick={() => setState('width', 'small')}>
+                  Small
+                </MenuItem>
+                <MenuItem onClick={() => setState('width', 'medium')}>
+                  Medium
+                </MenuItem>
+                <MenuItem onClick={() => setState('width', 'large')}>
+                  Large
+                </MenuItem>
+              </MenuRenderer>
+            </Inline>
+          </>,
         ),
     },
     {
@@ -143,24 +238,29 @@ const docs: ComponentDocs = {
       Example: ({ id, getState, toggleState, showToast }) =>
         source(
           <>
-            <MenuRenderer
-              offsetSpace="small"
-              trigger={(triggerProps, { open }) => (
-                <Box userSelect="none" cursor="pointer" {...triggerProps}>
-                  <Text>
-                    Menu{' '}
-                    <IconChevron
-                      direction={open ? 'up' : 'down'}
-                      alignY="lowercase"
-                    />
-                  </Text>
-                </Box>
-              )}
-            >
-              <MenuItem onClick={() => toggleState('confirm')} tone="critical">
-                Delete
-              </MenuItem>
-            </MenuRenderer>
+            <Inline space="none">
+              <MenuRenderer
+                offsetSpace="small"
+                trigger={(triggerProps, { open }) => (
+                  <Box userSelect="none" cursor="pointer" {...triggerProps}>
+                    <Text>
+                      Menu{' '}
+                      <IconChevron
+                        direction={open ? 'up' : 'down'}
+                        alignY="lowercase"
+                      />
+                    </Text>
+                  </Box>
+                )}
+              >
+                <MenuItem
+                  onClick={() => toggleState('confirm')}
+                  tone="critical"
+                >
+                  Delete
+                </MenuItem>
+              </MenuRenderer>
+            </Inline>
             <Dialog
               id={id}
               width="content"
@@ -196,6 +296,51 @@ const docs: ComponentDocs = {
               </Stack>
             </Dialog>
           </>,
+        ),
+    },
+    {
+      label: 'Using icons in the menu',
+      description: (
+        <Text>
+          When using{' '}
+          <TextLink href="/components/MenuItem#inserting-an-icon">
+            menu items with icons
+          </TextLink>
+          , you may find that not all of them have or need one. In order to
+          maintain a uniform alignment across all the menu items, you can
+          provide the <Strong>reserveIconSpace</Strong> prop.
+        </Text>
+      ),
+      Example: () =>
+        source(
+          <Inline space="none">
+            <MenuRenderer
+              reserveIconSpace
+              offsetSpace="small"
+              width="small"
+              trigger={(triggerProps, { open }) => (
+                <Box userSelect="none" cursor="pointer" {...triggerProps}>
+                  <Text>
+                    Reserved icon space{' '}
+                    <IconChevron
+                      direction={open ? 'up' : 'down'}
+                      alignY="lowercase"
+                    />
+                  </Text>
+                </Box>
+              )}
+            >
+              <MenuItem onClick={() => {}} icon={<IconProfile />}>
+                Item
+              </MenuItem>
+              <MenuItem onClick={() => {}} icon={<IconBookmark />}>
+                Item
+              </MenuItem>
+              <MenuItemDivider />
+              <MenuItem onClick={() => {}}>Item</MenuItem>
+              <MenuItem onClick={() => {}}>Item</MenuItem>
+            </MenuRenderer>
+          </Inline>,
         ),
     },
     {

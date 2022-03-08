@@ -3,7 +3,7 @@ import assert from 'assert';
 import clsx from 'clsx';
 
 import { OptionalTitle } from '../../components/icons/SVGTypes';
-import { BoxProps } from '../../components/Box/Box';
+import { PublicBoxProps } from '../../components/Box/Box';
 import { TextContext } from '../../components/Text/TextContext';
 import HeadingContext from '../../components/Heading/HeadingContext';
 import { textSize, useTextTone, UseTextProps } from '../typography';
@@ -50,12 +50,16 @@ const detaultVerticalCorrection = {
 export default (
   { size, tone, alignY, data, ...titleProps }: UseIconProps,
   { verticalCorrection = detaultVerticalCorrection }: PrivateIconProps = {},
-): BoxProps => {
+  // TODO: COLORMODE RELEASE
+  // Revert to BoxProps
+): PublicBoxProps => {
   const textContext = useContext(TextContext);
   const headingContext = useContext(HeadingContext);
   const inheritedTone =
     textContext && textContext.tone ? textContext.tone : 'neutral';
   const resolvedTone = useTextTone({ tone: tone || inheritedTone });
+  const toneClass =
+    tone || !(textContext && textContext.tone) ? resolvedTone : undefined;
   const isInline = textContext || headingContext;
   const a11yProps = titleProps.title
     ? { ...titleProps, role: 'img' }
@@ -78,7 +82,7 @@ export default (
       width: 'full',
       height: 'full',
       display: 'block',
-      className: resolvedTone,
+      className: toneClass,
       ...(data ? buildDataAttributes(data) : undefined),
       ...a11yProps,
     };
@@ -88,7 +92,7 @@ export default (
     display: isInline ? 'inlineBlock' : 'block',
     position: isInline ? 'relative' : undefined,
     className: [
-      resolvedTone,
+      toneClass,
       isInline
         ? [
             styles.size,

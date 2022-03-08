@@ -1,7 +1,10 @@
 import React, { Fragment, ReactNode } from 'react';
 import { titleCase } from 'title-case';
 import { ComponentScreenshot } from '../../../site/src/types';
-import { Box, Text, Stack, Column, Columns, IconPositive } from '../';
+import { Text, Stack, Column, Columns, IconPositive } from '../';
+// TODO: COLORMODE RELEASE
+// Use public import
+import { Box } from '../Box/Box';
 import { text as textSizes } from '../../hooks/typography/typography.css';
 import { backgrounds, textAlignments } from '../../utils/docsHelpers';
 
@@ -30,13 +33,20 @@ export const screenshots: ComponentScreenshot = {
       ),
     },
     {
-      label: 'Text on Brand Background',
-      background: 'brand',
+      label: 'Text on dark background',
+      background: 'neutral',
       Container,
       Example: () => (
         <Stack space="small">
           <Text>Neutral text</Text>
           <Text tone="secondary">Secondary text</Text>
+          <Text tone="critical">Critical text</Text>
+          <Text tone="caution">Caution text</Text>
+          <Text tone="positive">Positive text</Text>
+          <Text tone="info">Info text</Text>
+          <Text tone="promote">Promote text</Text>
+          <Text tone="formAccent">FormAccent text</Text>
+          <Text tone="brandAccent">BrandAccent text</Text>
         </Stack>
       ),
     },
@@ -64,7 +74,7 @@ export const screenshots: ComponentScreenshot = {
     },
     {
       label: 'Text Spacing',
-      background: 'card',
+      background: 'surface',
       Container,
       Example: () => {
         const sizes = Object.keys(textSizes) as Array<keyof typeof textSizes>;

@@ -6,9 +6,9 @@ import {
   IconPositive,
   IconPromote,
   IconCaution,
+  IconClear,
 } from '../icons';
 import { AllOrNone } from '../private/AllOrNone';
-import { ClearButton } from '../iconButtons/ClearButton/ClearButton';
 import { Columns } from '../Columns/Columns';
 import { Column } from '../Column/Column';
 import { Overlay } from '../private/Overlay/Overlay';
@@ -17,6 +17,11 @@ import { textAlignedToIcon } from '../../css/textAlignedToIcon.css';
 import buildDataAttributes, {
   DataAttributeMap,
 } from '../private/buildDataAttributes';
+import { BoxShadow } from '../../css/atoms/atomicProperties';
+import { Keyline } from '../private/Keyline/Keyline';
+import { virtualTouchable } from '../private/touchable/virtualTouchable';
+import { iconContainerSize } from '../../hooks/useIcon';
+import * as styles from './Alert.css';
 
 type Tone = 'promote' | 'info' | 'positive' | 'caution' | 'critical';
 
@@ -39,7 +44,7 @@ const backgroundForTone: Record<Tone, BoxProps['background']> = {
   critical: 'criticalLight',
 };
 
-const borderForTone: Record<Tone, BoxProps['boxShadow']> = {
+const borderForTone: Record<Tone, BoxShadow> = {
   promote: 'borderPromoteLight',
   info: 'borderInfoLight',
   positive: 'borderPositiveLight',
@@ -54,8 +59,6 @@ const icons = {
   caution: IconCaution,
   critical: IconCritical,
 };
-
-const highlightBarSize = 'xxsmall';
 
 export const Alert = ({
   tone = 'info',
@@ -80,40 +83,69 @@ export const Alert = ({
       aria-live="polite"
       {...(data ? buildDataAttributes(data) : undefined)}
     >
-      <Box paddingLeft={highlightBarSize}>
-        <Columns space="small">
+      <Columns space="small">
+        <Column width="content">
+          <Icon tone={tone} />
+        </Column>
+        <Column>
+          <Box className={textAlignedToIcon.standard}>{children}</Box>
+        </Column>
+        {onClose ? (
           <Column width="content">
-            <Icon tone={tone} />
-          </Column>
-          <Column>
-            <Box className={textAlignedToIcon.standard}>{children}</Box>
-          </Column>
-          {onClose ? (
-            <Column width="content">
-              <ClearButton
-                tone="neutral"
-                label={closeLabel}
-                onClick={onClose}
+            <Box
+              component="button"
+              aria-label={closeLabel}
+              borderRadius="full"
+              cursor="pointer"
+              position="relative"
+              onClick={onClose}
+              outline="none"
+              transition="touchable"
+              transform={{ active: 'touchable' }}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              className={[
+                styles.closeButton,
+                iconContainerSize(),
+                virtualTouchable(),
+              ]}
+            >
+              <Overlay
+                component="span"
+                boxShadow="outlineFocus"
+                transition="fast"
+                onlyVisibleForKeyboardNavigation
+                borderRadius="full"
+                className={styles.closeButtonFocus}
               />
-            </Column>
-          ) : null}
-        </Columns>
-      </Box>
-      {parentBackground !== 'card' && (
+              <Overlay
+                component="span"
+                background="surface"
+                transition="fast"
+                borderRadius="full"
+                className={styles.closeButtonHover}
+              />
+              <Box
+                component="span"
+                display="block"
+                zIndex={1}
+                position="relative"
+              >
+                <IconClear size="fill" tone={tone} />
+              </Box>
+            </Box>
+          </Column>
+        ) : null}
+      </Columns>
+      {parentBackground.lightMode !== 'surface' && (
         <Overlay
           borderRadius={borderRadius}
-          boxShadow={borderForTone[tone]}
+          boxShadow={{ lightMode: borderForTone[tone] }}
           visible
         />
       )}
-      <Box
-        background={tone}
-        paddingLeft={highlightBarSize}
-        position="absolute"
-        top={0}
-        bottom={0}
-        left={0}
-      />
+      <Keyline tone={tone} borderRadius={borderRadius} />
     </Box>
   );
 };

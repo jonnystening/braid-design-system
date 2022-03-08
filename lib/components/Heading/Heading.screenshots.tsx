@@ -1,7 +1,10 @@
 import React, { ReactNode, Fragment } from 'react';
 import { ComponentScreenshot } from '../../../site/src/types';
 import { heading as headingLevels } from '../../hooks/typography/typography.css';
-import { Box, Heading, Stack } from '../';
+import { Heading, Stack } from '../';
+// TODO: COLORMODE RELEASE
+// Use public import
+import { Box } from '../Box/Box';
 import { backgrounds, textAlignments } from '../../utils/docsHelpers';
 
 const Container = ({ children }: { children: ReactNode }) => (
@@ -71,7 +74,7 @@ export const screenshots: ComponentScreenshot = {
     },
     {
       label: 'Heading Spacing',
-      background: 'card',
+      background: 'surface',
       Example: () => {
         const levels = Object.keys(headingLevels) as Array<
           keyof typeof headingLevels

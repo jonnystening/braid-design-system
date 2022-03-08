@@ -1,5 +1,701 @@
 # braid-design-system
 
+## 31.7.0
+
+### Minor Changes
+
+- **MenuRenderer, OverflowMenu:** Add menu `width` and `placement` support ([#1075](https://github.com/seek-oss/braid-design-system/pull/1075))
+
+  Provides a set of `width`s to control how wide the menu is, where `content` is the default. The available widths are ratioed off the `contentWidth`s specified on the theme.
+
+  Additionally the `placement` of the menu can choose from either `top` or `bottom` where the latter remains the default.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <MenuRenderer
+    // ...
+    width="small"
+    placement="top"
+  >
+    ...
+  </MenuRenderer>
+  ```
+
+- **MenuItem, MenuItemLink, MenuRenderer, OverflowMenu:** Add `icon` support ([#1075](https://github.com/seek-oss/braid-design-system/pull/1075))
+
+  Provides a designed slot for adding an icon to `MenuItem` and `MenuItemLink`. To compliment this we have introduced `reserveIconSpace` on both `MenuRenderer` and `OverflowMenu` so the labels in menu items without icons align with the labels of menu items with an icon.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <MenuRenderer reserveIconSpace>
+    <MenuItem
+      // ...
+      icon={<IconBookmark />}
+    >
+      Menu Item
+    </MenuItem>
+  </MenuRenderer>
+  ```
+
+- **MenuItem, MenuItemLink, MenuItemChecklist:** Add `badge` support ([#1075](https://github.com/seek-oss/braid-design-system/pull/1075))
+
+  Provides a designed slot for adding a `Badge` to all the variants of a menu item.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <MenuRenderer>
+    <MenuItem
+      // ...
+      badge={<Badge>Badge</Badge>}
+    >
+      Menu Item
+    </MenuItem>
+  </MenuRenderer>
+  ```
+
+### Patch Changes
+
+- **Button:** Support using as menu trigger ([#1075](https://github.com/seek-oss/braid-design-system/pull/1075))
+
+  Allow a `Button` to receive all of the required props for a menu trigger. As a result a `Button` now accepts `onKeyUp`, `onKeyDown` and `aria-haspopup`.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <MenuRenderer
+    trigger={triggerProps => <Button {...triggerProps}>Button</Button>}
+  >
+    ...
+  </MenuRenderer>
+  ```
+
+- **Column:** Enure inner element honours `component` prop ([#1075](https://github.com/seek-oss/braid-design-system/pull/1075))
+
+## 31.6.0
+
+### Minor Changes
+
+- **Bleed:** Add component ([#1066](https://github.com/seek-oss/braid-design-system/pull/1066))
+
+  Introduce `Bleed` layout component that allows content to bleed out into the parent layout by a specified amount, useful when a content needs to negate the indent provided by a parent component.
+
+  See the [documentation](https://seek-oss.github.io/braid-design-system/components/Bleed) and [layout guide](https://seek-oss.github.io/braid-design-system/foundations/layout#bleed) for more information.
+
+  **EXAMPLE USAGE:**
+
+  ```diff
+   <Card>
+     <Stack space="gutter">
+  +    <Bleed horizontal="gutter" top="gutter">
+         <Placeholder height={200} label="Header Image" />
+  +    </Bleed>
+       <Heading level="3">Heading</Heading>
+       <Text>Text content</Text>
+     </Stack>
+   </Card>
+  ```
+
+- **Box, BoxRenderer, atoms:** Add support for `inset` shorthand ([#1069](https://github.com/seek-oss/braid-design-system/pull/1069))
+
+  Introduces the `inset` shorthand as a convenience for applying `top`, `bottom`, `left` and `right` properties.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Box position="absolute" inset={0} />
+  ```
+
+  or
+
+  ```ts
+  atoms({
+    position: 'absolute',
+    inset: 0,
+  });
+  ```
+
+- **Pagination:** Add `pageLimit` support ([#1070](https://github.com/seek-oss/braid-design-system/pull/1070))
+
+  Add support for configuring the number of pages displayed using the `pageLimit` prop. The default is still set to 7, but consumers can now reduce this, useful when `Pagination` is used inside column layouts.
+
+  In addition, the layout has been stabilised, preventing the links moving when the next/prev actions are shown/hidden.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Pagination
+    ...
+    pageLimit={3}
+  />
+  ```
+
+- **Columns:** Support using span elements via component prop ([#1064](https://github.com/seek-oss/braid-design-system/pull/1064))
+
+  Setting the `component` prop to `span` will now ensure all elements controlled by `Columns` are `span`s. This is useful when using layout components inside dom elements that should not contain `div`s from a HTML validation perspective.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Columns space="medium" component="span">
+    ...
+  </Columns>
+  ```
+
+- **Drawer:** Support positioning on the left ([#1067](https://github.com/seek-oss/braid-design-system/pull/1067))
+
+  A `Drawer` can now enter from and be positioned on the left. The default remains unchanged and will enter from and be docked to the right.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Drawer
+    ...
+    position="left"
+  />
+  ```
+
+- **Inline:** Support using span elements via component prop ([#1068](https://github.com/seek-oss/braid-design-system/pull/1068))
+
+  Setting the `component` prop to `span` will now ensure all elements controlled by `Inline` are `span`s. This is useful when using layout components inside dom elements that should not contain `div`s from a HTML validation perspective.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Inline space="medium" component="span">
+    ...
+  </Inline>
+  ```
+
+## 31.5.0
+
+### Minor Changes
+
+- **Stack:** Add support for span elements ([#1060](https://github.com/seek-oss/braid-design-system/pull/1060))
+
+  Stack now supports using `span` elements for it's markup, this is useful when using layout components inside elements that should not contain a `div` element, e.g. `button`.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Stack component="span" space="medium">
+    ...
+  </Stack>
+  ```
+
+- **Stepper:** Add component ([#1060](https://github.com/seek-oss/braid-design-system/pull/1060))
+
+  See [documentation](https://seek-oss.github.io/braid-design-system/components/Stepper) for full feature set and usage details.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <Stepper label="Linear steps" progress={3}>
+    <Step>1. First step</Step>
+    <Step>2. Second step</Step>
+    <Step>3. Third step</Step>
+    <Step>4. Forth step</Step>
+  </Stepper>
+  ```
+
+## 31.4.0
+
+### Minor Changes
+
+- **AccordionItem:** Add badge support ([#1057](https://github.com/seek-oss/braid-design-system/pull/1057))
+
+  The `AccordionItem` now has support for the `badge` prop.
+
+  **EXAMPLE USAGE:**
+
+  ```jsx
+  <AccordionItem label="Label" badge={<Badge>New</Badge>}>
+    ...
+  </AccordionItem>
+  ```
+
+### Patch Changes
+
+- **Autosuggest:** Scroll list into view ([#1058](https://github.com/seek-oss/braid-design-system/pull/1058))
+
+  The suggestions list will now be scrolled into view (on tablet and above) if it extends beyond the bottom of the window. This prevents suggestions (particularly those loaded asynchronously) from being obscured by the edge of the window.
+
+## 31.3.1
+
+### Patch Changes
+
+- **MenuRenderer, OverflowMenu:** Ensure layout of the trigger is controlled by the parent ([#1055](https://github.com/seek-oss/braid-design-system/pull/1055))
+
+  Fixes an issue where the trigger container did not adhere to the parent layout, preventing consumers from providing triggers that take up the full width of their available space. This goes against one of Braid's key layout principles which says [spacing between elements is owned entirely by layout components](https://seek-oss.github.io/braid-design-system/foundations/layout).
+
+## 31.3.0
+
+### Minor Changes
+
+- **vars:** Expose `contentWidth` theme tokens ([#1052](https://github.com/seek-oss/braid-design-system/pull/1052))
+
+## 31.2.3
+
+### Patch Changes
+
+- Update experimental color mode flags ([#1050](https://github.com/seek-oss/braid-design-system/pull/1050))
+
+## 31.2.2
+
+### Patch Changes
+
+- **BraidProvider:** Add `backgroundColor` to html node when `styleBody` is set (defaults to `true`) ([#1047](https://github.com/seek-oss/braid-design-system/pull/1047))
+
+## 31.2.1
+
+### Patch Changes
+
+- useIcon: Return props compatible with public Box component ([#1045](https://github.com/seek-oss/braid-design-system/pull/1045))
+
+## 31.2.0
+
+### Minor Changes
+
+- **vars:** Add light variant foreground colors ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+  **New foregrounds**
+  The following foregrounds are now available on the `vars.foregroundColor` theme object:
+
+  - `cautionLight`
+  - `infoLight`
+  - `linkLight`
+  - `linkLightVisited`
+  - `positiveLight`
+  - `promoteLight`
+
+- **Text:** Improve contrast of `caution`, `positive`, `info`, `promote` and `link` tones ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+  When using any of the above tones in a dark container, a lighter colour will be used to improve the text contrast against the background.
+
+### Patch Changes
+
+- **OverflowMenu:** Use `neutral` tone button style ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+- **Alert, Card, Toast:** Improve highlight keyline ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+  Ensures that components using a highlight keyline have the correct border radius and mask their overflow correctly.
+
+- **Alert, Autosuggest, Tag, TextField:** Use `neutral` tone button style for clear action ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+- **Box:** Reset background color on `input` and `select` elements ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+  When specifying a `component` of `input` or `select` the background color was not being reset, falling through to the user agent styles. Reseting it to `transparent` to ensure predicatble styles across browsers and colour modes.
+
+- **MenuItem, MenuItemLink, MenuItemCheckbox:** Use `span` elements internally for more valid HTML. ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+- **Loader:** Use current text color ([#1042](https://github.com/seek-oss/braid-design-system/pull/1042))
+
+## 31.1.0
+
+### Minor Changes
+
+- **IconTip:** Add tip icon ([#1040](https://github.com/seek-oss/braid-design-system/pull/1040))
+
+- **IconZoomIn, IconZoomOut:** Add zoom in/out icons ([#1035](https://github.com/seek-oss/braid-design-system/pull/1035))
+
+## 31.0.0
+
+### Major Changes
+
+- **BraidTestProvider:** Move to separate entry ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  By moving `BraidTestProvider` to it’s own entry, we can prevent importing all the themes at dev-time. This improves the developer experience when debugging the stylesheet that is output by the development server.
+
+  **MIGRATION GUIDE**
+
+  Migration can largely be automated by running the Braid upgrade command. You must provide a glob to target your project’s source files. For example:
+
+  ```
+  yarn braid-upgrade v31 "**/*.{ts,tsx}"
+  ```
+
+  ***
+
+  It may be necessary to manually migrate code in some cases, here are the affected use cases:
+
+  ```diff
+  - import { BraidTestProvider } from 'braid-design-system';
+  + import { BraidTestProvider } from 'braid-design-system/test';
+  ```
+
+- **BackgroundProvider** Removed in favour of setting a `background` of `customDark`/`customLight` directly on the `Box` that has the custom background color. ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **MIGRATION GUIDE**
+
+  ```diff
+  -<Box style={{ backgroundColor: 'purple' }}>
+  +<Box background="customDark" style={{ backgroundColor: 'purple' }}>
+  -   <BackgroundProvider value="UNKNOWN_DARK">
+       <Text>Inverted text given dark context</Text>
+  -   </BackgroundProvider>
+   </Box>
+  ```
+
+- Remove previously deprecated `ButtonRenderer` component in favour of [`Button`](https://seek-oss.github.io/braid-design-system/components/Button) and [`ButtonLink`](https://seek-oss.github.io/braid-design-system/components/ButtonLink). ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **MIGRATION GUIDE**
+
+  If you were using this to render an `a` element that visually looks like a button, you should be using [`ButtonLink`](https://seek-oss.github.io/braid-design-system/components/ButtonLink)
+
+  ```diff
+  -  <ButtonRenderer>
+  -    {(ButtonChildren, buttonProps) => (
+  -      <a to="#" {...buttonProps}>
+  -        Visually a button
+  -      </a>
+  -    )}
+  -  </ButtonRenderer>
+  +  <ButtonLink>
+  +    Visually a button
+  +  </ButtonLink>
+  ```
+
+- **Button, ButtonLink:** Add `neutral` tone ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  Introduces a `neutral` tone for cases where actions need to be de-emphasised. As a result, there is a breaking change to the contextual design rules that invert buttons in dark containers.
+
+  **BREAKING CHANGE:**
+
+  A `Button` with a `variant` of `ghost`, `soft`, or `transparent` and no specified `tone` would previously invert when inside a dark container. Now, instead of inverting the foreground colour, these cases will use a lighter version of the default tone, i.e. `formAccent`.
+
+  **MIGRATION GUIDE:**
+
+  To maintain previous behaviour, consumers should opt into the `neutral` tone.
+
+  ```diff
+   <Box background="brand" padding="gutter">
+  -   <Button variant="ghost">Click</Button>
+  +   <Button variant="ghost" tone="neutral">Click</Button>
+   </Box>
+  ```
+
+- Remove legacy seekAsia themes ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  Since the rebrand went live earlier this year, all consumers of `jobsDb`, `jobStreet`, `jobStreetClassic` and `seekUnifiedBeta` themes should now be using the `apac` theme in production.
+
+  **MIGRATION GUIDE**
+
+  ```diff
+  -import jobStreet from 'braid-design-system/themes/jobStreet';
+  +import apac from 'braid-design-system/themes/apac';
+
+  -<BraidProvider theme={jobStreet}>
+  +<BraidProvider theme={apac}>
+     ...
+   </BraidProvider>
+  ```
+
+- **BulletList** Remove deprecated component ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **MIGRATION GUIDE**
+
+  ```diff
+  -<BulletList>
+  -  <Bullet large>Bullet</Bullet>
+  -  <Bullet large>Bullet</Bullet>
+  -  <Bullet large>Bullet</Bullet>
+  -</BulletList>
+
+  +<List size="large">
+  +  <Text>Bullet</Text>
+  +  <Text>Bullet</Text>
+  +  <Text>Bullet</Text>
+  +</List>
+  ```
+
+- Remove previously deprecated `TextLinkRenderer` component in favour of [`TextLink`](https://seek-oss.github.io/braid-design-system/components/TextLink) and [`TextLinkButton`](https://seek-oss.github.io/braid-design-system/components/TextLinkButton). ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **MIGRATION GUIDE**
+
+  If you were using this to render a `button` element that visually looks like a link, you should be using [`TextLinkButton`](https://seek-oss.github.io/braid-design-system/components/TextLinkButton)
+
+  ```diff
+  <Text>
+  -  <TextLinkRenderer reset={false}>
+  -    {(textLinkProps) => (
+  -      <Box component="button" {...textLinkProps}>
+  -        Visually a link
+  -      </Box>
+  -    )}
+  -  </TextLinkRenderer>
+  +  <TextLinkButton>
+  +    Visually a link
+  +  </TextLinkButton>
+    , rendered as a button.
+  </Text>
+  ```
+
+  If you were using this to render an `a` element or using a client side router link component you should ensure you have configured the [`linkComponent on BraidProvider`](https://seek-oss.github.io/braid-design-system/components/BraidProvider#providing-a-custom-link-component) in your app. Once handled, migrating to [`TextLink`](https://seek-oss.github.io/braid-design-system/components/TextLink) should be straight forward.
+
+  ```diff
+  <Text>
+  -  <TextLinkRenderer reset={false}>
+  -    {(textLinkProps) => (
+  -      <Link {...textLinkProps}>
+  -        ...
+  -      </Link>
+  -    )}
+  -  </TextLinkRenderer>
+  +  <TextLink>
+  +    ...
+  +  </TextLink>
+  </Text>
+  ```
+
+- **Button, ButtonLink:** Remove weight prop ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  Removing support for the `weight` prop. This was deprecated back in [v29.26.0](https://seek-oss.github.io/braid-design-system/releases#29.26.0) in favour of using the [`variant`](https://seek-oss.github.io/braid-design-system/components/Button#variants) prop.
+
+- **TextLink, TextLinkButton:** Remove support inside `Actions` component ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  Removing support for `TextLink` and `TextLinkButton` components inside of `Actions`. This was previously deprecated back in [v29.26.0](https://seek-oss.github.io/braid-design-system/releases#29.26.0) in favour of using the `transparent` `variant` of [`ButtonLink`](https://seek-oss.github.io/braid-design-system/components/Button#variants).
+
+  **MIGRATION GUIDE**
+
+  ```diff
+    <Actions>
+      <Button>...</Button>
+  -   <TextLink href="...">...</TextLink>
+  +   <ButtonLink href="..." variant="transparent">...</ButtonLink>
+    </Actions>
+  ```
+
+- Remove `BraidLoadableProvider` ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  As most Apps should run the `apac` theme across all brands, it no longer makes sense to centralise a loadable version of the `BraidProvider`. This should simplify builds across the board and may result in a small build-speed increase.
+
+  **MIGRATION GUIDE**
+
+  If you are only using a single theme, then you should migrate your `BraidLoadableProvider` usage to `BraidProvider`.
+
+  ```diff
+  +import apac from 'braid-design-system/themes/apac';
+  +import { BraidProvider } from 'braid-design-system';
+  -import { BraidLoadableProvider } from 'braid-design-system';
+
+  export const App = () => (
+  -    <BraidLoadableProvider themeName="apac">
+  +    <BraidProvider theme={apac}>
+      ...
+  -    </BraidLoadableProvider>
+  +    </BraidProvider>
+  );
+  ```
+
+  If your app still needs to render different themes then you can replicate the `BraidLoadableProvider` functionality locally using the `loadable.lib` API.
+
+  ```tsx
+  import { BraidProvider } from 'braid-design-system';
+  import React, { ReactNode } from 'react';
+  import loadable from 'sku/@loadable/component';
+
+  type ThemeName = 'apac' | 'catho';
+
+  const BraidTheme = loadable.lib((props: { themeName: ThemeName }) =>
+    import(`braid-design-system/themes/${props.themeName}`),
+  );
+
+  interface AppProps {
+    themeName: ThemeName;
+    children: ReactNode;
+  }
+  export const App = ({ themeName, children }: AppProps) => (
+    <BraidTheme themeName={themeName}>
+      {({ default: theme }) => (
+        <BraidProvider theme={theme}>{children}</BraidProvider>
+      )}
+    </BraidTheme>
+  );
+  ```
+
+- **Box, atoms, vars:** Update theme colour tokens with improved semantics. ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  Simplifies the semantics of the colour-based tokens to support upcoming colour mode work. Changes to the property values on `backgroundColor` and `borderColor` has flow on affects to the apis on `Box` and `atoms`.
+
+  **TOKEN CHANGES**
+
+  **New**
+
+  - **backgroundColor:** `surface`, `neutralSoft`
+  - **borderColor:** `neutral`, `neutralInverted`, `neutralLight`
+
+  **Removed**
+
+  - **backgroundColor:** `card`, `formAccentDisabled`, `input`, `inputDisabled`, `selection`
+  - **borderColor:** `formHover`, `standard`, `standardInverted`
+
+  **MIGRATION GUIDE**
+
+  Migration can largely be automated by running the Braid upgrade command. You must provide a glob to target your project’s source files. For example:
+
+  ```
+  yarn braid-upgrade v31 "**/*.{ts,tsx}"
+  ```
+
+  ***
+
+  It may be necessary to manually migrate code in some cases, here are the affected use cases:
+
+  **`Box` backgrounds**
+
+  ```diff
+  - <Box background="card" />
+  + <Box background="surface" />
+
+  - <Box background="formAccentDisabled" />
+  + <Box background="neutralLight" />
+
+  - <Box background="input" />
+  + <Box background="surface" />
+
+  - <Box background="inputDisabled" />
+  + <Box background="neutralSoft" />
+
+  - <Box background="selection" />
+  + <Box background="formAccentSoft" />
+  ```
+
+  **`Box` boxShadows**
+
+  ```diff
+  - <Box boxShadow="borderStandard" />
+  + <Box boxShadow="borderNeutralLight" />
+
+  - <Box boxShadow="borderStandardInverted" />
+  + <Box boxShadow="borderNeutralInverted" />
+
+  - <Box boxShadow="borderStandardInvertedLarge" />
+  + <Box boxShadow="borderNeutralInvertedLarge" />
+
+  - <Box boxShadow="borderFormHover" />
+  + <Box boxShadow="borderFormAccent" />
+  ```
+
+  **`vars`**
+
+  ```diff
+  - vars.borderColor.standard
+  + vars.borderColor.neutralLight
+
+  - vars.borderColor.standardInverted
+  + vars.borderColor.neutralInverted
+
+  - vars.borderColor.formHover
+  + vars.borderColor.formAccent
+  ```
+
+  **`atoms`**
+
+  ```diff
+   atoms({
+  -  boxShadow: 'borderStandard',
+  +  boxShadow: 'borderNeutralLight',
+   });
+
+   atoms({
+  -  boxShadow: 'borderStandardInverted',
+  +  boxShadow: 'borderNeutralInverted',
+   });
+
+   atoms({
+  -  boxShadow: 'borderStandardInvertedLarge',
+  +  boxShadow: 'borderNeutralInvertedLarge',
+   });
+
+   atoms({
+  -  boxShadow: 'borderFormHover',
+  +  boxShadow: 'borderFormAccent',
+   });
+  ```
+
+### Minor Changes
+
+- **Box:** Add neutral background variants and new boxShadow border variants ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **New backgrounds**
+  The following backgrounds are now available:
+
+  - `neutralActive`
+  - `neutralHover`
+  - `neutralSoftActive`
+  - `neutralSoftHover`
+
+  **New boxShadows**
+  The following box shadows are now available:
+
+  - `borderBrandAccentLightLarge`
+  - `borderCriticalLightLarge`
+  - `borderFormAccentLight`
+  - `borderFormAccentLightLarge`
+
+- **atoms:** Add boxShadow border variants ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **New boxShadows**
+  The following box shadows are now available:
+
+  - `borderBrandAccentLightLarge`
+  - `borderCriticalLightLarge`
+  - `borderFormAccentLight`
+  - `borderFormAccentLightLarge`
+
+- **vars:** Darken neutral background for the `occ` theme. ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  A `neutral` background should be able to hold tone-based text. Moving from `grey700` to `grey800` as per the [Atomic Design System color palette](https://occmundial.github.io/occ-atomic/#Colors)
+
+- **vars:** Add new backgrounds and light variant border colors ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  **New backgrounds**
+  The following backgrounds are now available on the `vars.backgroundColor` theme object:
+
+  - `neutralActive`
+  - `neutralHover`
+  - `neutralSoftActive`
+  - `neutralSoftHover`
+
+  **New borderColors**
+  The following border colors are now available on the `vars.borderColor` theme object:
+
+  - `brandAccentLight`
+  - `criticalLight`
+  - `formAccentLight`
+
+- **vars:** Darken neutral background for the `seekAnz` theme. ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  A `neutral` background should be able to hold tone-based text. Moving from `sk-mid-gray-dark` to `sk-charcoal` as per the [Seek Style Guide color palette](https://seek-oss.github.io/seek-style-guide/palette)
+
+### Patch Changes
+
+- **Text:** Improve contrast of `brandAccent`, `critical` and `formAccent` tones ([#1031](https://github.com/seek-oss/braid-design-system/pull/1031))
+
+  When using any of the above tones in a dark container, a lighter colour will be used to improve the text contrast against the background.
+
+## 30.7.0
+
+### Minor Changes
+
+- **Toggle:** Add ref support ([#1029](https://github.com/seek-oss/braid-design-system/pull/1029))
+
+## 30.6.0
+
+### Minor Changes
+
+- **TextLinkButton:** Add support for `tabIndex` ([#1025](https://github.com/seek-oss/braid-design-system/pull/1025))
+
+## 30.5.1
+
+### Patch Changes
+
+- Move `@types/react` to devDependencies ([#1023](https://github.com/seek-oss/braid-design-system/pull/1023))
+
+  Braid requires consumers to provide React, therefore they should also provide the appropriate version of `@types/react` rather than rely on the version installed in Braid.
+
 ## 30.5.0
 
 ### Minor Changes

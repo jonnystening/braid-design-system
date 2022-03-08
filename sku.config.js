@@ -18,12 +18,15 @@ const entries = Boolean(process.env.DEBUG_IE)
 module.exports = {
   srcPaths: [
     'lib',
+    'color-mode',
+    'codemod/src',
     'css',
     'themes',
     'site/src',
     'scripts',
     'generate-component-docs',
     'reset',
+    'test',
   ],
   ...entries,
   routes,

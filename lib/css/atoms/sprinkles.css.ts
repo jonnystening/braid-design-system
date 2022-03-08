@@ -1,3 +1,4 @@
+import { style } from '@vanilla-extract/css';
 import {
   ConditionalValue,
   RequiredConditionalValue,
@@ -12,10 +13,14 @@ import {
   responsiveProperties,
   unresponsiveProperties,
   pseudoProperties,
+  colorProperties,
 } from './atomicProperties';
 
 const unresponsiveAtomicProperties = defineProperties({
   properties: unresponsiveProperties,
+  shorthands: {
+    inset: ['top', 'bottom', 'left', 'right'],
+  },
 });
 
 const pseudoAtomicProperties = defineProperties({
@@ -26,6 +31,21 @@ const pseudoAtomicProperties = defineProperties({
     },
   },
   properties: pseudoProperties,
+});
+
+export const darkMode = style({});
+export const colorModeSelectors = {
+  light: `html:not(${darkMode}) &`,
+  dark: `html${darkMode} &`,
+};
+
+const colorAtomicProperties = defineProperties({
+  defaultCondition: 'lightMode',
+  conditions: {
+    lightMode: { selector: colorModeSelectors.light },
+    darkMode: { selector: colorModeSelectors.dark },
+  },
+  properties: colorProperties,
 });
 
 const responsiveAtomicProperties = defineProperties({
@@ -58,6 +78,7 @@ export const sprinkles = createSprinkles(
   unresponsiveAtomicProperties,
   responsiveAtomicProperties,
   pseudoAtomicProperties,
+  colorAtomicProperties,
 );
 
 export type OptionalResponsiveValue<Value extends string | number> =
@@ -74,3 +95,9 @@ export const normalizeResponsiveValue = createNormalizeValueFn(
   responsiveAtomicProperties,
 );
 export const mapResponsiveValue = createMapValueFn(responsiveAtomicProperties);
+
+export type ColorModeValue<Value extends string | number> = ConditionalValue<
+  typeof colorAtomicProperties,
+  Value
+>;
+export const mapColorModeValue = createMapValueFn(colorAtomicProperties);

@@ -1,7 +1,6 @@
 import React from 'react';
 import { ComponentDocs } from '../../../site/src/types';
 import {
-  Box,
   Text,
   TextLink,
   Stack,
@@ -12,9 +11,12 @@ import {
   Strong,
   Alert,
 } from '../';
+// TODO: COLORMODE RELEASE
+// Use public import
+import { Box } from './Box';
+import type { SimpleBackground } from './Box';
 import source from '../../utils/source.macro';
 import Code from '../../../site/src/App/Code/Code';
-import { BoxProps } from './Box';
 import {
   responsiveProperties,
   unresponsiveProperties,
@@ -22,16 +24,14 @@ import {
   UnresponsiveProperties,
   ResponsiveProperties,
   PseudoProperties,
+  BoxShadow,
 } from '../../css/atoms/atomicProperties';
+import { ThemedExample } from '../../../site/src/App/ThemeSetting';
 
-type BackgroundDocs = Required<
-  Record<NonNullable<BoxProps['background']>, string>
->;
+type BackgroundDocs = Required<Record<SimpleBackground, string>>;
 const validateBackgrounds = (backgrounds: BackgroundDocs) => backgrounds;
 
-type BoxShadowDocs = Required<
-  Record<NonNullable<BoxProps['boxShadow']>, string>
->;
+type BoxShadowDocs = Required<Record<BoxShadow, string>>;
 const validateBoxShadows = (boxShadows: BoxShadowDocs) => boxShadows;
 
 interface AtomicPropertyProps {
@@ -384,6 +384,70 @@ const docs: ComponentDocs = {
           <Code playroom={false}>
             {source(<Box background="brand">...</Box>).code}
           </Code>
+          <Text>
+            When a <TextLink href="/components/Text">Text</TextLink> component
+            is placed on a dark background, the foreground colour either inverts
+            or lightens based on the{' '}
+            <TextLink href="/components/Text#contrast">
+              contrast rules of Text.
+            </TextLink>
+          </Text>
+          <Text>
+            When using custom backgrounds or images, this can no longer work by
+            default. However, you can opt back into this behaviour by setting
+            the <Strong>background</Strong> to either{' '}
+            <Strong>customLight</Strong> or <Strong>customDark</Strong>.
+          </Text>
+          <Stack space="xxsmall">
+            <ThemedExample background="body">
+              <Stack space="large">
+                <Box
+                  padding="medium"
+                  background="customDark"
+                  style={{
+                    backgroundColor: '#3d0080',
+                  }}
+                >
+                  <Text>Text on custom dark background</Text>
+                </Box>
+                <Box
+                  padding="medium"
+                  background="customLight"
+                  style={{
+                    backgroundColor: '#c8cfff',
+                  }}
+                >
+                  <Text>Text on custom light background</Text>
+                </Box>
+              </Stack>
+            </ThemedExample>
+            <Code collapsedByDefault>
+              {
+                source(
+                  <Stack space="large">
+                    <Box
+                      padding="medium"
+                      background="customDark"
+                      style={{
+                        backgroundColor: '#3d0080',
+                      }}
+                    >
+                      <Text>Text on custom dark background</Text>
+                    </Box>
+                    <Box
+                      padding="medium"
+                      background="customLight"
+                      style={{
+                        backgroundColor: '#c8cfff',
+                      }}
+                    >
+                      <Text>Text on custom light background</Text>
+                    </Box>
+                  </Stack>,
+                ).code
+              }
+            </Code>
+          </Stack>
           <Alert tone="caution">
             <Text>
               These background colours are likely to change over time, so it’s
@@ -402,6 +466,9 @@ const docs: ComponentDocs = {
             {Object.entries(
               validateBackgrounds({
                 body: 'Used for elements that need to match the body background.',
+                // TODO: COLORMODE RELEASE
+                // bodyDark:
+                //   'Used for elements that need to match the body background in dark context.',
                 brand: 'Used for branding larger areas of the screen.',
                 brandAccent: 'Used for hero elements on the screen.',
                 brandAccentHover: 'Hover colour for “brandAccent” elements.',
@@ -420,13 +487,6 @@ const docs: ComponentDocs = {
                   'Active colour for “formAccentSoft” elements.',
                 formAccentSoftHover:
                   'Hover colour for formAccentSoft” elements.',
-                formAccentDisabled:
-                  'Disabled colour for “formAccent” elements.',
-                input: 'Used for input fields.',
-                inputDisabled: 'Used for input fields when disabled.',
-                card: 'Used for card surfaces.',
-                selection:
-                  'Used for user selections, e.g. selected item in an Autosuggest.',
                 positive: 'Used for heavier “positive” elements.',
                 positiveLight: 'Used for light “positive” elements.',
                 critical: 'Used for heavier “critical” elements.',
@@ -444,18 +504,37 @@ const docs: ComponentDocs = {
                 promote: 'Used for heavier “promote” elements.',
                 promoteLight: 'Used for light “promote” elements.',
                 neutral: 'Used for heavier “neutral” elements.',
+                neutralActive: 'Active colour for "neutral" elements',
+                neutralHover: 'Hover colour for "neutral" elements',
                 neutralLight: 'Used for light “neutral” elements.',
+                neutralSoft: 'Used for soft “neutral” elements',
+                neutralSoftActive: 'Active colour for "neutralSoft" elements',
+                neutralSoftHover: 'Hover colour for "neutralSoft" elements',
+                surface: 'Used for surfaces that sit on top of body elements',
+                // TODO: COLORMODE RELEASE
+                // surfaceDark:
+                //   'Used for surfaces that sit on top of body elements in a dark context',
               }),
             ).map(([background, description]) => (
               <Columns key={background} space="medium" alignY="center">
                 <Column width="content">
-                  <Box background="card" borderRadius="large" padding="gutter">
+                  <Box
+                    background="surface"
+                    borderRadius="large"
+                    padding="gutter"
+                  >
                     <Box
-                      background={background as keyof BackgroundDocs}
+                      background={{
+                        lightMode: background as keyof BackgroundDocs,
+                        darkMode: background as keyof BackgroundDocs,
+                      }}
                       boxShadow={
-                        ['card', 'input'].includes(background)
-                          ? 'borderStandard'
-                          : undefined
+                        (
+                          {
+                            surface: { lightMode: 'borderNeutralLight' },
+                            surfaceDark: { darkMode: 'borderNeutral' },
+                          } as const
+                        )[background]
                       }
                       borderRadius="large"
                       padding="gutter"
@@ -520,21 +599,27 @@ const docs: ComponentDocs = {
                 small: 'Used for small shadows.',
                 medium: 'Used for medium shadows.',
                 large: 'Used for large shadows.',
-                borderStandard: 'Used for neutral element borders.',
-                borderStandardInverted:
-                  'Used for standard borders on dark backgrounds.',
-                borderStandardInvertedLarge:
-                  'Used for large standard borders on dark backgrounds.',
+                borderNeutral: 'Used for neutral element borders.',
+                borderNeutralLarge: 'Used for large neutral element borders.',
+                borderNeutralInverted:
+                  'Used for neutral borders on dark backgrounds.',
+                borderNeutralInvertedLarge:
+                  'Used for large neutral borders on dark backgrounds.',
+                borderNeutralLight: 'Used for light neutral element borders.',
                 borderField: 'Used for borders around form fields.',
-                borderFormHover:
-                  'Used for borders around form fields on hover.',
                 outlineFocus: 'Used for focus states of interactive elements.',
                 borderFormAccent:
                   'Used for borders around prominent interactive elements.',
                 borderFormAccentLarge:
                   'Used for large borders around prominent interactive elements.',
+                borderFormAccentLight:
+                  'Used for borders around prominent interactive elements in a dark context.',
+                borderFormAccentLightLarge:
+                  'Used for large borders around prominent interactive elements in a dark context.',
                 borderBrandAccentLarge:
                   'Used for large borders around branded elements.',
+                borderBrandAccentLightLarge:
+                  'Used for large borders around branded elements in a dark context.',
                 borderPositive: 'Used for borders around “positive” elements.',
                 borderPositiveLight:
                   'Used for borders around “positiveLight” elements.',
@@ -543,6 +628,8 @@ const docs: ComponentDocs = {
                   'Used for large borders around “critical” elements.',
                 borderCriticalLight:
                   'Used for borders around “criticalLight” elements.',
+                borderCriticalLightLarge:
+                  'Used for large borders around “criticalLight” elements.',
                 borderCaution: 'Used for borders around “caution” elements.',
                 borderCautionLight:
                   'Used for borders around “cautionLight” elements.',
@@ -557,14 +644,22 @@ const docs: ComponentDocs = {
               <Columns key={boxShadow} space="medium" alignY="center">
                 <Column width="content">
                   <Box
-                    background={
-                      boxShadow.includes('Inverted') ? 'brand' : 'card'
-                    }
+                    background={{
+                      lightMode: boxShadow.includes('Inverted')
+                        ? 'neutral'
+                        : 'surface',
+                      darkMode: /^border|outline/.test(boxShadow)
+                        ? 'surfaceDark'
+                        : 'surface',
+                    }}
                     borderRadius="large"
                     padding="gutter"
                   >
                     <Box
-                      boxShadow={boxShadow as keyof BoxShadowDocs}
+                      boxShadow={{
+                        lightMode: boxShadow as keyof BoxShadowDocs,
+                        darkMode: boxShadow as keyof BoxShadowDocs,
+                      }}
                       borderRadius="large"
                       padding="gutter"
                     />

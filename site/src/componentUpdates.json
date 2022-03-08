@@ -2002,5 +2002,345 @@
         "summary": "**FieldLabel:** Dim label when `disabled`"
       }
     ]
+  },
+  {
+    "version": "30.5.1",
+    "updates": []
+  },
+  {
+    "version": "30.6.0",
+    "updates": [
+      {
+        "updated": [
+          "TextLinkButton"
+        ],
+        "summary": "**TextLinkButton:** Add support for `tabIndex`"
+      }
+    ]
+  },
+  {
+    "version": "30.7.0",
+    "updates": [
+      {
+        "updated": [
+          "Toggle"
+        ],
+        "summary": "**Toggle:** Add ref support"
+      }
+    ]
+  },
+  {
+    "version": "31.0.0",
+    "updates": [
+      {
+        "updated": [
+          "BraidTestProvider"
+        ],
+        "summary": "**BraidTestProvider:** Move to separate entry\n\nBy moving `BraidTestProvider` to it’s own entry, we can prevent importing all the themes at dev-time. This improves the developer experience when debugging the stylesheet that is output by the development server.\n\n**MIGRATION GUIDE**\n\nMigration can largely be automated by running the Braid upgrade command. You must provide a glob to target your project’s source files. For example:\n\n```\nyarn braid-upgrade v31 \"**/*.{ts,tsx}\"\n```\n\n---\n\nIt may be necessary to manually migrate code in some cases, here are the affected use cases:\n\n```diff\n- import { BraidTestProvider } from 'braid-design-system';\n+ import { BraidTestProvider } from 'braid-design-system/test';\n```"
+      },
+      {
+        "updated": [
+          "Box"
+        ],
+        "summary": "**Box:** Add neutral background variants and new boxShadow border variants\n\n**New backgrounds**\nThe following backgrounds are now available:\n- `neutralActive`\n- `neutralHover`\n- `neutralSoftActive`\n- `neutralSoftHover`\n\n**New boxShadows**\nThe following box shadows are now available:\n- `borderBrandAccentLightLarge`\n- `borderCriticalLightLarge`\n- `borderFormAccentLight`\n- `borderFormAccentLightLarge`"
+      },
+      {
+        "updated": [
+          "Button",
+          "ButtonLink"
+        ],
+        "summary": "**Button, ButtonLink:** Add `neutral` tone\n\nIntroduces a `neutral` tone for cases where actions need to be de-emphasised. As a result, there is a breaking change to the contextual design rules that invert buttons in dark containers.\n\n\n**BREAKING CHANGE:**\n\nA `Button` with a `variant` of `ghost`, `soft`, or `transparent` and no specified `tone` would previously invert when inside a dark container. Now, instead of inverting the foreground colour, these cases will use a lighter version of the default tone, i.e. `formAccent`.\n\n**MIGRATION GUIDE:**\n\nTo maintain previous behaviour, consumers should opt into the `neutral` tone.\n\n```diff\n <Box background=\"brand\" padding=\"gutter\">\n-   <Button variant=\"ghost\">Click</Button>\n+   <Button variant=\"ghost\" tone=\"neutral\">Click</Button>\n </Box>\n```"
+      },
+      {
+        "updated": [
+          "Text"
+        ],
+        "summary": "**Text:** Improve contrast of `brandAccent`, `critical` and `formAccent` tones\n\nWhen using any of the above tones in a dark container, a lighter colour will be used to improve the text contrast against the background."
+      },
+      {
+        "updated": [
+          "atoms"
+        ],
+        "summary": "**atoms:** Add boxShadow border variants\n\n**New boxShadows**\nThe following box shadows are now available:\n- `borderBrandAccentLightLarge`\n- `borderCriticalLightLarge`\n- `borderFormAccentLight`\n- `borderFormAccentLightLarge`"
+      },
+      {
+        "updated": [
+          "vars"
+        ],
+        "summary": "**vars:** Darken neutral background for the `occ` theme.\n\nA `neutral` background should be able to hold tone-based text. Moving from `grey700` to `grey800` as per the [Atomic Design System color palette](https://occmundial.github.io/occ-atomic/#Colors)"
+      },
+      {
+        "updated": [
+          "vars"
+        ],
+        "summary": "**vars:** Add new backgrounds and light variant border colors\n\n**New backgrounds**\nThe following backgrounds are now available on the `vars.backgroundColor` theme object:\n- `neutralActive`\n- `neutralHover`\n- `neutralSoftActive`\n- `neutralSoftHover`\n\n**New borderColors**\nThe following border colors are now available on the `vars.borderColor` theme object:\n- `brandAccentLight`\n- `criticalLight`\n- `formAccentLight`"
+      },
+      {
+        "updated": [
+          "Button",
+          "ButtonLink"
+        ],
+        "summary": "**Button, ButtonLink:** Remove weight prop\n\nRemoving support for the `weight` prop. This was deprecated back in [v29.26.0](https://seek-oss.github.io/braid-design-system/releases#29.26.0) in favour of using the [`variant`](https://seek-oss.github.io/braid-design-system/components/Button#variants) prop."
+      },
+      {
+        "updated": [
+          "TextLink",
+          "TextLinkButton"
+        ],
+        "summary": "**TextLink, TextLinkButton:** Remove support inside `Actions` component\n\nRemoving support for `TextLink` and `TextLinkButton` components inside of `Actions`. This was previously deprecated back in [v29.26.0](https://seek-oss.github.io/braid-design-system/releases#29.26.0) in favour of using the `transparent` `variant` of [`ButtonLink`](https://seek-oss.github.io/braid-design-system/components/Button#variants).\n\n**MIGRATION GUIDE**\n\n```diff\n  <Actions>\n    <Button>...</Button>\n-   <TextLink href=\"...\">...</TextLink>\n+   <ButtonLink href=\"...\" variant=\"transparent\">...</ButtonLink>\n  </Actions>\n```"
+      },
+      {
+        "updated": [
+          "vars"
+        ],
+        "summary": "**vars:** Darken neutral background for the `seekAnz` theme.\n\nA `neutral` background should be able to hold tone-based text. Moving from `sk-mid-gray-dark` to `sk-charcoal` as per the [Seek Style Guide color palette](https://seek-oss.github.io/seek-style-guide/palette)"
+      },
+      {
+        "updated": [
+          "Box",
+          "atoms",
+          "vars"
+        ],
+        "summary": "**Box, atoms, vars:** Update theme colour tokens with improved semantics.\n\nSimplifies the semantics of the colour-based tokens to support upcoming colour mode work. Changes to the property values on `backgroundColor` and `borderColor` has flow on affects to the apis on `Box` and `atoms`.\n\n\n**TOKEN CHANGES**\n\n**New**\n- **backgroundColor:** `surface`, `neutralSoft`\n- **borderColor:** `neutral`, `neutralInverted`, `neutralLight`\n\n**Removed**\n- **backgroundColor:** `card`, `formAccentDisabled`, `input`, `inputDisabled`, `selection`\n- **borderColor:** `formHover`, `standard`, `standardInverted`\n\n**MIGRATION GUIDE**\n\nMigration can largely be automated by running the Braid upgrade command. You must provide a glob to target your project’s source files. For example:\n\n```\nyarn braid-upgrade v31 \"**/*.{ts,tsx}\"\n```\n\n---\n\nIt may be necessary to manually migrate code in some cases, here are the affected use cases:\n\n**`Box` backgrounds**\n```diff\n- <Box background=\"card\" />\n+ <Box background=\"surface\" />\n\n- <Box background=\"formAccentDisabled\" />\n+ <Box background=\"neutralLight\" />\n\n- <Box background=\"input\" />\n+ <Box background=\"surface\" />\n\n- <Box background=\"inputDisabled\" />\n+ <Box background=\"neutralSoft\" />\n\n- <Box background=\"selection\" />\n+ <Box background=\"formAccentSoft\" />\n```\n\n**`Box` boxShadows**\n```diff\n- <Box boxShadow=\"borderStandard\" />\n+ <Box boxShadow=\"borderNeutralLight\" />\n\n- <Box boxShadow=\"borderStandardInverted\" />\n+ <Box boxShadow=\"borderNeutralInverted\" />\n\n- <Box boxShadow=\"borderStandardInvertedLarge\" />\n+ <Box boxShadow=\"borderNeutralInvertedLarge\" />\n\n- <Box boxShadow=\"borderFormHover\" />\n+ <Box boxShadow=\"borderFormAccent\" />\n```\n\n**`vars`**\n```diff\n- vars.borderColor.standard\n+ vars.borderColor.neutralLight\n\n- vars.borderColor.standardInverted\n+ vars.borderColor.neutralInverted\n\n- vars.borderColor.formHover\n+ vars.borderColor.formAccent\n```\n\n**`atoms`**\n```diff\n atoms({\n-  boxShadow: 'borderStandard',\n+  boxShadow: 'borderNeutralLight',\n });\n\n atoms({\n-  boxShadow: 'borderStandardInverted',\n+  boxShadow: 'borderNeutralInverted',\n });\n\n atoms({\n-  boxShadow: 'borderStandardInvertedLarge',\n+  boxShadow: 'borderNeutralInvertedLarge',\n });\n\n atoms({\n-  boxShadow: 'borderFormHover',\n+  boxShadow: 'borderFormAccent',\n });\n```"
+      }
+    ]
+  },
+  {
+    "version": "31.1.0",
+    "updates": [
+      {
+        "new": [
+          "IconTip"
+        ],
+        "summary": "**IconTip:** Add tip icon"
+      },
+      {
+        "new": [
+          "IconZoomIn",
+          "IconZoomOut"
+        ],
+        "summary": "**IconZoomIn, IconZoomOut:** Add zoom in/out icons"
+      }
+    ]
+  },
+  {
+    "version": "31.2.0",
+    "updates": [
+      {
+        "updated": [
+          "OverflowMenu"
+        ],
+        "summary": "**OverflowMenu:** Use `neutral` tone button style"
+      },
+      {
+        "updated": [
+          "Alert",
+          "Card",
+          "Toast"
+        ],
+        "summary": "**Alert, Card, Toast:** Improve highlight keyline\n\nEnsures that components using a highlight keyline have the correct border radius and mask their overflow correctly."
+      },
+      {
+        "updated": [
+          "Alert",
+          "Autosuggest",
+          "Tag",
+          "TextField"
+        ],
+        "summary": "**Alert, Autosuggest, Tag, TextField:** Use `neutral` tone button style for clear action"
+      },
+      {
+        "updated": [
+          "Box"
+        ],
+        "summary": "**Box:** Reset background color on `input` and `select` elements\n\nWhen specifying a `component` of `input` or `select` the background color was not being reset, falling through to the user agent styles. Reseting it to `transparent` to ensure predicatble styles across browsers and colour modes."
+      },
+      {
+        "updated": [
+          "vars"
+        ],
+        "summary": "**vars:** Add light variant foreground colors\n\n**New foregrounds**\nThe following foregrounds are now available on the `vars.foregroundColor` theme object:\n- `cautionLight`\n- `infoLight`\n- `linkLight`\n- `linkLightVisited`\n- `positiveLight`\n- `promoteLight`"
+      },
+      {
+        "updated": [
+          "Text"
+        ],
+        "summary": "**Text:** Improve contrast of `caution`, `positive`, `info`, `promote` and `link` tones\n\nWhen using any of the above tones in a dark container, a lighter colour will be used to improve the text contrast against the background."
+      },
+      {
+        "updated": [
+          "MenuItem",
+          "MenuItemLink",
+          "MenuItemCheckbox"
+        ],
+        "summary": "**MenuItem, MenuItemLink, MenuItemCheckbox:** Use `span` elements internally for more valid HTML."
+      },
+      {
+        "updated": [
+          "Loader"
+        ],
+        "summary": "**Loader:**  Use current text color"
+      }
+    ]
+  },
+  {
+    "version": "31.2.1",
+    "updates": []
+  },
+  {
+    "version": "31.2.2",
+    "updates": [
+      {
+        "updated": [
+          "BraidProvider"
+        ],
+        "summary": "**BraidProvider:** Add `backgroundColor` to html node when `styleBody` is set (defaults to `true`)"
+      }
+    ]
+  },
+  {
+    "version": "31.2.3",
+    "updates": []
+  },
+  {
+    "version": "31.3.0",
+    "updates": [
+      {
+        "updated": [
+          "vars"
+        ],
+        "summary": "**vars:** Expose `contentWidth` theme tokens"
+      }
+    ]
+  },
+  {
+    "version": "31.3.1",
+    "updates": [
+      {
+        "updated": [
+          "MenuRenderer",
+          "OverflowMenu"
+        ],
+        "summary": "**MenuRenderer, OverflowMenu:** Ensure layout of the trigger is controlled by the parent\n\nFixes an issue where the trigger container did not adhere to the parent layout, preventing consumers from providing triggers that take up the full width of their available space. This goes against one of Braid's key layout principles which says [spacing between elements is owned entirely by layout components](https://seek-oss.github.io/braid-design-system/foundations/layout)."
+      }
+    ]
+  },
+  {
+    "version": "31.4.0",
+    "updates": [
+      {
+        "updated": [
+          "Autosuggest"
+        ],
+        "summary": "**Autosuggest:** Scroll list into view\n\nThe suggestions list will now be scrolled into view (on tablet and above) if it extends beyond the bottom of the window. This prevents suggestions (particularly those loaded asynchronously) from being obscured by the edge of the window."
+      },
+      {
+        "updated": [
+          "AccordionItem"
+        ],
+        "summary": "**AccordionItem:** Add badge support\n\nThe `AccordionItem` now has support for the `badge` prop.\n\n**EXAMPLE USAGE:**\n```jsx\n<AccordionItem\n  label=\"Label\"\n  badge={<Badge>New</Badge>}\n>\n  ...\n</AccordionItem>\n```"
+      }
+    ]
+  },
+  {
+    "version": "31.5.0",
+    "updates": [
+      {
+        "updated": [
+          "Stack"
+        ],
+        "summary": "**Stack:** Add support for span elements\n\nStack now supports using `span` elements for it's markup, this is useful when using layout components inside elements that should not contain a `div` element, e.g. `button`.\n\n**EXAMPLE USAGE:**\n```jsx\n<Stack component=\"span\" space=\"medium\">\n  ...\n</Stack>\n```"
+      },
+      {
+        "new": [
+          "Stepper"
+        ],
+        "summary": "**Stepper:** Add component\n\nSee [documentation](https://seek-oss.github.io/braid-design-system/components/Stepper) for full feature set and usage details.\n\n**EXAMPLE USAGE:**\n```jsx\n<Stepper label=\"Linear steps\" progress={3}>\n  <Step>1. First step</Step>\n  <Step>2. Second step</Step>\n  <Step>3. Third step</Step>\n  <Step>4. Forth step</Step>\n</Stepper>\n```"
+      }
+    ]
+  },
+  {
+    "version": "31.6.0",
+    "updates": [
+      {
+        "new": [
+          "Bleed"
+        ],
+        "summary": "**Bleed:** Add component\n\nIntroduce `Bleed` layout component that allows content to bleed out into the parent layout by a specified amount, useful when a content needs to negate the indent provided by a parent component.\n\nSee the [documentation](https://seek-oss.github.io/braid-design-system/components/Bleed) and [layout guide](https://seek-oss.github.io/braid-design-system/foundations/layout#bleed) for more information.\n\n**EXAMPLE USAGE:**\n```diff\n <Card>\n   <Stack space=\"gutter\">\n+    <Bleed horizontal=\"gutter\" top=\"gutter\">\n       <Placeholder height={200} label=\"Header Image\" />\n+    </Bleed>\n     <Heading level=\"3\">Heading</Heading>\n     <Text>Text content</Text>\n   </Stack>\n </Card>\n```"
+      },
+      {
+        "updated": [
+          "Box",
+          "BoxRenderer",
+          "atoms"
+        ],
+        "summary": "**Box, BoxRenderer, atoms:** Add support for `inset` shorthand\n\nIntroduces the `inset` shorthand as a convenience for applying `top`, `bottom`, `left` and `right` properties.\n\n**EXAMPLE USAGE:**\n```jsx\n<Box position=\"absolute\" inset={0} />\n```\nor\n```ts\natoms({\n  position: 'absolute',\n  inset: 0,\n})\n```"
+      },
+      {
+        "updated": [
+          "Pagination"
+        ],
+        "summary": "**Pagination:** Add `pageLimit` support\n\nAdd support for configuring the number of pages displayed using the `pageLimit` prop. The default is still set to 7, but consumers can now reduce this, useful when `Pagination` is used inside column layouts.\n\nIn addition, the layout has been stabilised, preventing the links moving when the next/prev actions are shown/hidden.\n\n**EXAMPLE USAGE:**\n```jsx\n<Pagination\n  ...\n  pageLimit={3}\n/>\n```"
+      },
+      {
+        "updated": [
+          "Columns"
+        ],
+        "summary": "**Columns:** Support using span elements via component prop\n\nSetting the `component` prop to `span` will now ensure all elements controlled by `Columns` are `span`s. This is useful when using layout components inside dom elements that should not contain `div`s from a HTML validation perspective.\n\n**EXAMPLE USAGE:**\n```jsx\n<Columns space=\"medium\" component=\"span\">\n  ...\n</Columns>\n```"
+      },
+      {
+        "updated": [
+          "Drawer"
+        ],
+        "summary": "**Drawer:** Support positioning on the left\n\nA `Drawer` can now enter from and be positioned on the left. The default remains unchanged and will enter from and be docked to the right.\n\n**EXAMPLE USAGE:**\n```jsx\n<Drawer\n  ...\n  position=\"left\"\n/>\n```"
+      },
+      {
+        "updated": [
+          "Inline"
+        ],
+        "summary": "**Inline:** Support using span elements via component prop\n\nSetting the `component` prop to `span` will now ensure all elements controlled by `Inline` are `span`s. This is useful when using layout components inside dom elements that should not contain `div`s from a HTML validation perspective.\n\n**EXAMPLE USAGE:**\n```jsx\n<Inline space=\"medium\" component=\"span\">\n  ...\n</Inline>\n```"
+      }
+    ]
+  },
+  {
+    "version": "31.7.0",
+    "updates": [
+      {
+        "updated": [
+          "MenuRenderer",
+          "OverflowMenu"
+        ],
+        "summary": "**MenuRenderer, OverflowMenu:** Add menu `width` and `placement` support\n\nProvides a set of `width`s to control how wide the menu is, where `content` is the default. The available widths are ratioed off the `contentWidth`s specified on the theme.\n\nAdditionally the `placement` of the menu can choose from either `top` or `bottom` where the latter remains the default.\n\n**EXAMPLE USAGE:**\n```jsx\n<MenuRenderer\n  // ...\n  width=\"small\"\n  placement=\"top\">\n  ...\n</MenuRenderer>\n```"
+      },
+      {
+        "updated": [
+          "Button"
+        ],
+        "summary": "**Button:** Support using as menu trigger\n\nAllow a `Button` to receive all of the required props for a menu trigger. As a result a `Button` now accepts `onKeyUp`, `onKeyDown` and `aria-haspopup`.\n\n**EXAMPLE USAGE:**\n```jsx\n<MenuRenderer\n  trigger={triggerProps => (\n    <Button {...triggerProps}>\n      Button\n    </Button>\n  )}\n>\n  ...\n</MenuRenderer>\n```"
+      },
+      {
+        "updated": [
+          "MenuItem",
+          "MenuItemLink",
+          "MenuRenderer",
+          "OverflowMenu"
+        ],
+        "summary": "**MenuItem, MenuItemLink, MenuRenderer, OverflowMenu:** Add `icon` support\n\nProvides a designed slot for adding an icon to `MenuItem` and `MenuItemLink`. To compliment this we have introduced `reserveIconSpace` on both `MenuRenderer` and `OverflowMenu` so the labels in menu items without icons align with the labels of menu items with an icon.\n\n**EXAMPLE USAGE:**\n```jsx\n<MenuRenderer reserveIconSpace>\n  <MenuItem\n    // ...\n    icon={<IconBookmark />}\n  >\n    Menu Item\n  </MenuItem>\n</MenuRenderer>\n```"
+      },
+      {
+        "updated": [
+          "MenuItem",
+          "MenuItemLink",
+          "MenuItemChecklist"
+        ],
+        "summary": "**MenuItem, MenuItemLink, MenuItemChecklist:** Add `badge` support\n\nProvides a designed slot for adding a `Badge` to all the variants of a menu item.\n\n**EXAMPLE USAGE:**\n```jsx\n<MenuRenderer>\n  <MenuItem\n    // ...\n    badge={<Badge>Badge</Badge>}\n  >\n    Menu Item\n  </MenuItem>\n</MenuRenderer>\n```"
+      },
+      {
+        "updated": [
+          "Column"
+        ],
+        "summary": "**Column:** Enure inner element honours `component` prop"
+      }
+    ]
   }
 ]
