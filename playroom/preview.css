@@ -1,4 +1,4 @@
-@keyframes utcnv44 {
+@keyframes _11xnz7m4 {
   0%, 100% {
     opacity: 0;
   }
@@ -9,15 +9,15 @@
     stroke-dashoffset: 0;
   }
 }
-.utcnv41 {
+._11xnz7m1 {
   z-index: 100;
-  background: var(--r22p7u18);
-  color: var(--r22p7uz);
+  background: var(--_1ngh03s18);
+  color: var(--_1ngh03sz);
 }
-.utcnv43 > svg > path {
+._11xnz7m3 > svg > path {
   stroke-dasharray: 1000px;
   stroke-dashoffset: 1000;
-  animation-name: utcnv44;
+  animation-name: _11xnz7m4;
   animation-duration: 1300ms;
   animation-delay: 500ms;
   animation-direction: forwards;
@@ -25,7 +25,7 @@
   animation-iteration-count: 2;
   animation-fill-mode: forwards;
 }
-.utcnv45 {
+._11xnz7m5 {
   margin: 0 auto;
   width: 40vw;
   max-width: 200px;
