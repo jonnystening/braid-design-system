@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, Fragment, Children } from 'react';
 import assert from 'assert';
-import flattenChildren from 'react-keyed-flatten-children';
+import { default as flattenChildren } from 'react-keyed-flatten-children';
 import { TabsContext } from './TabsProvider';
 import { TAB_PANELS_UPDATED } from './Tabs.actions';
 import { TabPanel } from './TabPanel';

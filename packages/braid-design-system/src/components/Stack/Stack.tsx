@@ -1,5 +1,5 @@
 import React, { Children, ReactNode } from 'react';
-import flattenChildren from 'react-keyed-flatten-children';
+import { default as flattenChildren } from 'react-keyed-flatten-children';
 import assert from 'assert';
 import { Box } from '../Box/Box';
 import type { ResponsiveSpace } from '../../css/atoms/atoms';

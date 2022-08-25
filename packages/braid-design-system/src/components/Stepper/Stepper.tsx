@@ -1,6 +1,6 @@
 import assert from 'assert';
 import React, { Children, ReactElement } from 'react';
-import flattenChildren from 'react-keyed-flatten-children';
+import { default as flattenChildren } from 'react-keyed-flatten-children';
 import buildDataAttributes, {
   DataAttributeMap,
 } from '../private/buildDataAttributes';
