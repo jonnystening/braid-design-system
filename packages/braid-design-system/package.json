@@ -2,10 +2,17 @@
   "name": "braid-design-system",
   "version": "31.16.0",
   "description": "Themeable design system for the SEEK Group",
-  "main": "lib/components/index.ts",
-  "bin": {
-    "braid-upgrade": "./codemod/bin.js"
+  "homepage": "https://seek-oss.github.io/braid-design-system/",
+  "bugs": {
+    "url": "https://github.com/seek-oss/braid-design-system/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seek-oss/braid-design-system.git",
+    "directory": "packages/braid-design-system"
+  },
+  "license": "MIT",
+  "author": "SEEK",
   "sideEffects": [
     "lib/themes/**/*",
     "lib/css/atoms/**/*",
@@ -14,31 +21,98 @@
     "reset/**/*",
     "*.css.ts"
   ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/index.cjs.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.cjs.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./apacTheme": {
+      "import": {
+        "types": "./apacTheme/index.cjs.d.ts",
+        "default": "./apacTheme/index.mjs"
+      },
+      "require": {
+        "types": "./apacTheme/index.cjs.d.ts",
+        "default": "./apacTheme/index.cjs"
+      }
+    },
+    "./color-mode": {
+      "import": {
+        "types": "./color-mode/index.cjs.d.ts",
+        "default": "./color-mode/index.mjs"
+      },
+      "require": {
+        "types": "./color-mode/index.cjs.d.ts",
+        "default": "./color-mode/index.cjs"
+      }
+    },
+    "./css": {
+      "import": {
+        "types": "./css/index.cjs.d.ts",
+        "default": "./css/index.mjs"
+      },
+      "require": {
+        "types": "./css/index.cjs.d.ts",
+        "default": "./css/index.cjs"
+      }
+    },
+    "./reset": {
+      "import": {
+        "types": "./reset/index.cjs.d.ts",
+        "default": "./reset/index.mjs"
+      },
+      "require": {
+        "types": "./reset/index.cjs.d.ts",
+        "default": "./reset/index.cjs"
+      }
+    },
+    "./test": {
+      "import": {
+        "types": "./test/index.cjs.d.ts",
+        "default": "./test/index.mjs"
+      },
+      "require": {
+        "types": "./test/index.cjs.d.ts",
+        "default": "./test/index.cjs"
+      }
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "bin": {
+    "braid-upgrade": "./codemod/bin.js"
+  },
+  "files": [
+    "/apacTheme",
+    "/color-mode",
+    "/css",
+    "/dist",
+    "/reset",
+    "/test"
+  ],
   "scripts": {
+    "build": "pnpm build-codemod && crackle package",
+    "build-codemod": "rm -rf ./codemod/dist && cp -r ../codemod/dist ./codemod/dist",
+    "build-storybook": "SKU_TELEMETRY=false sku build-storybook",
     "chromatic": "chromatic --storybook-build-dir ./dist-storybook --exit-zero-on-changes --auto-accept-changes master",
     "eslint": "eslint --debug --ignore-path ../../.eslintignore .",
     "format": "eslint --ignore-path ../../.eslintignore --fix . && prettier --ignore-path ../.prettierignore --write .",
+    "generate-icons": "node ./scripts/generateIcons.js",
     "prettier": "prettier --ignore-path ../../.prettierignore --list-different .",
     "storybook": "SKU_TELEMETRY=false sku storybook",
-    "build": "rm -rf ./codemod/dist && cp -r ../codemod/dist ./codemod/dist",
-    "build-storybook": "SKU_TELEMETRY=false sku build-storybook",
-    "generate-icons": "node ./scripts/generateIcons.js",
     "tsc": "tsc"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/seek-oss/braid-design-system.git",
-    "directory": "packages/braid-design-system"
-  },
-  "author": "SEEK",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/seek-oss/braid-design-system/issues"
-  },
-  "homepage": "https://seek-oss.github.io/braid-design-system/",
   "dependencies": {
     "@capsizecss/core": "^3.0.0",
     "@capsizecss/vanilla-extract": "^1.0.0",
+    "@crackle/cli": "^0.7.0",
     "@types/autosuggest-highlight": "^3.1.1",
     "@types/dedent": "^0.7.0",
     "@vanilla-extract/css": "^1.7.2",
@@ -59,11 +133,6 @@
     "react-remove-scroll": "^2.5.3",
     "utility-types": "^3.10.0",
     "uuid": "^8.3.2"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0 || ^17 || ^18",
-    "react-dom": "^16.8.0 || ^17 || ^18",
-    "sku": ">=10.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.0",
@@ -101,5 +170,10 @@
     "sku": "11.4.5",
     "svgo": "^2.8.0",
     "title-case": "^3.0.3"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17 || ^18",
+    "react-dom": "^16.8.0 || ^17 || ^18",
+    "sku": ">=10.13.1"
   }
 }

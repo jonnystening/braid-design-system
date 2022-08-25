@@ -2,3 +2,12 @@ node_modules/
 lib/components/icons/*/*Svg.tsx
 codemod/dist/
 dist-storybook/
+
+# managed by crackle
+/apacTheme
+/color-mode
+/css
+/dist
+/reset
+/test
+# end managed by crackle
