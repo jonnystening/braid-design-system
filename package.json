@@ -82,6 +82,9 @@
     "patchedDependencies": {
       "panzoom@9.4.2": "patches/panzoom@9.4.2.patch",
       "sku@11.4.5": "patches/sku@11.4.5.patch"
+    },
+    "overrides": {
+      "@crackle/core": "0.0.0-gotham-patches-20227261837"
     }
   },
   "skuSkipPostInstall": true
