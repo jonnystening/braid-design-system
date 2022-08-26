@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 overrides:
-  '@crackle/core': 0.0.0-gotham-patches-20227261837
+  '@crackle/core': 0.0.0-gotham-patches-20227265259
 
 patchedDependencies:
   panzoom@9.4.2:
@@ -2231,7 +2231,7 @@ packages:
     resolution: {integrity: sha512-rNjYAYjJSMWoX3NGL3s6kOrYlqdzge+LsdzRXZi5jgDjc89cXFkFlQzaed5Bl8qcaUydFnLhSrdsowMIByhr9Q==}
     hasBin: true
     dependencies:
-      '@crackle/core': 0.0.0-gotham-patches-20227261837
+      '@crackle/core': 0.0.0-gotham-patches-20227265259
       yargs: 17.5.1
     transitivePeerDependencies:
       - '@types/react'
@@ -2244,8 +2244,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@crackle/core/0.0.0-gotham-patches-20227261837:
-    resolution: {integrity: sha512-OTB30RKsr6Y4llUAfEpXnx4q44FZAyF+JtM3Q2QkO7M2c7E6bGDHyp+NGfzaVpPzfk5Sr820UKGQYa+MMkLe+A==}
+  /@crackle/core/0.0.0-gotham-patches-20227265259:
+    resolution: {integrity: sha512-Qs7F/g2+ukaMdLMCDG7h8bvjg3mnhV3zzqQbvEd/ZKtidS4V768copM8HMoUfqu83Ozkf4SkRAbyqKI3Z3PFVg==}
     dependencies:
       '@babel/core': 7.18.0
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.18.0
@@ -19226,7 +19226,7 @@ packages:
     resolution: {integrity: sha512-rjUWSqnfTNrjbB9NQWfPMH/xRK1deHeGsHoVfpxJ++XeYXE0d6B1En37AHfw3jtfTU7dzMzZL2jjpe8Qb5gLIQ==}
 
   /trim/0.0.1:
-    resolution: {integrity: sha1-WFhUf2spB1fulczMZm+1AITEYN0=}
+    resolution: {integrity: sha512-YzQV+TZg4AxpKxaTHK3c3D+kRDCGVEE7LemdlQZoQXn0iennk10RsIoY6ikzAqJTc9Xjl9C1/waHom/J86ziAQ==}
 
   /trough/1.0.5:
     resolution: {integrity: sha512-rvuRbTarPXmMb79SmzEp8aqXNKcK+y0XaB298IXueQ8I2PsrATcPBCSPyK/dDNa2iWOhKlfNnOjdAOTBU/nkFA==}
