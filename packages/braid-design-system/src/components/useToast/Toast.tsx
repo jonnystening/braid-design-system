@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from 'react';
-import { TreatProvider } from 'sku/react-treat';
 import { Stack } from '../Stack/Stack';
 import { Inline } from '../Inline/Inline';
 import { Columns } from '../Columns/Columns';
@@ -52,7 +51,6 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
   (
     {
       id,
-      treatTheme,
       vanillaTheme,
       dedupeKey,
       message,
@@ -111,66 +109,64 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     );
 
     return (
-      <TreatProvider theme={treatTheme}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          role="alert"
-          ref={ref}
-          onMouseEnter={stopTimeout}
-          onMouseLeave={startTimeout}
-          className={vanillaTheme}
-        >
-          <Box boxShadow="large" borderRadius={borderRadius}>
-            <ContentBlock width="xsmall">
-              <Box
-                background="surface"
-                position="relative"
-                boxShadow="borderNeutralLight"
-                borderRadius={borderRadius}
-                paddingY="medium"
-                paddingLeft="medium"
-                overflow="hidden"
-                className={styles.toast}
-              >
-                <Columns space="none">
-                  <Column width="content">
-                    <Box paddingRight="small">
-                      <Icon tone={tone} />
-                    </Box>
-                  </Column>
-                  <Column>{content}</Column>
-                  <Column width="content">
-                    <Box
-                      width="touchable"
-                      display="flex"
-                      justifyContent="center"
-                      alignItems="center"
-                      className={lineHeightContainer.standard}
-                      aria-hidden
-                    >
-                      <ButtonIcon
-                        id={`${dedupeKey}-clear`}
-                        icon={<IconClear />}
-                        tone="secondary"
-                        variant="transparent"
-                        onClick={remove}
-                        label={closeLabel}
-                        data={
-                          process.env.NODE_ENV !== 'production'
-                            ? { testid: 'clearToast' }
-                            : {}
-                        }
-                      />
-                    </Box>
-                  </Column>
-                </Columns>
-                <Keyline tone={tone} borderRadius={borderRadius} />
-              </Box>
-            </ContentBlock>
-          </Box>
+      <Box
+        display="flex"
+        justifyContent="center"
+        role="alert"
+        ref={ref}
+        onMouseEnter={stopTimeout}
+        onMouseLeave={startTimeout}
+        className={vanillaTheme}
+      >
+        <Box boxShadow="large" borderRadius={borderRadius}>
+          <ContentBlock width="xsmall">
+            <Box
+              background="surface"
+              position="relative"
+              boxShadow="borderNeutralLight"
+              borderRadius={borderRadius}
+              paddingY="medium"
+              paddingLeft="medium"
+              overflow="hidden"
+              className={styles.toast}
+            >
+              <Columns space="none">
+                <Column width="content">
+                  <Box paddingRight="small">
+                    <Icon tone={tone} />
+                  </Box>
+                </Column>
+                <Column>{content}</Column>
+                <Column width="content">
+                  <Box
+                    width="touchable"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    className={lineHeightContainer.standard}
+                    aria-hidden
+                  >
+                    <ButtonIcon
+                      id={`${dedupeKey}-clear`}
+                      icon={<IconClear />}
+                      tone="secondary"
+                      variant="transparent"
+                      onClick={remove}
+                      label={closeLabel}
+                      data={
+                        process.env.NODE_ENV !== 'production'
+                          ? { testid: 'clearToast' }
+                          : {}
+                      }
+                    />
+                  </Box>
+                </Column>
+              </Columns>
+              <Keyline tone={tone} borderRadius={borderRadius} />
+            </Box>
+          </ContentBlock>
         </Box>
-      </TreatProvider>
+      </Box>
     );
   },
 );
