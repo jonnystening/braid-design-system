@@ -1,4 +1,5 @@
 import { darken, lighten, rgba } from 'polished';
+
 import { palette } from '../../color/palette';
 import { BraidTokens } from '../tokenType';
 
@@ -11,7 +12,7 @@ const link = palette.indigo['600'];
 const linkVisited = 'DarkViolet';
 const secondary = palette.grey['500'];
 
-const tokens: BraidTokens = {
+export const tokens: BraidTokens = {
   name: 'docs',
   displayName: 'Docs',
   typography: {
@@ -257,5 +258,3 @@ const tokens: BraidTokens = {
     },
   },
 };
-
-export default tokens;

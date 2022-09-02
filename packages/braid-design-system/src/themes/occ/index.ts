@@ -1,5 +1,3 @@
-import vanillaTheme from './occTheme.css';
+import theme from './occTheme.css';
 
-export default {
-  vanillaTheme,
-};
+export default theme;

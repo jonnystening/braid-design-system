@@ -1,5 +1,3 @@
-import vanillaTheme from './seekBusinessTheme.css';
+import theme from './seekBusinessTheme.css';
 
-export default {
-  vanillaTheme,
-};
+export default theme;

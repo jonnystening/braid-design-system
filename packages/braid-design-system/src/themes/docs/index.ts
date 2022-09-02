@@ -1,5 +1,3 @@
-import vanillaTheme from './docsTheme.css';
+import theme from './docsTheme.css';
 
-export default {
-  vanillaTheme,
-};
+export default theme;

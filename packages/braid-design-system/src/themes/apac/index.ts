@@ -1,5 +1,3 @@
-import vanillaTheme from './apacTheme.css';
+import theme from './apacTheme.css';
 
-export default {
-  vanillaTheme,
-};
+export default theme;
