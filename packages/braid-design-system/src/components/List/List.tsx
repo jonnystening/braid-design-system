@@ -2,7 +2,7 @@ import React, { Children, ReactNode } from 'react';
 import { Text, TextProps } from '../Text/Text';
 import { Stack, StackProps } from '../Stack/Stack';
 import { Box } from '../Box/Box';
-import { default as flattenChildren } from 'react-keyed-flatten-children';
+import flattenChildren from 'react-keyed-flatten-children';
 import { ReactNodeNoStrings } from '../private/ReactNodeNoStrings';
 import {
   DefaultTextPropsProvider,

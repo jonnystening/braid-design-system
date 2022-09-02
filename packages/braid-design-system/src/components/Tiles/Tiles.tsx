@@ -1,5 +1,5 @@
 import React, { Children } from 'react';
-import { default as flattenChildren } from 'react-keyed-flatten-children';
+import flattenChildren from 'react-keyed-flatten-children';
 import { Box } from '../Box/Box';
 import { Divider, DividerProps } from '../Divider/Divider';
 import { Space } from '../../css/atoms/atoms';
