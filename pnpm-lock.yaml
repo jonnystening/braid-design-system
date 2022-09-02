@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 overrides:
-  '@crackle/core': 0.0.0-gotham-patches-20228123154
+  '@crackle/core': 0.0.0-gotham-patches-202281231016
 
 patchedDependencies:
   panzoom@9.4.2:
@@ -176,7 +176,6 @@ importers:
       lodash: 4.17.21
       polished: 4.2.2
       react-focus-lock: 2.9.1_react@18.1.0
-      react-keyed-flatten-children: 1.3.0_react@18.1.0
       react-popper-tooltip: 4.3.1_2q7l3o2s2f77g7novtsxtrhvne
       react-remove-scroll: 2.5.3_react@18.1.0
       utility-types: 3.10.0
@@ -212,6 +211,7 @@ importers:
       playroom: 0.28.0_2q7l3o2s2f77g7novtsxtrhvne
       react: 18.1.0
       react-dom: 18.2.0_react@18.1.0
+      react-keyed-flatten-children: 1.3.0_react@18.1.0
       react-router-dom: 6.3.0_2q7l3o2s2f77g7novtsxtrhvne
       sanitize-html: 2.7.0
       sku: 11.4.5_5jutrt3jthugnmo43zf7yhig3u_2q7l3o2s2f77g7novtsxtrhvne
@@ -2231,7 +2231,7 @@ packages:
     resolution: {integrity: sha512-rNjYAYjJSMWoX3NGL3s6kOrYlqdzge+LsdzRXZi5jgDjc89cXFkFlQzaed5Bl8qcaUydFnLhSrdsowMIByhr9Q==}
     hasBin: true
     dependencies:
-      '@crackle/core': 0.0.0-gotham-patches-20228123154
+      '@crackle/core': 0.0.0-gotham-patches-202281231016
       yargs: 17.5.1
     transitivePeerDependencies:
       - '@types/react'
@@ -2245,14 +2245,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@crackle/core/0.0.0-gotham-patches-20228123154:
-    resolution: {integrity: sha512-6z55HgJuGshY133ytJZspiP1UijQbin1vSs9jZ46LVYQ7CaACboaVQel65diih+frzmiNx+/LQvoc+gu2+rehw==}
+  /@crackle/core/0.0.0-gotham-patches-202281231016:
+    resolution: {integrity: sha512-Vkr9qZPa5uu+ztbCcAW37IXft+qbXvdhr1lqi5FU/jth9v5lz5jnyRsvXgSu3ArnaK1x1vykcPO70oYeWw073g==}
     dependencies:
       '@babel/core': 7.18.0
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.18.0
       '@babel/plugin-syntax-typescript': 7.17.12_@babel+core@7.18.0
       '@crackle/babel-plugin-remove-exports': 0.1.0
       '@crackle/router': 0.1.2_rucwy2ro6yyrjn73fut3quomqm
+      '@rollup/plugin-commonjs': 22.0.2_rollup@2.77.3
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.77.3
       '@vanilla-extract/babel-plugin': 1.1.7
       '@vanilla-extract/css': 1.7.3
@@ -3317,6 +3318,22 @@ packages:
 
   /@popperjs/core/2.11.5:
     resolution: {integrity: sha512-9X2obfABZuDVLCgPK9aX0a/x4jaOEweTTWE2+9sr0Qqqevj2Uv5XorvusThmc9XGYpS9yI+fhh8RTafBtGposw==}
+    dev: false
+
+  /@rollup/plugin-commonjs/22.0.2_rollup@2.77.3:
+    resolution: {integrity: sha512-//NdP6iIwPbMTcazYsiBMbJW7gfmpHom33u1beiIoHDEM0Q9clvtQB1T0efvMqHeKsGohiHo97BCPCkBXdscwg==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      rollup: ^2.68.0
+    dependencies:
+      '@rollup/pluginutils': 3.1.0_rollup@2.77.3
+      commondir: 1.0.1
+      estree-walker: 2.0.2
+      glob: 7.2.3
+      is-reference: 1.2.1
+      magic-string: 0.25.9
+      resolve: 1.22.1
+      rollup: 2.77.3
     dev: false
 
   /@rollup/plugin-node-resolve/13.3.0_rollup@2.77.3:
@@ -12729,6 +12746,12 @@ packages:
   /is-promise/2.2.2:
     resolution: {integrity: sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==}
 
+  /is-reference/1.2.1:
+    resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
+    dependencies:
+      '@types/estree': 0.0.51
+    dev: false
+
   /is-regex/1.1.4:
     resolution: {integrity: sha512-kvRdxDsxZjhzUX07ZnLydzS1TU/TJlTUHHY4YLL87e37oUA49DfkLqgy+VjFocowy29cKvcSiu+kIv728jTTVg==}
     engines: {node: '>= 0.4'}
@@ -17312,7 +17335,6 @@ packages:
     dependencies:
       react: 18.1.0
       react-is: 16.13.1
-    dev: false
 
   /react-markdown/5.0.3_7cpxmzzodpxnolj5zcc5cr63ji:
     resolution: {integrity: sha512-jDWOc1AvWn0WahpjW6NK64mtx6cwjM4iSsLHJPNBqoAgGOVoIdJMqaKX4++plhOtdd4JksdqzlDibgPx6B/M2w==}
