@@ -7,3 +7,9 @@ CHANGELOG.md
 .changeset/*.md
 componentUpdates.json
 componentDocs.json
+
+packages/braid-design-system/apacTheme
+packages/braid-design-system/color-mode
+packages/braid-design-system/css
+packages/braid-design-system/reset
+packages/braid-design-system/test
