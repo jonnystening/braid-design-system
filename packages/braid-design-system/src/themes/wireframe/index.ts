@@ -1,5 +1,3 @@
-import vanillaTheme from './wireframeTheme.css';
+import theme from './wireframeTheme.css';
 
-export default {
-  vanillaTheme,
-};
+export default theme;
