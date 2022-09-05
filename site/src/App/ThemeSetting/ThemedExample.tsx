@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { useThemeSettings } from './ThemeSettingContext';
 import { BraidProvider } from 'braid-design-system';
-import { Box, BoxProps } from 'braid-design-system/lib/components/Box/Box';
+import { Box, BoxProps } from 'braid-design-system/src/components/Box/Box';
 import * as styles from './ThemedExample.css';
 
 interface ThemedExampleProps {

@@ -10,8 +10,8 @@ import React, {
 } from 'react';
 import { useParams, useMatch, Outlet, useResolvedPath } from 'react-router';
 import { default as flattenChildren } from 'react-keyed-flatten-children';
-import { negativeMargin } from 'braid-design-system/lib/css/negativeMargin/negativeMargin';
-import { BadgeProps } from 'braid-design-system/lib/components/Badge/Badge';
+import { negativeMargin } from 'braid-design-system/src/css/negativeMargin/negativeMargin';
+import { BadgeProps } from 'braid-design-system/src/components/Badge/Badge';
 import {
   Alert,
   Badge,
@@ -22,7 +22,7 @@ import {
   Stack,
   Text,
 } from 'braid-design-system';
-import { useBackgroundLightness } from 'braid-design-system/lib/components/Box/BackgroundContext';
+import { useBackgroundLightness } from 'braid-design-system/src/components/Box/BackgroundContext';
 import {
   getComponentDocs,
   getComponentSnippets,

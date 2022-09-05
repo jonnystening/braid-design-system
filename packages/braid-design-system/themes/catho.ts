@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/catho';
+export { default } from '../src/themes/catho';

@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/occ';
+export { default } from '../src/themes/occ';

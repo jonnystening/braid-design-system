@@ -11,9 +11,9 @@ import {
   IconSearch,
   Strong,
 } from 'braid-design-system';
-import { Overlay } from 'braid-design-system/lib/components/private/Overlay/Overlay';
+import { Overlay } from 'braid-design-system/src/components/private/Overlay/Overlay';
 import { Page } from '../../../../types';
-import * as icons from 'braid-design-system/lib/components/icons';
+import * as icons from 'braid-design-system/src/components/icons';
 import { PageTitle } from '../../../Seo/PageTitle';
 import * as styles from './iconography.css';
 

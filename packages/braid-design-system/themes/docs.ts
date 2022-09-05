@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/docs';
+export { default } from '../src/themes/docs';

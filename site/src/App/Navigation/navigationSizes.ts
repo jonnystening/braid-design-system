@@ -1,4 +1,4 @@
-import tokens from 'braid-design-system/lib/themes/docs/tokens';
+import { tokens } from 'braid-design-system/src/themes/docs/tokens';
 
 const menuButton = 32;
 

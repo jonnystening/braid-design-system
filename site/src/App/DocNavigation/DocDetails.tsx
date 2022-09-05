@@ -7,7 +7,7 @@ import {
   Secondary,
   Text,
 } from 'braid-design-system';
-import { PlayroomStateProvider } from 'braid-design-system/lib/playroom/playroomState';
+import { PlayroomStateProvider } from 'braid-design-system/src/playroom/playroomState';
 import { LinkableHeading } from '../LinkableHeading/LinkableHeading';
 import { PageTitle } from '../Seo/PageTitle';
 import { useThemeSettings } from '../ThemeSetting';

@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/seekAnz';
+export { default } from '../src/themes/seekAnz';

@@ -86,5 +86,10 @@
       "@crackle/core": "0.0.0-gotham-patches-202281231016"
     }
   },
+  "manypkg": {
+    "ignoredRules": [
+      "INTERNAL_MISMATCH"
+    ]
+  },
   "skuSkipPostInstall": true
 }

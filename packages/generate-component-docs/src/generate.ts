@@ -14,7 +14,7 @@ const tsconfigPath = path.join(
 );
 const componentsFile = path.join(
   __dirname,
-  '../../braid-design-system/lib/components/index.ts',
+  '../../braid-design-system/src/components/index.ts',
 );
 const testComponentsFile = path.join(
   __dirname,

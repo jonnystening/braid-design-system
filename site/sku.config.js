@@ -9,7 +9,7 @@ module.exports = {
   srcPaths: [
     '../packages/braid-design-system/color-mode',
     '../packages/braid-design-system/css',
-    '../packages/braid-design-system/lib',
+    '../packages/braid-design-system/src',
     '../packages/braid-design-system/reset',
     '../packages/braid-design-system/scripts',
     '../packages/braid-design-system/test',

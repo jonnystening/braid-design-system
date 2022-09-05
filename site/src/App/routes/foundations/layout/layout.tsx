@@ -24,13 +24,13 @@ import {
 } from 'braid-design-system';
 import { TextStack } from '../../../TextStack/TextStack';
 import Code from '../../../Code/Code';
-import tokens from 'braid-design-system/lib/themes/wireframe/tokens';
+import { tokens } from 'braid-design-system/src/themes/docs/tokens';
 import { Page } from '../../../../types';
 import { ThemedExample } from '../../../ThemeSetting';
 import { PageTitle } from '../../../Seo/PageTitle';
 import { LinkableHeading } from '../../../LinkableHeading/LinkableHeading';
-import source from 'braid-design-system/lib/utils/source.macro';
-import { Placeholder } from 'braid-design-system/lib/playroom/components';
+import source from 'braid-design-system/src/utils/source.macro';
+import { Placeholder } from 'braid-design-system/src/playroom/components';
 
 type Space = 'none' | keyof typeof tokens.space;
 const spaceScale = ['none', ...Object.keys(tokens.space)] as Space[];

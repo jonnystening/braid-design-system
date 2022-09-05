@@ -23,7 +23,7 @@ import { DocSnippets } from './DocNavigation/DocSnippets';
 import { ReleasesPage } from './routes/releases';
 import { GalleryPage } from './routes/gallery';
 import { AppMeta } from './Seo/AppMeta';
-import { darkMode } from 'braid-design-system/lib/css/atoms/sprinkles.css';
+import { darkMode } from 'braid-design-system/src/css/atoms/sprinkles.css';
 
 const CustomLink = makeLinkComponent(
   ({ href, rel, onClick, ...restProps }, ref) =>

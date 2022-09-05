@@ -7,7 +7,7 @@ import reactElementToJsxString from 'react-element-to-jsx-string';
 import typescriptParser from 'prettier/parser-typescript';
 import { createUrl } from 'playroom/utils';
 import { useConfig } from '../ConfigContext';
-import { Source } from 'braid-design-system/lib/utils/source.macro';
+import { Source } from 'braid-design-system/src/utils/source.macro';
 import {
   Stack,
   Text,
@@ -18,9 +18,9 @@ import {
 } from 'braid-design-system';
 // TODO: COLORMODE RELEASE
 // Use public import
-import { Box, BoxProps } from 'braid-design-system/lib/components/Box/Box';
-import { FieldOverlay } from 'braid-design-system/lib/components/private/FieldOverlay/FieldOverlay';
-import { hideFocusRingsClassName } from 'braid-design-system/lib/components/private/hideFocusRings/hideFocusRings';
+import { Box, BoxProps } from 'braid-design-system/src/components/Box/Box';
+import { FieldOverlay } from 'braid-design-system/src/components/private/FieldOverlay/FieldOverlay';
+import { hideFocusRingsClassName } from 'braid-design-system/src/components/private/hideFocusRings/hideFocusRings';
 import { CopyIcon } from './CopyIcon';
 import { PlayIcon } from './PlayIcon';
 import * as styles from './Code.css';
@@ -29,8 +29,8 @@ import * as styles from './Code.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import editorTheme from './editorTheme';
 import { ThemedExample } from '../ThemeSetting';
-import usePlayroomScope from 'braid-design-system/lib/playroom/useScope';
-import { PlayroomStateProvider } from 'braid-design-system/lib/playroom/playroomState';
+import usePlayroomScope from 'braid-design-system/src/playroom/useScope';
+import { PlayroomStateProvider } from 'braid-design-system/src/playroom/playroomState';
 
 type ReactElementOrString = ReactElement | string;
 

@@ -28,11 +28,11 @@ const cssNames = getExports(
   'css',
 );
 const componentNames = getExports(
-  '../packages/braid-design-system/lib/components/index.ts',
+  '../packages/braid-design-system/src/components/index.ts',
 );
 const testNames = getExports('../packages/braid-design-system/test/index.ts');
 const iconNames = getExports(
-  '../packages/braid-design-system/lib/components/icons/index.ts',
+  '../packages/braid-design-system/src/components/icons/index.ts',
 );
 
 const guideRoutes = getPages('src/App/routes/guides/index.ts');

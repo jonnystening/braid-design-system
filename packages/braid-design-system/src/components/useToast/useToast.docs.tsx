@@ -45,7 +45,6 @@ const docs: ComponentDocs = {
             id={id}
             dedupeKey={id}
             shouldRemove={false}
-            treatTheme={theme.treatTheme}
             vanillaTheme={theme.vanillaTheme}
             onClose={() => {}}
             message="Positive toast"
@@ -172,7 +171,6 @@ const docs: ComponentDocs = {
               id={`${id}_1`}
               dedupeKey={`${id}_1`}
               shouldRemove={false}
-              treatTheme={theme.treatTheme}
               vanillaTheme={theme.vanillaTheme}
               onClose={() => {}}
               message="Positive message"
@@ -182,7 +180,6 @@ const docs: ComponentDocs = {
               id={`${id}_2`}
               dedupeKey={`${id}_2`}
               shouldRemove={false}
-              treatTheme={theme.treatTheme}
               vanillaTheme={theme.vanillaTheme}
               onClose={() => {}}
               message="Critical message"
@@ -231,7 +228,6 @@ const docs: ComponentDocs = {
               id={id}
               dedupeKey={id}
               shouldRemove={false}
-              treatTheme={theme.treatTheme}
               vanillaTheme={theme.vanillaTheme}
               onClose={() => {}}
               message="Positive message"
@@ -294,7 +290,6 @@ const docs: ComponentDocs = {
               id={id}
               dedupeKey={id}
               shouldRemove={false}
-              treatTheme={theme.treatTheme}
               vanillaTheme={theme.vanillaTheme}
               onClose={() => {}}
               message="Positive message"
@@ -357,7 +352,6 @@ const docs: ComponentDocs = {
               id={id}
               dedupeKey={id}
               shouldRemove={false}
-              treatTheme={theme.treatTheme}
               vanillaTheme={theme.vanillaTheme}
               onClose={() => {}}
               tone="positive"

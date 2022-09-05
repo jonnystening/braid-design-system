@@ -41,10 +41,10 @@ import {
 } from 'braid-design-system';
 // TODO: COLORMODE RELEASE
 // Use public import
-import { Box } from 'braid-design-system/lib/components/Box/Box';
+import { Box } from 'braid-design-system/src/components/Box/Box';
 import docsTheme from 'braid-design-system/themes/docs';
 import { getHistory, isNew } from '../../Updates';
-import source from 'braid-design-system/lib/utils/source.macro';
+import source from 'braid-design-system/src/utils/source.macro';
 import { CopyIcon } from '../../Code/CopyIcon';
 import { CodeButton, formatSnippet } from '../../Code/Code';
 import { ComponentExample } from '../../../types';
@@ -57,9 +57,9 @@ import {
   galleryComponents as allGalleryComponents,
   getComponentDocs,
 } from '../../navigationHelpers';
-import { PlayroomStateProvider } from 'braid-design-system/lib/playroom/playroomState';
+import { PlayroomStateProvider } from 'braid-design-system/src/playroom/playroomState';
 import { useSourceFromExample } from '../../useSourceFromExample/useSourceFromExample';
-import * as icons from 'braid-design-system/lib/components/icons';
+import * as icons from 'braid-design-system/src/components/icons';
 import {
   zoom as zoomState,
   fitToScreenDimensions,
@@ -68,8 +68,8 @@ import {
 } from './galleryState';
 import { GalleryPanel } from './GalleryPanel';
 import { ButtonIcon } from 'braid-design-system';
-import useIcon, { UseIconProps } from 'braid-design-system/lib/hooks/useIcon';
-import { SVGProps } from 'braid-design-system/lib/components/icons/SVGTypes';
+import useIcon, { UseIconProps } from 'braid-design-system/src/hooks/useIcon';
+import { SVGProps } from 'braid-design-system/src/components/icons/SVGTypes';
 import { Logo } from '../../Logo/Logo';
 
 import * as styles from './gallery.css';

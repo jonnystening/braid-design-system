@@ -4,16 +4,16 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const browserslist = require('../browserslist');
 
 module.exports = {
-  components: '../packages/braid-design-system/lib/playroom/components.ts',
+  components: '../packages/braid-design-system/src/playroom/components.ts',
   outputPath: './dist/playroom',
   title: 'BRAID',
-  snippets: '../packages/braid-design-system/lib/playroom/snippets.ts',
-  themes: '../packages/braid-design-system/lib/themes/index.ts',
+  snippets: '../packages/braid-design-system/src/playroom/snippets.ts',
+  themes: '../packages/braid-design-system/src/themes/index.ts',
   frameComponent:
-    '../packages/braid-design-system/lib/playroom/FrameComponent.tsx',
-  scope: '../packages/braid-design-system/lib/playroom/useScope.ts',
+    '../packages/braid-design-system/src/playroom/FrameComponent.tsx',
+  scope: '../packages/braid-design-system/src/playroom/useScope.ts',
   typeScriptFiles: [
-    '../packages/braid-design-system/lib/**/*.{ts,tsx}',
+    '../packages/braid-design-system/src/**/*.{ts,tsx}',
     '!**/node_modules',
   ],
   widths: [320, 768, 1024, 1400],

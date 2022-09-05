@@ -1,10 +1,10 @@
 import { ReactNode, ReactElement } from 'react';
 import { HelmetData } from 'react-helmet-async';
 import { RouteProps } from 'react-router';
-import { ReactNodeNoStrings } from 'braid-design-system/lib/components/private/ReactNodeNoStrings';
-import { Source } from 'braid-design-system/lib/utils/source.macro';
-import { BoxProps } from 'braid-design-system/lib/components/Box/Box';
-import useScope from 'braid-design-system/lib/playroom/useScope';
+import { ReactNodeNoStrings } from 'braid-design-system/src/components/private/ReactNodeNoStrings';
+import { Source } from 'braid-design-system/src/utils/source.macro';
+import { BoxProps } from 'braid-design-system/src/components/Box/Box';
+import useScope from 'braid-design-system/src/playroom/useScope';
 
 export interface AppConfig {
   playroomUrl: string;

@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/wireframe';
+export { default } from '../src/themes/wireframe';

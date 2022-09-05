@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Heading, Box, IconLink, Link } from 'braid-design-system';
-import { HeadingProps } from 'braid-design-system/lib/components/Heading/Heading';
+import { HeadingProps } from 'braid-design-system/src/components/Heading/Heading';
 import * as styles from './LinkableHeading.css';
 
 type LinkableHeadingProps = {

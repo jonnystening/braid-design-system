@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from 'braid-design-system';
-import { useTextTone } from 'braid-design-system/lib/hooks/typography';
+import { useTextTone } from 'braid-design-system/src/hooks/typography';
 
 interface LogoProps {
   width?: string | number;

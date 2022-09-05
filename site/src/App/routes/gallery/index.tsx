@@ -6,7 +6,7 @@ import { Box } from 'braid-design-system';
 import { Logo } from '../../Logo/Logo';
 import { useThemeSettings } from '../../ThemeSetting';
 import { Gallery } from './Gallery';
-import { darkMode } from 'braid-design-system/lib/css/atoms/sprinkles.css';
+import { darkMode } from 'braid-design-system/src/css/atoms/sprinkles.css';
 import * as styles from './gallery.css';
 
 const useBackgroundColor = () => {

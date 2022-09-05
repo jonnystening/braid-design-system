@@ -2,12 +2,12 @@ import groupBy from 'lodash/groupBy';
 import * as components from 'braid-design-system';
 import * as testComponents from 'braid-design-system/test';
 import * as css from 'braid-design-system/css';
-import { BraidSnippet } from 'braid-design-system/lib/components/private/Snippets';
+import { BraidSnippet } from 'braid-design-system/src/components/private/Snippets';
 import { ComponentDocs, ComponentExample, CssDoc } from '../types';
 import undocumentedExports from '../undocumentedExports.json';
 
 const componentDocsContext = require.context(
-  '../../../packages/braid-design-system/lib/components/',
+  '../../../packages/braid-design-system/src/components/',
   true,
   /.docs\.tsx$/,
 );
@@ -31,7 +31,7 @@ export const getCssDoc = (cssName: string) =>
   cssDocsContext(`./${cssName}.docs.tsx`).default as CssDoc;
 
 const snippetsContext = require.context(
-  '../../../packages/braid-design-system/lib/components/',
+  '../../../packages/braid-design-system/src/components/',
   true,
   /\.snippets\.tsx?$/,
 );
@@ -100,7 +100,7 @@ const getComponentNameFromFilename = (filename: string) => {
 };
 
 const galleryContext = require.context(
-  '../../../packages/braid-design-system/lib/components/',
+  '../../../packages/braid-design-system/src/components/',
   true,
   /.gallery\.tsx$/,
 );

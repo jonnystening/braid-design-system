@@ -18,11 +18,11 @@ import {
   TextField,
   MonthPicker,
   Textarea,
-} from 'braid-design-system/lib/playroom/components';
+} from 'braid-design-system/src/playroom/components';
 import Code from '../../../Code/Code';
-import { ReactNodeNoStrings } from 'braid-design-system/lib/components/private/ReactNodeNoStrings';
+import { ReactNodeNoStrings } from 'braid-design-system/src/components/private/ReactNodeNoStrings';
 import { PageTitle } from '../../../Seo/PageTitle';
-import source from 'braid-design-system/lib/utils/source.macro';
+import source from 'braid-design-system/src/utils/source.macro';
 import { LinkableHeading } from '../../../LinkableHeading/LinkableHeading';
 
 interface StepProps {

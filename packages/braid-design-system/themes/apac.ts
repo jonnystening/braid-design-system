@@ -1,1 +1,1 @@
-export { default } from '../lib/themes/apac';
+export { default } from '../src/themes/apac';
