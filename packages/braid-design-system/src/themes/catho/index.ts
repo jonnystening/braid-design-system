@@ -1,7 +1,3 @@
-import { theme as treatTheme } from './theme.treat';
-import vanillaTheme from './cathoTheme.css';
+import theme from './cathoTheme.css';
 
-export default {
-  ...treatTheme,
-  vanillaTheme,
-};
+export default theme;

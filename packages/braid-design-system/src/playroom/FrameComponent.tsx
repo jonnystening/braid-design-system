@@ -6,7 +6,7 @@ import {
   ToastProvider,
   useResponsiveValue,
 } from '../components';
-import { BraidTheme } from '../themes/BraidTheme';
+import type { BraidTheme } from '../themes/makeBraidTheme';
 import { PlayroomStateProvider } from './playroomState';
 import { darkMode } from '../css/atoms/sprinkles.css';
 
