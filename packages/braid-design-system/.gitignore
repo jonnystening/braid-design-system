@@ -1,5 +1,5 @@
 node_modules/
-lib/components/icons/*/*Svg.tsx
+src/components/icons/*/*Svg.tsx
 codemod/dist/
 dist-storybook/
 

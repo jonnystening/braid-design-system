@@ -41,7 +41,7 @@ const svgrConfig = {
 };
 
 const baseDir = path.join(__dirname, '..');
-const iconComponentsDir = path.join(baseDir, 'lib/components/icons');
+const iconComponentsDir = path.join(baseDir, 'src/components/icons');
 
 (async () => {
   // First clean up any existing SVG components
