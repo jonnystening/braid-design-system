@@ -22,9 +22,10 @@ import {
   Strong,
   Bleed,
 } from 'braid-design-system';
+import { vars } from 'braid-design-system/css';
+
 import { TextStack } from '../../../TextStack/TextStack';
 import Code from '../../../Code/Code';
-import { tokens } from 'braid-design-system/src/themes/docs/tokens';
 import { Page } from '../../../../types';
 import { ThemedExample } from '../../../ThemeSetting';
 import { PageTitle } from '../../../Seo/PageTitle';
@@ -32,8 +33,8 @@ import { LinkableHeading } from '../../../LinkableHeading/LinkableHeading';
 import source from 'braid-design-system/src/utils/source.macro';
 import { Placeholder } from 'braid-design-system/src/playroom/components';
 
-type Space = 'none' | keyof typeof tokens.space;
-const spaceScale = ['none', ...Object.keys(tokens.space)] as Space[];
+type Space = 'none' | keyof typeof vars.space;
+const spaceScale = ['none', ...Object.keys(vars.space)] as Space[];
 
 const lipsum1 =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse dignissim dapibus elit, vel egestas felis pharetra non. Cras malesuada, massa nec ultricies efficitur, lectus ante consequat magna, a porttitor massa ex ut quam.';
