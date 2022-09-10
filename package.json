@@ -83,7 +83,7 @@
       "sku@11.4.5": "patches/sku@11.4.5.patch"
     },
     "overrides": {
-      "@crackle/core": "0.0.0-gotham-patches-202281231016"
+      "@crackle/core": "0.0.0-filescope-urls-20220910114131"
     }
   },
   "manypkg": {
