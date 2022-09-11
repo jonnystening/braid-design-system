@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 overrides:
-  '@crackle/core': 0.0.0-filescope-urls-20220910114131
+  '@crackle/core': 0.0.0-filescope-urls-20220911230027
 
 patchedDependencies:
   panzoom@9.4.2:
@@ -2081,7 +2081,7 @@ packages:
     resolution: {integrity: sha512-rNjYAYjJSMWoX3NGL3s6kOrYlqdzge+LsdzRXZi5jgDjc89cXFkFlQzaed5Bl8qcaUydFnLhSrdsowMIByhr9Q==}
     hasBin: true
     dependencies:
-      '@crackle/core': 0.0.0-filescope-urls-20220910114131
+      '@crackle/core': 0.0.0-filescope-urls-20220911230027
       yargs: 17.5.1
     transitivePeerDependencies:
       - '@types/react'
@@ -2095,8 +2095,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@crackle/core/0.0.0-filescope-urls-20220910114131:
-    resolution: {integrity: sha512-vK2QmA7PfX+fUBkfShcU+/+hfdE6sTsEKxhDax3q1Q+VnDEAjtAJqG4r41IK+h4S6m0f3nn9/XX1ydc0aodm2Q==}
+  /@crackle/core/0.0.0-filescope-urls-20220911230027:
+    resolution: {integrity: sha512-L1PIJEP1WLQYs6u0qbBhzeM7G7oU+I5PF2ALZP+tIqa8SzCx5tVSk96uLIM7qxFZ4y8dttoOPpPXIW0XcYllFg==}
     dependencies:
       '@babel/core': 7.18.0
       '@babel/plugin-syntax-jsx': 7.18.6_@babel+core@7.18.0
@@ -2106,8 +2106,8 @@ packages:
       '@rollup/plugin-commonjs': 22.0.2_rollup@2.77.3
       '@rollup/plugin-node-resolve': 13.3.0_rollup@2.77.3
       '@vanilla-extract/babel-plugin': 1.1.7
-      '@vanilla-extract/css': 1.7.3
-      '@vanilla-extract/integration': 0.0.0-filescope-urls-2022810112138
+      '@vanilla-extract/css': 0.0.0-filescope-urls-202281122225
+      '@vanilla-extract/integration': 0.0.0-filescope-urls-202281122225
       '@vanilla-extract/vite-plugin': 3.3.1_vite@3.0.9
       '@vitejs/plugin-react-refresh': 1.3.6
       builtin-modules: 3.3.0
@@ -5167,8 +5167,8 @@ packages:
   /@vanilla-extract/css-utils/0.1.2:
     resolution: {integrity: sha512-qoxIu5E/UhJtoKsPL1JaU9nhTN0Xl5zYV0pScOgsvc3JN46TvTTt0L3GV8x3PQpZP7x3elw8BsC9czYbhJy9Gg==}
 
-  /@vanilla-extract/css/0.0.0-filescope-urls-2022810112138:
-    resolution: {integrity: sha512-cjLyfuEPKFNIEsfDIKa0qjUsfHcdCrDNIUf2FkSkeUli9nggCFdM6HXYdpyX27UNqOUF+OwclJvvpQ7tKsFwiA==}
+  /@vanilla-extract/css/0.0.0-filescope-urls-202281122225:
+    resolution: {integrity: sha512-LhG5QrhZL+qYPXvryJkt5/fMzKk0NCpVHzKXKZVVvJwyM1OExtZh6VYwXm/wZWBvhMmZ1yBux3VPPaPkX9vv3Q==}
     dependencies:
       '@emotion/hash': 0.8.0
       '@vanilla-extract/private': 1.0.3
@@ -5199,10 +5199,10 @@ packages:
       media-query-parser: 2.0.2
       outdent: 0.8.0
 
-  /@vanilla-extract/integration/0.0.0-filescope-urls-2022810112138:
-    resolution: {integrity: sha512-BL3Ua7DEciNUj9xwJoz8JsaBoJJrvkd0OJ5FjyYIO+4aeT2/z0JrYVL+KYYKJP9XaBM8NR0UONanQqJQ5Q7MOQ==}
+  /@vanilla-extract/integration/0.0.0-filescope-urls-202281122225:
+    resolution: {integrity: sha512-bXTO2gNyhYC2tjD8/w+6cBAjBCLyRa+wwGxBDxvog5Ac5zUjF26vNr2l7N5B7Ss42yeg8ot0fqRDqvtQHVbn+w==}
     dependencies:
-      '@vanilla-extract/css': 0.0.0-filescope-urls-2022810112138
+      '@vanilla-extract/css': 0.0.0-filescope-urls-202281122225
       esbuild: 0.11.23
       eval: 0.1.6
       find-up: 5.0.0
