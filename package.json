@@ -81,9 +81,6 @@
     "patchedDependencies": {
       "panzoom@9.4.2": "patches/panzoom@9.4.2.patch",
       "sku@11.4.5": "patches/sku@11.4.5.patch"
-    },
-    "overrides": {
-      "@crackle/core": "0.0.0-filescope-urls-20220911230027"
     }
   },
   "manypkg": {
