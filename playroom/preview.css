@@ -1,4 +1,4 @@
-@keyframes q67f3r4 {
+@keyframes ih6o214 {
   0%, 100% {
     opacity: 0;
   }
@@ -9,15 +9,15 @@
     stroke-dashoffset: 0;
   }
 }
-.q67f3r1 {
+.ih6o211 {
   z-index: 100;
-  background: var(--_2jfd5i18);
-  color: var(--_2jfd5iz);
+  background: var(--_1trhjvt18);
+  color: var(--_1trhjvtz);
 }
-.q67f3r3 > svg > path {
+.ih6o213 > svg > path {
   stroke-dasharray: 1000px;
   stroke-dashoffset: 1000;
-  animation-name: q67f3r4;
+  animation-name: ih6o214;
   animation-duration: 1300ms;
   animation-delay: 500ms;
   animation-direction: forwards;
@@ -25,7 +25,7 @@
   animation-iteration-count: 2;
   animation-fill-mode: forwards;
 }
-.q67f3r5 {
+.ih6o215 {
   margin: 0 auto;
   width: 40vw;
   max-width: 200px;
