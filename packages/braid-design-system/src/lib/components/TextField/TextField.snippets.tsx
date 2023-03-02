@@ -66,4 +66,26 @@ export const snippets: Snippets = [
       <TextField label="Label" tone="neutral" message="Neutral message" />,
     ),
   },
+  {
+    name: 'With character limit',
+    code: source(
+      <TextField
+        label="Label"
+        description="Character limit of 100"
+        characterLimit={100}
+      />,
+    ),
+  },
+  {
+    name: 'With a highlighted range',
+    code: source(
+      <TextField
+        label="Label"
+        description="Characters 11-20 are highlighted"
+        tone="critical"
+        message="Critical message"
+        highlightRanges={[{ start: 11, end: 20 }]}
+      />,
+    ),
+  },
 ];

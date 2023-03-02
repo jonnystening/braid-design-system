@@ -66,16 +66,18 @@ type PassthroughProps =
   | 'autoComplete'
   | 'autoFocus';
 interface FieldRenderProps extends Pick<FieldBaseProps, PassthroughProps> {
+  'aria-describedby'?: string;
+  'aria-required'?: boolean;
+  'aria-label'?: string;
+  'aria-labelledby'?: string;
+}
+interface FieldStyleProps {
   background: BoxProps['background'];
   borderRadius: BoxProps['borderRadius'];
   width: BoxProps['width'];
   paddingLeft: BoxProps['paddingLeft'];
   paddingRight: BoxProps['paddingRight'];
   outline: BoxProps['outline'];
-  'aria-describedby'?: string;
-  'aria-required'?: boolean;
-  'aria-label'?: string;
-  'aria-labelledby'?: string;
   className: string;
 }
 
@@ -85,7 +87,8 @@ type InternalFieldProps = FieldBaseProps &
     alwaysShowSecondaryIcon?: boolean;
     children(
       overlays: ReactNode,
-      props: FieldRenderProps,
+      styleProps: FieldStyleProps,
+      fieldProps: FieldRenderProps,
       icon: ReactNode,
       secondaryIcon: ReactNode,
       prefix: ReactNode,
@@ -132,6 +135,7 @@ export const Field = ({
   const hasVisualLabel = 'label' in restProps;
   const showSecondaryIcon =
     alwaysShowSecondaryIcon || (secondaryIcon && hasValue);
+  const hasMessage = message || secondaryMessage || reserveMessageSpace;
 
   const overlays = (
     <Fragment>
@@ -144,134 +148,149 @@ export const Field = ({
         visible={tone === 'critical' && !disabled}
       />
       <FieldOverlay variant="focus" className={styles.focusOverlay} />
-      <FieldOverlay variant="hover" className={styles.hoverOverlay} />
+      <FieldOverlay
+        variant="hover"
+        className={!disabled ? styles.hoverOverlay : undefined}
+      />
     </Fragment>
   );
 
   const fieldPadding = 'small';
 
   return (
-    <Stack space="xsmall">
-      {hasVisualLabel ? (
-        <FieldLabel
-          id={labelId}
-          htmlFor={id}
-          label={'label' in restProps ? restProps.label : undefined}
-          disabled={disabled}
-          secondaryLabel={
-            'secondaryLabel' in restProps ? restProps.secondaryLabel : undefined
-          }
-          tertiaryLabel={
-            'tertiaryLabel' in restProps ? restProps.tertiaryLabel : undefined
-          }
-          description={
-            'description' in restProps ? restProps.description : undefined
-          }
-          descriptionId={descriptionId}
-        />
-      ) : null}
-
+    <Box>
       <Box
-        position="relative"
-        background={fieldBackground}
-        borderRadius="standard"
-        display="flex"
-        className={showSecondaryIcon ? styles.secondaryIconSpace : undefined}
+        className={styles.field}
+        paddingBottom={hasMessage ? 'xsmall' : undefined}
       >
-        {children(
-          overlays,
-          {
-            id,
-            name,
-            background: fieldBackground,
-            width: 'full',
-            paddingLeft: fieldPadding,
-            paddingRight: showSecondaryIcon ? undefined : fieldPadding,
-            borderRadius: 'standard',
-            outline: 'none',
-            'aria-describedby': mergeIds(
-              ariaDescribedBy,
-              message || secondaryMessage ? messageId : undefined,
-              descriptionId,
-            ),
-            'aria-required': required,
-            ...('aria-label' in restProps
-              ? { 'aria-label': restProps['aria-label'] }
-              : {}),
-            ...('aria-labelledby' in restProps
-              ? { 'aria-labelledby': restProps['aria-labelledby'] }
-              : {}),
-            disabled,
-            autoComplete,
-            autoFocus,
-            ...buildDataAttributes({ data, validateRestProps: restProps }),
-            className: clsx(
-              styles.field,
-              styles.placeholderColor,
-              textStyles({
-                tone: hasValue && !disabled ? 'neutral' : 'secondary',
-                size: 'standard',
-                baseline: false,
-              }),
-              touchableText.standard,
-              icon && !prefix ? styles.iconSpace : null,
-            ),
-          },
-          icon ? (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              position="absolute"
-              height="touchable"
-              width="touchable"
-              pointerEvents="none"
-              top={0}
-              left={0}
-            >
-              <Text baseline={false} tone={prefix ? 'secondary' : undefined}>
-                {icon}
-              </Text>
-            </Box>
-          ) : null,
-          secondaryIcon ? (
-            <Box
-              component="span"
-              position="absolute"
-              width="touchable"
-              height="touchable"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              top={0}
-              right={0}
-            >
-              {secondaryIcon}
-            </Box>
-          ) : null,
-          prefix ? (
-            <Box
-              component="label"
-              htmlFor={id}
-              display="flex"
-              alignItems="center"
-              paddingLeft={icon ? undefined : fieldPadding}
-              height="touchable"
-              flexShrink={0}
-              className={icon ? styles.iconSpace : null}
-            >
-              <Text tone="secondary" baseline={false}>
-                {prefix}
-              </Text>
-              <Box padding={fieldPadding} paddingRight="none" height="full">
-                <Box height="full" className={styles.verticalDivider} />
+        {hasVisualLabel ? (
+          <FieldLabel
+            id={labelId}
+            htmlFor={id}
+            label={'label' in restProps ? restProps.label : undefined}
+            disabled={disabled}
+            secondaryLabel={
+              'secondaryLabel' in restProps
+                ? restProps.secondaryLabel
+                : undefined
+            }
+            tertiaryLabel={
+              'tertiaryLabel' in restProps ? restProps.tertiaryLabel : undefined
+            }
+            description={
+              'description' in restProps ? restProps.description : undefined
+            }
+            descriptionId={descriptionId}
+          />
+        ) : null}
+
+        <Box
+          position="relative"
+          background={fieldBackground}
+          borderRadius="standard"
+          display="flex"
+          marginTop={hasVisualLabel ? 'xsmall' : undefined}
+          className={[
+            showSecondaryIcon ? styles.secondaryIconSpace : undefined,
+          ]}
+        >
+          {children(
+            overlays,
+            {
+              background: fieldBackground,
+              width: 'full',
+              paddingLeft: fieldPadding,
+              paddingRight: showSecondaryIcon ? undefined : fieldPadding,
+              borderRadius: 'standard',
+              outline: 'none',
+              className: clsx(
+                // styles.field,
+                styles.placeholderColor,
+                textStyles({
+                  tone: hasValue && !disabled ? 'neutral' : 'secondary',
+                  size: 'standard',
+                  baseline: false,
+                }),
+                touchableText.standard,
+                icon && !prefix ? styles.iconSpace : null,
+              ),
+            },
+            {
+              id,
+              name,
+              'aria-describedby': mergeIds(
+                ariaDescribedBy,
+                message || secondaryMessage ? messageId : undefined,
+                descriptionId,
+              ),
+              'aria-required': required,
+              ...('aria-label' in restProps
+                ? { 'aria-label': restProps['aria-label'] }
+                : {}),
+              ...('aria-labelledby' in restProps
+                ? { 'aria-labelledby': restProps['aria-labelledby'] }
+                : {}),
+              disabled,
+              autoComplete,
+              autoFocus,
+              ...buildDataAttributes({ data, validateRestProps: restProps }),
+            },
+            icon ? (
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                position="absolute"
+                height="touchable"
+                width="touchable"
+                pointerEvents="none"
+                top={0}
+                left={0}
+              >
+                <Text baseline={false} tone={prefix ? 'secondary' : undefined}>
+                  {icon}
+                </Text>
               </Box>
-            </Box>
-          ) : null,
-        )}
+            ) : null,
+            secondaryIcon ? (
+              <Box
+                component="span"
+                position="absolute"
+                width="touchable"
+                height="touchable"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                top={0}
+                right={0}
+              >
+                {secondaryIcon}
+              </Box>
+            ) : null,
+            prefix ? (
+              <Box
+                component="label"
+                htmlFor={id}
+                display="flex"
+                alignItems="center"
+                paddingLeft={icon ? undefined : fieldPadding}
+                height="touchable"
+                flexShrink={0}
+                className={icon ? styles.iconSpace : null}
+              >
+                <Text tone="secondary" baseline={false}>
+                  {prefix}
+                </Text>
+                <Box padding={fieldPadding} paddingRight="none" height="full">
+                  <Box height="full" className={styles.verticalDivider} />
+                </Box>
+              </Box>
+            ) : null,
+          )}
+        </Box>
       </Box>
 
-      {message || secondaryMessage || reserveMessageSpace ? (
+      {hasMessage ? (
         <FieldMessage
           id={messageId}
           tone={tone}
@@ -281,6 +300,6 @@ export const Field = ({
           reserveMessageSpace={reserveMessageSpace}
         />
       ) : null}
-    </Stack>
+    </Box>
   );
 };

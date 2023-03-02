@@ -288,5 +288,46 @@ export const screenshots: ComponentScreenshot = {
         />
       ),
     },
+    {
+      label: 'TextField highlighting a range',
+      Container,
+      Example: ({ id }) => {
+        const [value, setValue] = useState(
+          'The long piece of text highlighting a range',
+        );
+
+        return (
+          <TextField
+            id={id}
+            value={value}
+            onChange={(e) => setValue(e.currentTarget.value)}
+            label="Label"
+            description="Characters 9-22 are invalid"
+            highlightRanges={[{ start: 9, end: 22 }]}
+          />
+        );
+      },
+    },
+    {
+      label: 'TextField highlighting a while range exceeding character limit',
+      Container,
+      Example: ({ id }) => {
+        const [value, setValue] = useState(
+          'The long piece of text exceeding the specified 50 character limit',
+        );
+
+        return (
+          <TextField
+            id={id}
+            value={value}
+            onChange={(e) => setValue(e.currentTarget.value)}
+            label="Label"
+            description="Characters 9-22 are invalid"
+            characterLimit={50}
+            highlightRanges={[{ start: 9, end: 22 }]}
+          />
+        );
+      },
+    },
   ],
 };

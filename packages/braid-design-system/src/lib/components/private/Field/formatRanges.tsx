@@ -1,12 +1,16 @@
 import type { ReactChild } from 'react';
 import React from 'react';
 import parseHighlights from 'autosuggest-highlight/parse';
-import type { TextareaProps } from './Textarea';
 import { Highlight } from './Highlight/Highlight';
+
+export type HighlightRange = Array<{
+  start: number;
+  end?: number;
+}>;
 
 export const formatRanges = (
   value: string,
-  highlightRanges: TextareaProps['highlightRanges'],
+  highlightRanges: HighlightRange,
 ): ReactChild[] => {
   if (highlightRanges && value) {
     let lastEnd = 0;
@@ -37,7 +41,7 @@ export const formatRanges = (
         }
 
         return [...acc, ...adjustedRange];
-      }, [] as NonNullable<TextareaProps['highlightRanges']>);
+      }, [] as NonNullable<HighlightRange>);
 
     return parseHighlights(
       value,

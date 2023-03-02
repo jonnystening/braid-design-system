@@ -24,7 +24,7 @@ export const iconSpace = style({
 
 export const focusOverlay = style({
   selectors: {
-    [`${field}:focus ~ &`]: {
+    [`${field}:focus-within &`]: {
       opacity: 1,
     },
   },
@@ -32,7 +32,7 @@ export const focusOverlay = style({
 
 export const hoverOverlay = style({
   selectors: {
-    [`${field}:hover:not(:disabled) ~ &, ${field}:focus ~ &`]: {
+    [`${field}:hover &, ${field}:focus-within &`]: {
       opacity: 1,
     },
   },

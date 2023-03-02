@@ -132,4 +132,48 @@ export const galleryItems: ComponentExample[] = [
         />,
       ),
   },
+  {
+    label: 'Limiting the number of characters',
+    Example: ({ id, getState, setState, setDefaultState }) =>
+      source(
+        <>
+          {setDefaultState(
+            'textfield',
+            'A long piece of text exceeding the specified character limit of 50',
+          )}
+
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            description="Character limit of 50"
+            characterLimit={50}
+          />
+        </>,
+      ),
+  },
+  {
+    label: 'Highlighting ranges',
+    Example: ({ id, getState, setState, setDefaultState }) =>
+      source(
+        <>
+          {setDefaultState(
+            'textfield',
+            'A long piece of text with a highlighted range',
+          )}
+
+          <TextField
+            label="Label"
+            id={id}
+            onChange={setState('textfield')}
+            value={getState('textfield')}
+            tone="critical"
+            message="Critical message"
+            description="Characters 7-20 are highlighted"
+            highlightRanges={[{ start: 7, end: 20 }]}
+          />
+        </>,
+      ),
+  },
 ];

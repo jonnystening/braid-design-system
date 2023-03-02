@@ -1,7 +1,8 @@
 import type { AllHTMLAttributes, UIEvent, FormEvent } from 'react';
 import React, { forwardRef, useState, useRef, useCallback } from 'react';
 import { Box } from '../Box/Box';
-import { formatRanges } from './formatRanges';
+import type { HighlightRange } from '../private/Field/formatRanges';
+import { formatRanges } from '../private/Field/formatRanges';
 import type { FieldBaseProps, FieldLabelVariant } from '../private/Field/Field';
 import { Field } from '../private/Field/Field';
 import { getCharacterLimitStatus } from '../private/Field/getCharacterLimitStatus';
@@ -19,10 +20,7 @@ export type TextareaBaseProps = Omit<
   onFocus?: NativeTextareaProps['onFocus'];
   onPaste?: NativeTextareaProps['onPaste'];
   placeholder?: NativeTextareaProps['placeholder'];
-  highlightRanges?: Array<{
-    start: number;
-    end?: number;
-  }>;
+  highlightRanges?: HighlightRange;
   characterLimit?: number;
   lines?: number;
   lineLimit?: number;

@@ -290,6 +290,37 @@ const docs: ComponentDocs = {
         ),
     },
     {
+      label: 'Highlighting ranges',
+      description: (
+        <Text>
+          To support targeted validations, specific character ranges can be
+          highlighted as critical. The <Strong>highlightRanges</Strong> prop
+          accepts and array of <Strong>start</Strong> and <Strong>end</Strong>{' '}
+          character positions.
+        </Text>
+      ),
+      Example: ({ id, getState, setState, setDefaultState }) =>
+        source(
+          <>
+            {setDefaultState(
+              'text',
+              'A long piece of text with a highlighted range',
+            )}
+
+            <TextField
+              label="Label"
+              id={id}
+              onChange={setState('text')}
+              value={getState('text')}
+              tone="critical"
+              message="Critical message"
+              description="Characters 7-20 are highlighted"
+              highlightRanges={[{ start: 7, end: 20 }]}
+            />
+          </>,
+        ),
+    },
+    {
       label: 'Tailoring the keyboard layout',
       description: (
         <>
