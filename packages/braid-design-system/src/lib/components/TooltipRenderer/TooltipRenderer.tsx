@@ -40,7 +40,7 @@ export const TooltipTextDefaultsProvider = ({
   );
 };
 
-const borderRadius = 'xlarge';
+const borderRadius = 'large';
 
 export type ArrowProps = ReturnType<
   ReturnType<typeof usePopperTooltip>['getArrowProps']
@@ -74,12 +74,8 @@ export const TooltipContent = ({
       boxShadow="large"
       background="customDark"
       borderRadius={borderRadius}
-      className={[
-        styles.background,
-        styles.maxWidth,
-        styles.translateZ0,
-        styles.padding,
-      ]}
+      padding="small"
+      className={[styles.background, styles.maxWidth, styles.translateZ0]}
     >
       <TooltipTextDefaultsProvider>
         <Box position="relative" zIndex={1}>

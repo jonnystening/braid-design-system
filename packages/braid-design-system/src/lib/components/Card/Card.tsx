@@ -9,6 +9,7 @@ import { Box } from '../Box/Box';
 import type { DataAttributeMap } from '../private/buildDataAttributes';
 import buildDataAttributes from '../private/buildDataAttributes';
 import { Keyline } from '../private/Keyline/Keyline';
+import { useThemeName } from '../useThemeName/useThemeName';
 
 export const validCardComponents = [
   'div',
@@ -29,7 +30,7 @@ type ResponsiveCardRounding = {
   roundedAbove?: ResponsiveRangeProps['above'];
 };
 
-const borderRadius = 'xlarge';
+const borderRadius = 'large';
 
 export type CardProps = {
   children: ReactNode;
@@ -51,8 +52,11 @@ export const Card = ({
       .map((c) => `'${c}'`)
       .join(', ')}]`,
   );
+  const isSeekJobsTheme = useThemeName() === 'seekJobs';
 
-  let resolvedRounding: BoxProps['borderRadius'];
+  let resolvedRounding: BoxProps['borderRadius'] = isSeekJobsTheme
+    ? borderRadius
+    : undefined;
 
   if ('rounded' in restProps) {
     resolvedRounding = borderRadius;
@@ -73,8 +77,11 @@ export const Card = ({
       component={component}
       position="relative"
       background="surface"
-      padding="gutter"
+      padding={
+        isSeekJobsTheme ? { mobile: 'medium', tablet: 'large' } : 'gutter'
+      }
       borderRadius={resolvedRounding}
+      boxShadow={isSeekJobsTheme ? 'borderNeutralLight' : undefined}
       {...buildDataAttributes({ data, validateRestProps: restProps })}
     >
       {tone ? <Keyline tone={tone} borderRadius={resolvedRounding} /> : null}

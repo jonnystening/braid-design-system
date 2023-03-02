@@ -2,7 +2,6 @@ import assert from 'assert';
 import dedent from 'dedent';
 import type { ReactNode, AllHTMLAttributes, ReactElement } from 'react';
 import React, { useContext, forwardRef } from 'react';
-import { touchableText } from '../../css/typography.css';
 import type { BoxBackgroundVariant, BoxProps } from '../Box/Box';
 import { Box } from '../Box/Box';
 import type { DataAttributeMap } from '../private/buildDataAttributes';
@@ -218,7 +217,7 @@ const ButtonLoader = () => (
 );
 
 const transparentPaddingX = 'small';
-const buttonRadius = 'large';
+const buttonRadius = 'standard';
 
 export const ButtonOverlays = ({
   variant = 'solid',
@@ -313,7 +312,7 @@ export const ButtonText = ({
   const size = sizeProp ?? actionsContext?.size ?? 'standard';
   const stylesForVariant = variants[variant][tone ?? 'default'];
   const shouldReducePaddingX = size === 'small' || variant === 'transparent';
-  const labelPaddingX = shouldReducePaddingX ? transparentPaddingX : 'medium';
+  const labelPaddingX = shouldReducePaddingX ? transparentPaddingX : 'large';
 
   assert(
     !icon || (icon.props.size === undefined && icon.props.tone === undefined),
@@ -324,20 +323,11 @@ export const ButtonText = ({
     <Box
       component="span"
       position="relative"
-      display="flex"
-      justifyContent="center"
-      flexWrap="wrap"
+      display="block"
       overflow="hidden"
       pointerEvents="none"
       paddingX={labelSpacing ? labelPaddingX : undefined}
-      paddingY={
-        labelSpacing && size === 'small'
-          ? styles.constants.smallButtonPaddingSize
-          : undefined
-      }
-      className={
-        labelSpacing && size === 'standard' ? touchableText.standard : undefined
-      }
+      className={labelSpacing ? styles.minHeightForSize : undefined}
       background={
         tone === 'neutral' && variant !== 'solid'
           ? {
@@ -352,8 +342,8 @@ export const ButtonText = ({
       <Text
         tone={stylesForVariant.textTone}
         weight="medium"
+        align="center"
         size={size}
-        baseline={false}
       >
         {icon ? (
           <Box

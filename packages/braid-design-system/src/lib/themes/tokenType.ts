@@ -1,12 +1,31 @@
 import type { FontMetrics } from '@capsizecss/core';
 import type { Breakpoint } from '../css/breakpoints';
 
+export const extractFontMetricsOnly = ({
+  capHeight,
+  ascent,
+  descent,
+  lineGap,
+  unitsPerEm,
+}: FontMetrics & { familyName?: string; xHeight?: number }): FontMetrics => ({
+  capHeight,
+  ascent,
+  descent,
+  lineGap,
+  unitsPerEm,
+});
+
 export type TextBreakpoint = Exclude<Breakpoint, 'desktop' | 'wide'>;
 
-type FontSizeText = {
-  fontSize: number;
-  rows: number;
-};
+type FontSizeText =
+  | {
+      fontSize: number;
+      rows: number;
+    }
+  | {
+      fontSize: number;
+      lineGap: number;
+    };
 
 export type TextDefinition = Record<TextBreakpoint, FontSizeText>;
 type FontWeight = 'regular' | 'medium' | 'strong';
@@ -50,7 +69,9 @@ export interface BraidTokens {
   grid: number;
   touchableSize: number;
   space: {
+    /* @deprecated Use `medium` instead */
     gutter: number;
+    xxxsmall: number;
     xxsmall: number;
     xsmall: number;
     small: number;
@@ -58,6 +79,7 @@ export interface BraidTokens {
     large: number;
     xlarge: number;
     xxlarge: number;
+    xxxlarge: number;
   };
   transforms: {
     touchable: string;
@@ -68,6 +90,7 @@ export interface BraidTokens {
   };
   border: {
     radius: {
+      small: string;
       standard: string;
       large: string;
       xlarge: string;

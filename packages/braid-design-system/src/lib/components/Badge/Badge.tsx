@@ -2,11 +2,11 @@ import React, { forwardRef, Children } from 'react';
 import assert from 'assert';
 import type { BoxProps } from '../Box/Box';
 import { Box } from '../Box/Box';
-import { Text } from '../Text/Text';
-import { lineHeightContainer } from '../../css/lineHeightContainer.css';
 import type { DataAttributeMap } from '../private/buildDataAttributes';
 import buildDataAttributes from '../private/buildDataAttributes';
 import * as styles from './Badge.css';
+import { textStyles } from '../../css/typography';
+import { Truncate } from '../private/Truncate/Truncate';
 
 const validTones = [
   'promote',
@@ -71,11 +71,9 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       <Box
         component="span"
         display="flex"
+        alignItems="center"
         cursor="default"
-        className={[
-          lineHeightContainer[styles.constants.textSize],
-          bleedY ? styles.bleedY : null,
-        ]}
+        className={[bleedY ? styles.bleedY : null]}
         {...buildDataAttributes({ data, validateRestProps: restProps })}
       >
         <Box
@@ -89,17 +87,17 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
             weight === 'strong' ? tone : lightModeBackgroundForTone[tone]
           }
           paddingX="xsmall"
-          borderRadius="large"
+          paddingY="xxsmall"
+          borderRadius="standard"
           overflow="hidden"
+          minWidth={0}
+          className={textStyles({
+            size: styles.constants.textSize,
+            baseline: true,
+            weight: 'medium',
+          })}
         >
-          <Text
-            size={styles.constants.textSize}
-            weight="medium"
-            truncate
-            baseline={false}
-          >
-            {children}
-          </Text>
+          <Truncate>{children}</Truncate>
         </Box>
       </Box>
     );

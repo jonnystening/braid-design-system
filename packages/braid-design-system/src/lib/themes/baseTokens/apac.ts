@@ -1,8 +1,11 @@
+import robotoMetrics from '@capsizecss/metrics/roboto';
 import type { DeepPartial } from 'utility-types';
 import { darken, lighten, rgba, saturate } from 'polished';
 import merge from 'lodash/merge';
+
 import { palette } from '../../color/palette';
 import type { BraidTokens } from '../tokenType';
+import { extractFontMetricsOnly } from '../tokenType';
 
 interface MakeTokensOptions {
   name: string;
@@ -17,6 +20,20 @@ interface MakeTokensOptions {
   brandAccentSoftHover: string;
   tokenOverrides?: DeepPartial<BraidTokens>;
 }
+
+const legacyViolet = {
+  900: '#1E0B65',
+  800: '#341B87',
+  700: '#512EAA',
+  600: '#6C41CE',
+  500: '#8B5CEB',
+  400: '#AD84F2',
+  300: '#C6ACF5',
+  200: '#E1D1F9',
+  100: '#F1E8FD',
+  50: '#FAF5FE',
+};
+
 export const makeTokens = ({
   name,
   displayName,
@@ -42,13 +59,7 @@ export const makeTokens = ({
       fontFamily:
         'Roboto, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif',
       webFont: null,
-      fontMetrics: {
-        capHeight: 1456,
-        ascent: 1900,
-        descent: -500,
-        lineGap: 0,
-        unitsPerEm: 2048,
-      },
+      fontMetrics: extractFontMetricsOnly(robotoMetrics),
       fontWeight: {
         regular: 400,
         medium: 500,
@@ -155,6 +166,7 @@ export const makeTokens = ({
     touchableSize: 11,
     space: {
       gutter: 6,
+      xxxsmall: 0.5,
       xxsmall: 1,
       xsmall: 2,
       small: 3,
@@ -162,6 +174,7 @@ export const makeTokens = ({
       large: 8,
       xlarge: 12,
       xxlarge: 24,
+      xxxlarge: 30,
     },
     transforms: {
       touchable: 'scale(0.95)',
@@ -172,6 +185,7 @@ export const makeTokens = ({
     },
     border: {
       radius: {
+        small: '2px',
         standard: '4px',
         large: '6px',
         xlarge: '10px',
@@ -198,8 +212,8 @@ export const makeTokens = ({
         neutralInverted: white,
         positive: palette.mint['700'],
         positiveLight: palette.mint['300'],
-        promote: palette.violet['700'],
-        promoteLight: palette.violet['300'],
+        promote: legacyViolet['700'],
+        promoteLight: legacyViolet['300'],
       },
     },
     focusRingSize: 3,
@@ -235,14 +249,14 @@ export const makeTokens = ({
         link: formAccent,
         linkLight: palette.indigo['300'],
         linkHover: formAccent,
-        linkVisited: palette.violet['700'],
-        linkLightVisited: palette.violet['300'],
+        linkVisited: legacyViolet['700'],
+        linkLightVisited: legacyViolet['300'],
         neutral: palette.grey['700'],
         neutralInverted: white,
         positive: palette.mint['700'],
         positiveLight: palette.mint['300'],
-        promote: palette.violet['700'],
-        promoteLight: palette.violet['300'],
+        promote: legacyViolet['700'],
+        promoteLight: legacyViolet['300'],
         rating: '#f57c00',
         secondary: palette.grey['500'],
         secondaryInverted: rgba('#fff', 0.65),
@@ -283,8 +297,8 @@ export const makeTokens = ({
         neutralSoftHover: darken(0.025, palette.grey['50']),
         positive: palette.mint['700'],
         positiveLight: palette.mint['100'],
-        promote: palette.violet['700'],
-        promoteLight: palette.violet['100'],
+        promote: legacyViolet['700'],
+        promoteLight: legacyViolet['100'],
         surface: white,
         surfaceDark: palette.grey['800'],
       },

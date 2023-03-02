@@ -109,6 +109,7 @@ importers:
       '@babel/generator': ^7.18.0
       '@babel/plugin-transform-typescript': ^7.20.13
       '@capsizecss/core': ^3.0.0
+      '@capsizecss/metrics': ^0.4.0
       '@capsizecss/vanilla-extract': ^1.0.0
       '@svgr/core': ^5.5.0
       '@svgr/plugin-jsx': ^5.5.0
@@ -171,6 +172,7 @@ importers:
       uuid: ^8.3.2
     dependencies:
       '@capsizecss/core': 3.0.0
+      '@capsizecss/metrics': 0.4.0
       '@capsizecss/vanilla-extract': 1.0.0_@vanilla-extract+css@1.9.5
       '@types/autosuggest-highlight': 3.2.0
       '@types/dedent': 0.7.0
@@ -2231,6 +2233,10 @@ packages:
 
   /@capsizecss/core/3.0.0:
     resolution: {integrity: sha512-tJNEWMmhHcU5z6ITAiVNN9z+PCTylybVIJqgX7Ts4zN66fe/W2Fe5UWJCCZIP/5uutsl5fYOaVVHZIjsuTVhBQ==}
+    dev: false
+
+  /@capsizecss/metrics/0.4.0:
+    resolution: {integrity: sha512-jPQDSAcJWli5YV2Ab8e4i3IYQLZOMCVoYprbL8rJWLwg9Ct0FNtVxA9LfmWdj+bXYh1r+i8WPHCXZ/RXR0fnyg==}
     dev: false
 
   /@capsizecss/vanilla-extract/1.0.0_@vanilla-extract+css@1.9.5:
@@ -6591,7 +6597,7 @@ packages:
   /axios/0.21.4_debug@4.3.1:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.0_debug@4.3.4
+      follow-redirects: 1.15.0
     transitivePeerDependencies:
       - debug
     dev: true

@@ -42,21 +42,18 @@ export const focusOverlay = style({
 export const standard = style({});
 export const small = style({});
 
+const minHeightValueForSize = {
+  standard: vars.touchableSize,
+  small: calc.multiply(vars.touchableSize, 0.8),
+};
+
 type TextBreakpoint = keyof typeof vars.textSize.small;
 const stylesForBreakpoint = (
   breakpoint: TextBreakpoint,
-  size: 'standard' | 'small',
+  size: keyof typeof minHeightValueForSize,
 ) => {
-  const height =
-    size === 'small'
-      ? calc.add(
-          calc.multiply(vars.space[constants.smallButtonPaddingSize], 2),
-          vars.textSize.small[breakpoint].lineHeight,
-        )
-      : vars.touchableSize;
-
-  const value = calc(height)
-    .subtract(vars.textSize[size][breakpoint].capHeight)
+  const value = calc(minHeightValueForSize[size])
+    .subtract(vars.textSize.standard[breakpoint].capHeight)
     .divide(2)
     .negate()
     .toString();
@@ -78,6 +75,47 @@ export const bleedVerticallyToCapHeight = style({
       tablet: stylesForBreakpoint('tablet', 'small'),
     }),
   },
+});
+
+const getMinHeightForSize = (
+  size: keyof typeof minHeightValueForSize,
+  bp: TextBreakpoint,
+) => {
+  const space = calc(minHeightValueForSize[size])
+    .subtract(vars.textSize.standard[bp].capHeight)
+    .divide(2)
+    .toString();
+
+  return {
+    paddingTop: space,
+    paddingBottom: space,
+  };
+};
+
+export const minHeightForSize = style({
+  selectors: {
+    [`${standard} &`]: responsiveStyle({
+      mobile: getMinHeightForSize('standard', 'mobile'),
+      tablet: getMinHeightForSize('standard', 'tablet'),
+    }),
+    [`${small} &`]: responsiveStyle({
+      mobile: getMinHeightForSize('small', 'mobile'),
+      tablet: getMinHeightForSize('small', 'tablet'),
+    }),
+  },
+});
+
+export const iconToCapHeight = styleVariants(
+  { small: vars.textSize.small, standard: vars.textSize.standard },
+  (size) =>
+    responsiveStyle({
+      mobile: { height: size.mobile.capHeight },
+      tablet: { height: size.tablet.capHeight },
+    }),
+);
+
+export const breakWord = style({
+  wordBreak: 'break-word',
 });
 
 const dot1 = keyframes({

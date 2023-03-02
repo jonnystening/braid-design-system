@@ -8,6 +8,7 @@ import { IconClear } from '../icons';
 import type { DataAttributeMap } from '../private/buildDataAttributes';
 import buildDataAttributes from '../private/buildDataAttributes';
 import type { AllOrNone } from '../private/AllOrNone';
+import { useThemeName } from '../useThemeName/useThemeName';
 import * as styles from './Tag.css';
 
 export type TagProps = {
@@ -26,6 +27,8 @@ export const Tag = ({
   children,
   ...restProps
 }: TagProps) => {
+  const isSeekJobsTheme = useThemeName() === 'seekJobs';
+
   assert(
     typeof children === 'undefined' || typeof children === 'string',
     'Tag may only contain a string',
@@ -46,7 +49,8 @@ export const Tag = ({
         display="flex"
         minWidth={0}
         alignItems="center"
-        background="neutralLight"
+        background={isSeekJobsTheme ? 'surface' : 'neutralLight'}
+        boxShadow={isSeekJobsTheme ? 'borderNeutralLight' : undefined}
         paddingY={onClear ? undefined : 'xxsmall'}
         paddingLeft={icon ? 'xsmall' : 'small'}
         paddingRight={onClear ? undefined : 'small'}
