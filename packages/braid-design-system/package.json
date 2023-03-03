@@ -162,6 +162,7 @@
     "@babel/core": "^7.18.0",
     "@babel/generator": "^7.18.0",
     "@babel/plugin-transform-typescript": "^7.20.13",
+    "@crackle/cli": "0.0.0-esm-cjs-build-once-20230303035846",
     "@svgr/core": "^5.5.0",
     "@svgr/plugin-jsx": "^5.5.0",
     "@svgr/plugin-prettier": "^5.5.0",
